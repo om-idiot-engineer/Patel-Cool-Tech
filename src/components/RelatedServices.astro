@@ -1,0 +1,74 @@
+---
+import Container from './Container.astro';
+import SectionHeading from './SectionHeading.astro';
+import { services } from '../data/services';
+
+interface Props {
+  currentSlug: string;
+}
+
+const { currentSlug } = Astro.props;
+const otherServices = services.filter((s) => s.slug !== currentSlug).slice(0, 3);
+---
+
+<section class="py-12 sm:py-16 bg-brand-surface-alt/60 border-b border-brand-border">
+  <Container>
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-10 gap-4">
+      <div>
+        <span class="text-xs font-bold uppercase tracking-wider text-brand-ice block mb-1">
+          Explore Other Solutions
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-brand-navy tracking-tight">
+          Related Air Conditioning Services
+        </h2>
+      </div>
+      <a
+        href="/services/"
+        class="inline-flex items-center gap-1.5 text-sm font-bold text-brand-blue hover:text-brand-ice transition-colors group flex-shrink-0"
+      >
+        <span>All 5 Services</span>
+        <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+        </svg>
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {
+        otherServices.map((service) => (
+          <article class="bg-white rounded-2xl p-6 border border-brand-border hover:border-brand-blue/30 hover:shadow-card transition-all duration-200 flex flex-col justify-between group">
+            <div>
+              <div class="flex items-center justify-between gap-3 mb-4">
+                <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-brand-surface border border-brand-border text-brand-text-subtle uppercase">
+                  {service.category === 'both' ? 'Homes & Offices' : service.category}
+                </span>
+                <span class="text-xs text-brand-text-subtle">Indore</span>
+              </div>
+              <h3 class="text-base sm:text-lg font-bold text-brand-navy group-hover:text-brand-blue transition-colors mb-2">
+                <a href={`/services/${service.slug}/`}>
+                  {service.title}
+                </a>
+              </h3>
+              <p class="text-xs sm:text-sm text-brand-text-muted leading-relaxed mb-4">
+                {service.shortDescription}
+              </p>
+            </div>
+
+            <div class="pt-3 border-t border-brand-border/60">
+              <a
+                href={`/services/${service.slug}/`}
+                class="inline-flex items-center justify-between w-full text-xs sm:text-sm font-semibold text-brand-blue group-hover:text-brand-ice transition-colors min-h-[44px]"
+                aria-label={`Learn more about ${service.title}`}
+              >
+                <span>View {service.title} details</span>
+                <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </Container>
+</section>

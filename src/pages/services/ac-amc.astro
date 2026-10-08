@@ -1,0 +1,126 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ServiceHero from '../../components/ServiceHero.astro';
+import ServiceScope from '../../components/ServiceScope.astro';
+import ServiceProcess from '../../components/ServiceProcess.astro';
+import ServiceBenefits from '../../components/ServiceBenefits.astro';
+import ServiceFAQ from '../../components/ServiceFAQ.astro';
+import RelatedServices from '../../components/RelatedServices.astro';
+import ServiceCTA from '../../components/ServiceCTA.astro';
+import { servicePagesData } from '../../data/servicePages';
+import { business } from '../../data/business';
+import { siteConfig } from '../../data/site';
+
+const serviceData = servicePagesData['ac-amc'];
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: `${siteConfig.siteUrl}/`,
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Services',
+      item: `${siteConfig.siteUrl}/services/`,
+    },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: serviceData.title,
+      item: `${siteConfig.siteUrl}/services/${serviceData.slug}/`,
+    },
+  ],
+};
+
+const serviceSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: serviceData.h1,
+  serviceType: serviceData.category,
+  provider: {
+    '@type': 'HVACBusiness',
+    name: business.name,
+    telephone: business.phones.primaryFormatted,
+    url: `${siteConfig.siteUrl}/`,
+  },
+  areaServed: business.serviceAreas.core.map((area) => ({
+    '@type': 'AdministrativeArea',
+    name: area,
+  })),
+  description: serviceData.metaDescription,
+};
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: serviceData.faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.answer,
+    },
+  })),
+};
+---
+
+<BaseLayout
+  title={serviceData.h1}
+  description={serviceData.metaDescription}
+  additionalSchema={[breadcrumbSchema, serviceSchema, faqSchema]}
+>
+  <ServiceHero
+    h1={serviceData.h1}
+    category={serviceData.category}
+    badge={serviceData.badge}
+    description={serviceData.shortSummary}
+    breadcrumbCurrent={serviceData.title}
+    iconName="shield-check"
+  />
+
+  <ServiceScope
+    coversHeading={serviceData.whatItCovers.heading}
+    coversIntro={serviceData.whatItCovers.intro}
+    coversItems={serviceData.whatItCovers.items}
+    situationsHeading={serviceData.commonSituations.heading}
+    situationsIntro={serviceData.commonSituations.intro}
+    situationsItems={serviceData.commonSituations.items}
+    considerationsHeading={serviceData.considerations?.heading}
+    considerationsIntro={serviceData.considerations?.intro}
+    considerationsItems={serviceData.considerations?.items}
+    serviceAreaNotice={serviceData.serviceAreaNotice}
+  />
+
+  <ServiceProcess
+    heading={serviceData.process.heading}
+    intro={serviceData.process.intro}
+    disclaimer={serviceData.process.disclaimer}
+    steps={serviceData.process.steps}
+  />
+
+  <ServiceBenefits
+    heading={serviceData.benefits.heading}
+    intro={serviceData.benefits.intro}
+    benefits={serviceData.benefits.items}
+  />
+
+  <ServiceFAQ
+    heading={`FAQs: ${serviceData.title} in Indore`}
+    intro="Questions about setting up an annual maintenance arrangement for residential or commercial cooling."
+    faqs={serviceData.faqs}
+  />
+
+  <RelatedServices currentSlug={serviceData.slug} />
+
+  <ServiceCTA
+    serviceTitle={serviceData.title}
+    tagline="Looking for scheduled maintenance for your home or commercial premises? Contact Patel Cool Tech to discuss your unit count and requirements."
+    notice={serviceData.serviceAreaNotice}
+  />
+</BaseLayout>

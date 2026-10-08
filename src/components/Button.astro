@@ -1,0 +1,57 @@
+---
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'secondary' | 'outline' | 'whatsapp' | 'tel';
+  size?: 'sm' | 'md' | 'lg';
+  class?: string;
+  target?: string;
+  rel?: string;
+  type?: 'button' | 'submit' | 'reset';
+  'aria-label'?: string;
+}
+
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  class: className = '',
+  target,
+  rel,
+  type = 'button',
+  'aria-label': ariaLabel,
+  ...rest
+} = Astro.props;
+
+const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-colors duration-150 select-none focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]';
+
+const sizeStyles = {
+  sm: 'px-3.5 py-2 text-sm min-h-[44px] gap-1.5',
+  md: 'px-5 py-2.5 text-sm sm:text-base min-h-[44px] gap-2',
+  lg: 'px-6 py-3.5 text-base sm:text-lg min-h-[48px] gap-2.5',
+};
+
+const variantStyles = {
+  primary: 'bg-brand-navy hover:bg-brand-navy-light text-white shadow-soft focus-visible:outline-brand-navy',
+  secondary: 'bg-brand-blue hover:bg-brand-blue-hover text-white shadow-soft focus-visible:outline-brand-blue',
+  outline: 'border-2 border-brand-navy text-brand-navy hover:bg-brand-navy hover:text-white focus-visible:outline-brand-navy',
+  whatsapp: 'bg-brand-whatsapp hover:bg-brand-whatsapp-hover text-white shadow-soft font-semibold focus-visible:outline-brand-whatsapp',
+  tel: 'bg-brand-blue hover:bg-brand-blue-hover text-white shadow-soft font-semibold focus-visible:outline-brand-blue',
+};
+
+const combinedClasses = [baseStyles, sizeStyles[size], variantStyles[variant], className].join(' ');
+
+// Automatically provide safe rel if target is _blank
+const computedRel = rel ? rel : target === '_blank' ? 'noopener noreferrer' : undefined;
+---
+
+{
+  href ? (
+    <a href={href} class={combinedClasses} target={target} rel={computedRel} aria-label={ariaLabel} {...rest}>
+      <slot />
+    </a>
+  ) : (
+    <button type={type} class={combinedClasses} aria-label={ariaLabel} {...rest}>
+      <slot />
+    </button>
+  )
+}

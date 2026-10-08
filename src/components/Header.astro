@@ -1,0 +1,131 @@
+---
+import { business } from '../data/business';
+import { siteConfig } from '../data/site';
+import Container from './Container.astro';
+import Button from './Button.astro';
+
+const currentPath = Astro.url.pathname;
+const isCurrent = (href: string) => {
+  if (href === '/') {
+    return currentPath === '/' || currentPath === '';
+  }
+  return currentPath.startsWith(href);
+};
+---
+
+<header class="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-brand-border transition-shadow duration-200">
+  <!-- Top micro-banner for local trust on tablets & desktop -->
+  <div class="hidden sm:block bg-brand-navy text-white text-xs py-1.5 px-4 border-b border-brand-navy-light/40">
+    <Container class="flex justify-between items-center text-xs">
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center gap-1.5 text-slate-200">
+          <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+          <span>Serving Indore &bull; Rau &bull; Pithampur</span>
+        </span>
+        <span class="text-slate-400 hidden lg:inline">&bull;</span>
+        <span class="text-slate-300 hidden lg:inline">Technicians: {business.technicians.map((t) => t.name).join(' & ')}</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <a href={business.phones.primaryTel} class="hover:text-brand-ice transition-colors flex items-center gap-1.5 text-slate-200 font-medium">
+          <svg class="w-3.5 h-3.5 text-brand-ice" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+          </svg>
+          <span>{business.phones.primaryFormatted}</span>
+        </a>
+        <span class="text-slate-500 hidden xl:inline">|</span>
+        <a href={business.phones.secondaryTel} class="hover:text-brand-ice transition-colors hidden xl:inline text-slate-300">
+          {business.phones.secondaryFormatted}
+        </a>
+      </div>
+    </Container>
+  </div>
+
+  <!-- Main Navigation Bar -->
+  <Container class="flex items-center justify-between h-16 sm:h-18">
+    <!-- Brand Identity -->
+    <a href="/" class="flex items-center gap-2.5 group py-1" aria-label="Patel Cool Tech Home">
+      <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-brand-navy flex items-center justify-center text-brand-ice group-hover:bg-brand-navy-light transition-colors shadow-sm flex-shrink-0">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+      </div>
+      <div class="flex flex-col">
+        <span class="font-extrabold text-base sm:text-lg lg:text-xl tracking-tight text-brand-navy group-hover:text-brand-blue transition-colors leading-tight">
+          PATEL COOL TECH
+        </span>
+        <span class="text-[10px] sm:text-xs font-medium text-brand-text-muted tracking-wide flex items-center gap-1.5 leading-none mt-0.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+          <span>Indore, Madhya Pradesh</span>
+        </span>
+      </div>
+    </a>
+
+    <!-- Desktop Navigation Links -->
+    <nav class="hidden md:flex items-center space-x-6 lg:space-x-8" aria-label="Desktop primary navigation">
+      {
+        siteConfig.navItems.map((item) => {
+          const active = isCurrent(item.href);
+          return (
+            <a
+              href={item.href}
+              class:list={[
+                'text-sm lg:text-base font-semibold transition-colors duration-150 py-1 relative',
+                active
+                  ? 'text-brand-blue font-bold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-brand-ice'
+                  : 'text-brand-navy hover:text-brand-ice',
+              ]}
+              aria-current={active ? 'page' : undefined}
+            >
+              {item.label}
+            </a>
+          );
+        })
+      }
+    </nav>
+
+    <!-- Desktop Actions -->
+    <div class="hidden md:flex items-center gap-2.5 lg:gap-3">
+      <Button
+        href={business.phones.whatsappUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        variant="whatsapp"
+        size="sm"
+        aria-label="Chat with Patel Cool Tech on WhatsApp"
+      >
+        <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12.031 2C6.495 2 2 6.495 2 12.031c0 1.97.57 3.811 1.558 5.368L2.094 22l4.743-1.442a9.98 9.98 0 005.194 1.473h.004c5.535 0 10.03-4.495 10.03-10.031 0-2.68-1.043-5.2-2.935-7.093A9.972 9.972 0 0012.031 2zm0 18.257h-.003a8.217 8.217 0 01-4.186-1.144l-.3-.178-3.11.946.963-3.033-.195-.311a8.22 8.22 0 01-1.26-4.506c0-4.544 3.697-8.241 8.243-8.241 2.2 0 4.27.859 5.827 2.417a8.196 8.196 0 012.413 5.826c0 4.546-3.698 8.244-8.242 8.244z"/>
+        </svg>
+        <span>WhatsApp</span>
+      </Button>
+
+      <Button
+        href={business.phones.primaryTel}
+        variant="primary"
+        size="sm"
+        aria-label="Call Patel Cool Tech"
+      >
+        <svg class="w-4 h-4 text-brand-ice flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+        </svg>
+        <span>Call Now</span>
+      </Button>
+    </div>
+
+    <!-- Mobile Hamburger Toggle Button -->
+    <div class="flex items-center md:hidden">
+      <button
+        type="button"
+        id="mobile-menu-toggle-btn"
+        class="inline-flex items-center justify-center p-2 rounded-lg text-brand-navy hover:bg-brand-surface-alt focus-visible:outline-brand-ice min-h-[48px] min-w-[48px] border border-transparent hover:border-brand-border transition-colors"
+        aria-label="Open navigation menu"
+        aria-expanded="false"
+        aria-controls="mobile-menu-drawer"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+  </Container>
+</header>

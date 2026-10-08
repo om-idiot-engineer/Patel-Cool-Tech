@@ -1,0 +1,105 @@
+---
+import '../styles/global.css';
+import { siteConfig } from '../data/site';
+import { buildPageTitle, generateLocalBusinessSchema } from '../utils/seo';
+import Header from '../components/Header.astro';
+import MobileMenu from '../components/MobileMenu.astro';
+import Footer from '../components/Footer.astro';
+import StickyMobileCTA from '../components/StickyMobileCTA.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonicalUrl?: string;
+  ogImage?: string;
+  noindex?: boolean;
+  additionalSchema?: Record<string, any> | Record<string, any>[];
+}
+
+const {
+  title,
+  description = siteConfig.defaultDescription,
+  canonicalUrl: propCanonicalUrl,
+  ogImage,
+  noindex = false,
+  additionalSchema,
+} = Astro.props;
+
+const canonicalUrl = (() => {
+  if (propCanonicalUrl) {
+    const u = new URL(propCanonicalUrl, siteConfig.siteUrl);
+    if (!u.pathname.endsWith('/')) {
+      u.pathname = `${u.pathname}/`;
+    }
+    return u.href;
+  }
+  const u = new URL(Astro.url.pathname, Astro.site || siteConfig.siteUrl);
+  if (!u.pathname.endsWith('/')) {
+    u.pathname = `${u.pathname}/`;
+  }
+  return u.href;
+})();
+
+const pageTitle = buildPageTitle(title);
+const schemaData = generateLocalBusinessSchema();
+---
+
+<!doctype html>
+<html lang="en" class="h-full scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    {!noindex && <link rel="canonical" href={canonicalUrl} />}
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    {!noindex && <meta property="og:url" content={canonicalUrl} />}
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:site_name" content={siteConfig.name} />
+    <meta property="og:locale" content={siteConfig.locale} />
+    {ogImage && <meta property="og:image" content={new URL(ogImage, Astro.site || siteConfig.siteUrl).href} />}
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content={ogImage ? "summary_large_image" : "summary"} />
+    {!noindex && <meta name="twitter:url" content={canonicalUrl} />}
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    {ogImage && <meta name="twitter:image" content={new URL(ogImage, Astro.site || siteConfig.siteUrl).href} />}
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#0b1f3a" />
+
+    <!-- LocalBusiness JSON-LD Schema (omitted on error / noindex pages) -->
+    {!noindex && <script type="application/ld+json" set:html={JSON.stringify(schemaData)} />}
+    {additionalSchema && (
+      <script type="application/ld+json" set:html={JSON.stringify(additionalSchema)} />
+    )}
+  </head>
+  <body class="flex flex-col min-h-full bg-white text-brand-text">
+    <!-- Accessible Skip to Main Content Link -->
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-50 px-4 py-2 bg-brand-navy text-white font-semibold rounded-md shadow-lg outline-none"
+    >
+      Skip to main content
+    </a>
+
+    <!-- Global Header & Mobile Navigation Drawer -->
+    <Header />
+    <MobileMenu />
+
+    <!-- Main Content Area -->
+    <main id="main-content" class="flex-grow">
+      <slot />
+    </main>
+
+    <!-- Global Footer & Mobile Direct CTA -->
+    <Footer />
+    <StickyMobileCTA />
+  </body>
+</html>

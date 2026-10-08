@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%" fill="none">
+  <defs>
+    <linearGradient id="repBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A" />
+      <stop offset="100%" stop-color="#1E293B" />
+    </linearGradient>
+    <linearGradient id="pcbGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#064E3B" />
+      <stop offset="100%" stop-color="#022C22" />
+    </linearGradient>
+    <filter id="repGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Dark technical diagnostic background -->
+  <rect width="800" height="600" fill="url(#repBg)" />
+
+  <!-- PCB Circuit Trace Grid -->
+  <g stroke="#047857" stroke-width="1.5" opacity="0.3" fill="none">
+    <path d="M 60 100 H 240 V 220 H 380" />
+    <path d="M 120 40 V 160 H 300 V 320" />
+    <path d="M 500 80 V 180 H 680" />
+    <path d="M 420 450 H 600 V 350 H 740" />
+    <circle cx="240" cy="220" r="4" fill="#059669" />
+    <circle cx="300" cy="320" r="4" fill="#059669" />
+    <circle cx="600" cy="350" r="4" fill="#059669" />
+  </g>
+
+  <!-- AC Control Board (PCB) -->
+  <rect x="160" y="120" width="340" height="340" rx="16" fill="url(#pcbGrad)" stroke="#10B981" stroke-width="2" />
+  
+  <!-- Integrated Circuits / Microcontrollers -->
+  <rect x="220" y="180" width="100" height="100" rx="8" fill="#18181B" stroke="#71717A" stroke-width="1.5" />
+  <text x="270" y="235" font-family="monospace" font-size="11" fill="#A1A1AA" text-anchor="middle">MCU CONTROL</text>
+  <circle cx="236" cy="196" r="3" fill="#E4E4E7" />
+
+  <!-- PCB Heat Sinks & Capacitors -->
+  <rect x="360" y="160" width="110" height="70" rx="4" fill="#3F3F46" />
+  <line x1="380" y1="160" x2="380" y2="230" stroke="#71717A" stroke-width="2" />
+  <line x1="400" y1="160" x2="400" y2="230" stroke="#71717A" stroke-width="2" />
+  <line x1="420" y1="160" x2="420" y2="230" stroke="#71717A" stroke-width="2" />
+  <line x1="440" y1="160" x2="440" y2="230" stroke="#71717A" stroke-width="2" />
+
+  <circle cx="250" cy="360" r="26" fill="#1E3A8A" stroke="#3B82F6" stroke-width="2" />
+  <circle cx="330" cy="360" r="26" fill="#1E3A8A" stroke="#3B82F6" stroke-width="2" />
+
+  <!-- Terminal Blocks -->
+  <rect x="180" y="410" width="220" height="30" rx="4" fill="#18181B" />
+  <circle cx="210" cy="425" r="4" fill="#F59E0B" />
+  <circle cx="250" cy="425" r="4" fill="#3B82F6" />
+  <circle cx="290" cy="425" r="4" fill="#EF4444" />
+  <circle cx="330" cy="425" r="4" fill="#10B981" />
+  <circle cx="370" cy="425" r="4" fill="#E4E4E7" />
+
+  <!-- Multimeter Device -->
+  <g transform="translate(540, 180)">
+    <!-- Multimeter Body -->
+    <rect x="0" y="0" width="180" height="280" rx="20" fill="#F59E0B" stroke="#D97706" stroke-width="3" />
+    <rect x="10" y="10" width="160" height="260" rx="14" fill="#1E293B" />
+    
+    <!-- LCD Screen -->
+    <rect x="25" y="30" width="130" height="60" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1.5" />
+    <text x="90" y="68" font-family="monospace" font-size="28" font-weight="700" fill="#38BDF8" text-anchor="middle">230.4 V</text>
+    <text x="135" y="48" font-family="monospace" font-size="10" fill="#10B981">AC RMS</text>
+
+    <!-- Rotary Dial -->
+    <circle cx="90" cy="150" r="38" fill="#334155" stroke="#475569" stroke-width="2" />
+    <line x1="90" y1="150" x2="90" y2="120" stroke="#F59E0B" stroke-width="4" stroke-linecap="round" />
+    <circle cx="90" cy="150" r="10" fill="#1E293B" />
+
+    <!-- Probe Ports -->
+    <circle cx="50" cy="235" r="10" fill="#EF4444" />
+    <circle cx="90" cy="235" r="10" fill="#18181B" />
+    <circle cx="130" cy="235" r="10" fill="#3B82F6" />
+  </g>
+
+  <!-- Test Probes running to PCB -->
+  <path d="M 590 415 C 550 490, 420 440, 370 425" stroke="#EF4444" stroke-width="4" fill="none" stroke-linecap="round" />
+  <path d="M 630 415 C 600 520, 390 480, 330 425" stroke="#18181B" stroke-width="4" fill="none" stroke-linecap="round" />
+
+  <!-- Technical badge overlay -->
+  <g transform="translate(48, 500)">
+    <rect x="0" y="0" width="300" height="52" rx="10" fill="#071527" stroke="#334155" stroke-width="1" />
+    <circle cx="28" cy="26" r="12" fill="#0284C7" />
+    <path d="M22 26 L26 30 L34 22" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+    <text x="52" y="24" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF">ON-SITE FAULT DIAGNOSIS</text>
+    <text x="52" y="40" font-family="system-ui, sans-serif" font-size="11" fill="#94A3B8">Electrical, Compressor &amp; PCB Testing</text>
+  </g>
+</svg>

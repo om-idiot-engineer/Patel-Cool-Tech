@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%" fill="none">
+  <defs>
+    <linearGradient id="instBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F8FAFC" />
+      <stop offset="100%" stop-color="#E2E8F0" />
+    </linearGradient>
+    <linearGradient id="instUnit" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#F1F5F9" />
+    </linearGradient>
+    <linearGradient id="instCopper" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#C2410C" />
+      <stop offset="50%" stop-color="#EA580C" />
+      <stop offset="100%" stop-color="#9A3412" />
+    </linearGradient>
+    <filter id="instShadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#0B1F3A" flood-opacity="0.1" />
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="600" fill="url(#instBg)" />
+
+  <!-- Wall mounting grid / blueprint guide lines -->
+  <g stroke="#CBD5E1" stroke-width="1" stroke-dasharray="4 4" opacity="0.6">
+    <line x1="100" y1="120" x2="700" y2="120" />
+    <line x1="100" y1="480" x2="700" y2="480" />
+    <line x1="200" y1="80" x2="200" y2="520" />
+    <line x1="600" y1="80" x2="600" y2="520" />
+    <circle cx="400" cy="300" r="140" />
+  </g>
+
+  <!-- Mounting bracket base on wall -->
+  <rect x="220" y="190" width="360" height="180" rx="8" fill="#CBD5E1" opacity="0.4" />
+  <line x1="240" y1="210" x2="240" y2="350" stroke="#94A3B8" stroke-width="4" stroke-linecap="round" />
+  <line x1="560" y1="210" x2="560" y2="350" stroke="#94A3B8" stroke-width="4" stroke-linecap="round" />
+  <line x1="240" y1="280" x2="560" y2="280" stroke="#94A3B8" stroke-width="3" stroke-linecap="round" />
+
+  <!-- Copper Line Set / Piping through sleeve -->
+  <path d="M540 330 C 580 330, 620 370, 640 430 L 660 520" stroke="url(#instCopper)" stroke-width="12" stroke-linecap="round" fill="none" />
+  <path d="M555 335 C 590 335, 630 380, 650 435 L 670 520" stroke="#475569" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.7" />
+
+  <!-- Wall Split AC Unit -->
+  <g filter="url(#instShadow)">
+    <rect x="180" y="170" width="440" height="150" rx="14" fill="url(#instUnit)" stroke="#E2E8F0" stroke-width="2" />
+    
+    <!-- Top air intake grille -->
+    <g stroke="#94A3B8" stroke-width="1.5" opacity="0.5">
+      <line x1="220" y1="188" x2="580" y2="188" />
+      <line x1="220" y1="196" x2="580" y2="196" />
+      <line x1="220" y1="204" x2="580" y2="204" />
+    </g>
+
+    <!-- Bevel & Horizontal seam -->
+    <line x1="182" y1="275" x2="618" y2="275" stroke="#CBD5E1" stroke-width="1.5" />
+    <rect x="220" y="284" width="360" height="14" rx="4" fill="#E2E8F0" />
+
+    <!-- Digital Display -->
+    <rect x="520" y="225" width="55" height="30" rx="6" fill="#0B1F3A" />
+    <circle cx="536" cy="240" r="3" fill="#10B981" />
+    <text x="555" y="246" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#38BDF8" text-anchor="middle">24°</text>
+
+    <!-- Brand emblem placeholder -->
+    <rect x="375" y="240" width="50" height="6" rx="2" fill="#94A3B8" />
+  </g>
+
+  <!-- Spirit Level Tool Indicator -->
+  <g transform="translate(310, 130)">
+    <rect x="0" y="0" width="180" height="24" rx="4" fill="#0284C7" />
+    <rect x="70" y="4" width="40" height="16" rx="3" fill="#FFFFFF" />
+    <rect x="74" y="6" width="32" height="12" rx="2" fill="#38BDF8" opacity="0.3" />
+    <!-- Level bubble centered -->
+    <circle cx="90" cy="12" r="5" fill="#10B981" />
+    <line x1="82" y1="4" x2="82" y2="20" stroke="#0284C7" stroke-width="1" />
+    <line x1="98" y1="4" x2="98" y2="20" stroke="#0284C7" stroke-width="1" />
+  </g>
+
+  <!-- Technical badge overlay -->
+  <g transform="translate(48, 500)">
+    <rect x="0" y="0" width="280" height="52" rx="10" fill="#0B1F3A" opacity="0.95" />
+    <circle cx="28" cy="26" r="12" fill="#0284C7" />
+    <path d="M22 26 L26 30 L34 22" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+    <text x="52" y="24" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF">PRECISION INSTALLATION</text>
+    <text x="52" y="40" font-family="system-ui, sans-serif" font-size="11" fill="#94A3B8">Level Mounting &amp; Leak Testing</text>
+  </g>
+</svg>

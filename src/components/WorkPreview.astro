@@ -1,0 +1,86 @@
+---
+import { workItems } from '../data/work';
+import Container from './Container.astro';
+import SectionHeading from './SectionHeading.astro';
+import Button from './Button.astro';
+---
+
+<section id="work" class="py-12 sm:py-16 lg:py-20 bg-white border-b border-brand-border scroll-mt-20">
+  <Container>
+    <SectionHeading
+      badge="On-Site Portfolio"
+      title="Our Work Preview"
+      subtitle="A look into the standard air conditioning installation, fault diagnosis, deep servicing, and maintenance workflows handled across Indore and nearby areas."
+      align="center"
+    />
+
+    <!-- 4-Card Responsive Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
+      {
+        workItems.map((item) => (
+          <article class="flex flex-col bg-brand-surface rounded-2xl overflow-hidden border border-brand-border/90 hover:border-brand-blue/50 transition-all duration-200 hover:shadow-card group">
+            <!-- Work Image Container with Aspect Ratio -->
+            <div class="relative w-full aspect-[4/3] bg-brand-surface-alt overflow-hidden">
+              <img
+                src={item.image}
+                alt={item.alt}
+                width="800"
+                height="600"
+                loading="lazy"
+                decoding="async"
+                class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
+              />
+              <!-- Subtle Category Chip -->
+              <span class="absolute top-3 left-3 px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-brand-navy/90 text-white backdrop-blur-sm">
+                {item.category}
+              </span>
+            </div>
+
+            <!-- Content Area -->
+            <div class="p-5 flex flex-col flex-grow justify-between">
+              <div>
+                <h3 class="text-base sm:text-lg font-bold text-brand-navy mb-2 leading-snug">
+                  {item.title}
+                </h3>
+                <p class="text-xs sm:text-sm text-brand-text-muted leading-relaxed">
+                  {item.shortDescription}
+                </p>
+              </div>
+
+              <!-- Factual Verification Footer -->
+              <div class="mt-4 pt-3 border-t border-brand-border/60 flex items-center justify-between text-xs text-brand-text-subtle">
+                <span class="inline-flex items-center gap-1.5 font-medium text-brand-navy">
+                  <span class="w-1.5 h-1.5 rounded-full bg-brand-ice"></span>
+                  On-Site Execution
+                </span>
+                <span>Split &amp; Window</span>
+              </div>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+
+    <!-- Section Bottom Callout -->
+    <div class="mt-10 sm:mt-12 text-center flex flex-col sm:flex-row items-center justify-center gap-3">
+      <Button
+        href="/our-work/"
+        variant="primary"
+        size="sm"
+        class="font-semibold px-5 min-h-[44px]"
+        aria-label="View our complete air conditioning work portfolio"
+      >
+        View Full Work Portfolio &rarr;
+      </Button>
+      <Button
+        href="/contact/"
+        variant="outline"
+        size="sm"
+        class="font-semibold px-5 min-h-[44px]"
+        aria-label="Request service from Patel Cool Tech"
+      >
+        Contact Technicians Directly
+      </Button>
+    </div>
+  </Container>
+</section>

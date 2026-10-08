@@ -1,0 +1,55 @@
+---
+import Container from './Container.astro';
+import SectionHeading from './SectionHeading.astro';
+import type { ServiceFAQItem } from '../data/servicePages';
+
+interface Props {
+  heading?: string;
+  intro?: string;
+  faqs: ServiceFAQItem[];
+}
+
+const {
+  heading = 'Frequently Asked Questions',
+  intro = 'Common questions about our air conditioning services, scheduling, and on-site procedures.',
+  faqs,
+} = Astro.props;
+---
+
+<section class="py-12 sm:py-16 bg-white border-b border-brand-border">
+  <Container>
+    <div class="max-w-3xl mx-auto">
+      <SectionHeading
+        badge="Got Questions?"
+        title={heading}
+        subtitle={intro}
+        align="center"
+      />
+
+      <div class="space-y-4">
+        {
+          faqs.map((faq, index) => (
+            <details class="group bg-brand-surface rounded-2xl border border-brand-border/80 overflow-hidden transition-all duration-200 open:bg-white open:border-brand-blue/30 open:shadow-card">
+              <summary class="flex items-center justify-between gap-4 p-5 sm:p-6 cursor-pointer select-none font-bold text-base sm:text-lg text-brand-navy hover:text-brand-blue focus-visible:outline-2 focus-visible:outline-brand-blue list-none">
+                <span class="flex items-center gap-3">
+                  <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-brand-surface-alt text-brand-text-subtle group-open:bg-brand-blue-light group-open:text-brand-blue transition-colors">
+                    Q{index + 1}
+                  </span>
+                  <span>{faq.question}</span>
+                </span>
+                <span class="w-7 h-7 rounded-full bg-brand-surface-alt flex items-center justify-center text-brand-text-muted flex-shrink-0 group-hover:bg-brand-blue-light group-hover:text-brand-blue group-open:rotate-180 transition-transform duration-200">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </span>
+              </summary>
+              <div class="px-5 pb-5 sm:px-6 sm:pb-6 text-sm sm:text-base text-brand-text-muted leading-relaxed border-t border-brand-border/40 pt-4">
+                <p>{faq.answer}</p>
+              </div>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </Container>
+</section>

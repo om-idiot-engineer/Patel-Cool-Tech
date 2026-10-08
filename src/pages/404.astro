@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Container from '../components/Container.astro';
+import Button from '../components/Button.astro';
+import { business } from '../data/business';
+---
+
+<BaseLayout
+  title="Page Not Found"
+  description="The requested page could not be found. Contact Patel Cool Tech for AC services in Indore."
+  noindex={true}
+>
+  <section class="py-20 sm:py-28 bg-white">
+    <Container class="text-center max-w-xl mx-auto">
+      <span class="text-brand-ice font-mono font-bold text-sm tracking-wider uppercase">Error 404</span>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-brand-navy mt-2 mb-4">
+        Page Not Found
+      </h1>
+      <p class="text-brand-text-muted text-base mb-8 leading-relaxed">
+        The page you are looking for might have been moved or does not exist. You can return to the homepage or reach out to our technicians directly.
+      </p>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <Button href="/" variant="primary">
+          Back to Homepage
+        </Button>
+        <Button href={business.phones.whatsappUrl} target="_blank" rel="noopener noreferrer" variant="whatsapp">
+          Chat on WhatsApp
+        </Button>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>

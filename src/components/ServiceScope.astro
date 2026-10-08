@@ -1,0 +1,149 @@
+---
+import Container from './Container.astro';
+import SectionHeading from './SectionHeading.astro';
+import type { ServiceCoverageItem } from '../data/servicePages';
+
+interface Props {
+  coversHeading: string;
+  coversIntro: string;
+  coversItems: ServiceCoverageItem[];
+  situationsHeading: string;
+  situationsIntro: string;
+  situationsItems: string[];
+  considerationsHeading?: string;
+  considerationsIntro?: string;
+  considerationsItems?: ServiceCoverageItem[];
+  serviceAreaNotice: string;
+}
+
+const {
+  coversHeading,
+  coversIntro,
+  coversItems,
+  situationsHeading,
+  situationsIntro,
+  situationsItems,
+  considerationsHeading,
+  considerationsIntro,
+  considerationsItems,
+  serviceAreaNotice,
+} = Astro.props;
+---
+
+<section class="py-12 sm:py-16 bg-white border-b border-brand-border">
+  <Container>
+    <!-- 1. What This Service Covers -->
+    <div class="mb-14 sm:mb-18">
+      <SectionHeading
+        badge="Scope of Work"
+        title={coversHeading}
+        subtitle={coversIntro}
+        align="left"
+      />
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+        {
+          coversItems.map((item) => (
+            <div class="bg-brand-surface rounded-2xl p-6 sm:p-7 border border-brand-border hover:border-brand-ice/40 hover:shadow-card transition-all duration-200">
+              <div class="flex items-start gap-4">
+                <div class="w-10 h-10 rounded-xl bg-brand-blue-light text-brand-blue flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="text-base sm:text-lg font-bold text-brand-navy mb-2">
+                    {item.title}
+                  </h3>
+                  <p class="text-xs sm:text-sm text-brand-text-muted leading-relaxed">
+                    {item.description}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- 2. Common Situations & Customer Needs -->
+    <div class="mb-14 sm:mb-18 bg-brand-surface rounded-2xl p-6 sm:p-8 lg:p-10 border border-brand-border">
+      <div class="max-w-3xl">
+        <span class="text-xs font-bold uppercase tracking-wider text-brand-ice block mb-1">
+          When to Contact Us
+        </span>
+        <h2 class="text-xl sm:text-2xl lg:text-3xl font-extrabold text-brand-navy tracking-tight mb-3">
+          {situationsHeading}
+        </h2>
+        <p class="text-sm sm:text-base text-brand-text-muted mb-6 leading-relaxed">
+          {situationsIntro}
+        </p>
+
+        <ul class="space-y-3.5" role="list">
+          {
+            situationsItems.map((situation) => (
+              <li class="flex items-start gap-3 text-xs sm:text-sm text-brand-text">
+                <span class="w-5 h-5 rounded-full bg-brand-blue/10 text-brand-blue flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </span>
+                <span class="leading-relaxed">{situation}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3. Key Considerations / Practical Guidance (Optional depending on service) -->
+    {
+      considerationsHeading && considerationsItems && (
+        <div class="mb-14 sm:mb-18">
+          <SectionHeading
+            badge="Technical Overview"
+            title={considerationsHeading}
+            subtitle={considerationsIntro || 'Practical points for homeowners and commercial managers:'}
+            align="left"
+          />
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+            {considerationsItems.map((item) => (
+              <div class="bg-white rounded-2xl p-6 border border-brand-border/80 shadow-soft flex flex-col justify-between">
+                <div>
+                  <h3 class="text-base font-bold text-brand-navy mb-2.5">
+                    {item.title}
+                  </h3>
+                  <p class="text-xs sm:text-sm text-brand-text-muted leading-relaxed">
+                    {item.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )
+    }
+
+    <!-- 4. Natural Service Area Banner -->
+    <div class="p-5 sm:p-6 rounded-2xl bg-brand-blue-light/50 border border-brand-blue/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-brand-blue text-white flex items-center justify-center flex-shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        </div>
+        <div>
+          <span class="text-xs font-bold text-brand-blue uppercase tracking-wider block">Service Area Coverage</span>
+          <p class="text-xs sm:text-sm font-medium text-brand-navy mt-0.5">
+            {serviceAreaNotice}
+          </p>
+        </div>
+      </div>
+      <div class="text-xs text-brand-text-subtle sm:text-right flex-shrink-0">
+        <span>Split &amp; Window Units &bull; On-Site Support</span>
+      </div>
+    </div>
+  </Container>
+</section>

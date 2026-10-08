@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%" fill="none">
+  <defs>
+    <linearGradient id="maintBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F8FAFC" />
+      <stop offset="100%" stop-color="#E2E8F0" />
+    </linearGradient>
+    <linearGradient id="condenserBody" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F1F5F9" />
+      <stop offset="100%" stop-color="#CBD5E1" />
+    </linearGradient>
+    <filter id="maintShadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#0B1F3A" flood-opacity="0.1" />
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="600" fill="url(#maintBg)" />
+
+  <!-- Outdoor Condenser Unit Silhouette / Structure (Background left) -->
+  <g transform="translate(80, 100)" filter="url(#maintShadow)">
+    <rect x="0" y="0" width="340" height="340" rx="16" fill="url(#condenserBody)" stroke="#94A3B8" stroke-width="2" />
+    <!-- Fan Grille Circle -->
+    <circle cx="170" cy="170" r="120" fill="#E2E8F0" stroke="#64748B" stroke-width="2" />
+    <circle cx="170" cy="170" r="85" fill="none" stroke="#94A3B8" stroke-width="2" />
+    <circle cx="170" cy="170" r="50" fill="none" stroke="#94A3B8" stroke-width="2" />
+    <circle cx="170" cy="170" r="22" fill="#334155" />
+    <!-- Fan blades -->
+    <path d="M 170 148 C 190 100, 230 110, 220 148 Z" fill="#64748B" />
+    <path d="M 170 192 C 150 240, 110 230, 120 192 Z" fill="#64748B" />
+    <path d="M 148 170 C 100 150, 110 110, 148 120 Z" fill="#64748B" />
+    <path d="M 192 170 C 240 190, 230 230, 192 220 Z" fill="#64748B" />
+    <!-- Service Valve Access on unit side -->
+    <rect x="310" y="220" width="30" height="60" rx="4" fill="#334155" />
+    <circle cx="325" cy="240" r="6" fill="#F59E0B" />
+    <circle cx="325" cy="265" r="6" fill="#F59E0B" />
+  </g>
+
+  <!-- Dual Manifold Gauge Set (Foreground right) -->
+  <g transform="translate(430, 80)">
+    <!-- Hanging hook -->
+    <path d="M 150 0 C 170 0, 170 30, 150 40 L 150 60" stroke="#64748B" stroke-width="5" fill="none" stroke-linecap="round" />
+    
+    <!-- Manifold Brass Bar -->
+    <rect x="50" y="240" width="200" height="40" rx="8" fill="#D97706" stroke="#92400E" stroke-width="2" />
+    
+    <!-- Left Valve Knob (Blue - Low Pressure) -->
+    <circle cx="70" cy="305" r="20" fill="#1D4ED8" stroke="#1E3A8A" stroke-width="3" />
+    <!-- Right Valve Knob (Red - High Pressure) -->
+    <circle cx="230" cy="305" r="20" fill="#DC2626" stroke="#991B1B" stroke-width="3" />
+    <!-- Center Sight Glass -->
+    <circle cx="150" cy="260" r="14" fill="#0284C7" stroke="#0369A1" stroke-width="2" />
+    <circle cx="150" cy="260" r="8" fill="#BAE6FD" />
+
+    <!-- Left Gauge (Low Side / Blue) -->
+    <circle cx="75" cy="140" r="70" fill="#1E293B" stroke="#1D4ED8" stroke-width="6" />
+    <circle cx="75" cy="140" r="62" fill="#FFFFFF" />
+    <!-- Gauge scale marks -->
+    <circle cx="75" cy="140" r="48" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="2 6" />
+    <text x="75" y="115" font-family="monospace" font-size="11" font-weight="700" fill="#1D4ED8" text-anchor="middle">LOW PSI</text>
+    <text x="75" y="175" font-family="monospace" font-size="10" fill="#64748B" text-anchor="middle">R32 / R410A</text>
+    <!-- Pointer -->
+    <line x1="75" y1="140" x2="105" y2="100" stroke="#DC2626" stroke-width="2.5" stroke-linecap="round" />
+    <circle cx="75" cy="140" r="6" fill="#1E293B" />
+
+    <!-- Right Gauge (High Side / Red) -->
+    <circle cx="225" cy="140" r="70" fill="#1E293B" stroke="#DC2626" stroke-width="6" />
+    <circle cx="225" cy="140" r="62" fill="#FFFFFF" />
+    <!-- Gauge scale marks -->
+    <circle cx="225" cy="140" r="48" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="2 6" />
+    <text x="225" y="115" font-family="monospace" font-size="11" font-weight="700" fill="#DC2626" text-anchor="middle">HIGH PSI</text>
+    <text x="225" y="175" font-family="monospace" font-size="10" fill="#64748B" text-anchor="middle">PRESSURE</text>
+    <!-- Pointer -->
+    <line x1="225" y1="140" x2="255" y2="105" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" />
+    <circle cx="225" cy="140" r="6" fill="#1E293B" />
+
+    <!-- Charging Hoses -->
+    <path d="M 80 280 C 80 380, -20 380, -20 280" stroke="#2563EB" stroke-width="8" fill="none" stroke-linecap="round" />
+    <path d="M 150 280 C 150 440, 200 460, 260 480" stroke="#EAB308" stroke-width="8" fill="none" stroke-linecap="round" />
+    <path d="M 220 280 C 220 400, 310 400, 310 320" stroke="#DC2626" stroke-width="8" fill="none" stroke-linecap="round" />
+  </g>
+
+  <!-- Technical badge overlay -->
+  <g transform="translate(48, 500)">
+    <rect x="0" y="0" width="310" height="52" rx="10" fill="#0B1F3A" opacity="0.95" />
+    <circle cx="28" cy="26" r="12" fill="#0284C7" />
+    <path d="M22 26 L26 30 L34 22" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+    <text x="52" y="24" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF">REFRIGERANT &amp; MAINTENANCE</text>
+    <text x="52" y="40" font-family="system-ui, sans-serif" font-size="11" fill="#94A3B8">Pressure Verification &amp; Seasonal AMC</text>
+  </g>
+</svg>

@@ -1,0 +1,388 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Container from '../components/Container.astro';
+import AboutTeam from '../components/AboutTeam.astro';
+import ServiceAreas from '../components/ServiceAreas.astro';
+import Button from '../components/Button.astro';
+import { business } from '../data/business';
+import { services } from '../data/services';
+import { siteConfig } from '../data/site';
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: `${siteConfig.siteUrl}/`,
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'About',
+      item: `${siteConfig.siteUrl}/about/`,
+    },
+  ],
+};
+
+const aboutPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  name: 'About Patel Cool Tech',
+  url: `${siteConfig.siteUrl}/about/`,
+  description: 'About Patel Cool Tech, a local air conditioning service business operated by Mahendra Patel and Satyam Patel in Indore.',
+  mainEntity: {
+    '@type': 'HVACBusiness',
+    name: business.name,
+    telephone: business.phones.primaryFormatted,
+    email: business.email,
+    url: `${siteConfig.siteUrl}/`,
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: business.city,
+      addressRegion: business.state,
+      addressCountry: 'IN',
+    },
+    founder: business.technicians.map((tech) => ({
+      '@type': 'Person',
+      name: tech.name,
+      jobTitle: tech.role,
+    })),
+  },
+};
+
+const whyDirectPoints = [
+  {
+    title: 'Direct Technician Access',
+    description: 'You talk directly with Mahendra Patel or Satyam Patel. No call center operators, third-party brokers, or communication gaps.',
+    icon: 'phone',
+  },
+  {
+    title: 'On-Site Diagnostic Honesty',
+    description: 'We inspect before recommending. If an issue requires a basic wash or capacitor swap, we explain it straightforwardly without pushing unnecessary parts.',
+    icon: 'check',
+  },
+  {
+    title: 'Indore Local Knowledge',
+    description: 'We understand local water hardness, seasonal dust conditions, and summer temperature demands across Indore, Rau, and Pithampur.',
+    icon: 'location',
+  },
+  {
+    title: 'Hands-On Accountability',
+    description: 'The technicians who quote and schedule your AC service are the ones who arrive on-site with tools, ladders, and testing equipment.',
+    icon: 'shield',
+  },
+];
+---
+
+<BaseLayout
+  title="About Patel Cool Tech | AC Service Team in Indore"
+  description="Meet Mahendra Patel and Satyam Patel, the technicians behind Patel Cool Tech. Providing hands-on AC installation, repair, servicing, and AMC support in Indore."
+  canonicalUrl={`${siteConfig.siteUrl}/about/`}
+  additionalSchema={[breadcrumbSchema, aboutPageSchema]}
+>
+  <!-- Hero Section -->
+  <section class="relative bg-gradient-to-b from-brand-surface via-white to-white pt-6 pb-12 sm:pt-8 sm:pb-16 border-b border-brand-border overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none opacity-[0.03]" aria-hidden="true">
+      <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="about-hero-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#0B1F3A" stroke-width="1" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#about-hero-pattern)" />
+      </svg>
+    </div>
+
+    <Container class="relative z-10">
+      <!-- Breadcrumb Navigation -->
+      <nav class="mb-5 sm:mb-6" aria-label="Breadcrumb">
+        <ol class="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-brand-text-subtle">
+          <li>
+            <a href="/" class="hover:text-brand-blue transition-colors">Home</a>
+          </li>
+          <li class="select-none" aria-hidden="true">&rsaquo;</li>
+          <li class="font-semibold text-brand-navy" aria-current="page">About</li>
+        </ol>
+      </nav>
+
+      <div class="max-w-3xl">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-brand-surface-alt text-brand-navy border border-brand-border mb-4">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true"></span>
+          <span class="tracking-wide uppercase text-[11px] font-bold">LOCAL BUSINESS &bull; INDORE</span>
+        </div>
+
+        <h1 class="text-2xl xs:text-3xl sm:text-4xl lg:text-[2.75rem] font-extrabold tracking-tight text-brand-navy leading-[1.18] sm:leading-[1.15]">
+          About Patel Cool Tech
+        </h1>
+
+        <p class="mt-4 sm:mt-5 text-base sm:text-lg text-brand-text-muted leading-relaxed">
+          Patel Cool Tech provides reliable air conditioning installation, repair, servicing, gas-related inspection and recharging, and AMC maintenance support across Indore, Rau, Pithampur, and nearby areas.
+        </p>
+
+        <!-- Direct Actions -->
+        <div class="mt-6 sm:mt-8 flex flex-col xs:flex-row items-stretch xs:items-center gap-3">
+          <Button
+            href={business.phones.primaryTel}
+            variant="primary"
+            size="lg"
+            class="w-full xs:w-auto justify-center font-bold px-6 py-3.5 min-h-[48px] text-sm sm:text-base shadow-card hover:shadow-hover"
+            aria-label={`Call Patel Cool Tech at ${business.phones.primaryFormatted}`}
+          >
+            <svg class="w-5 h-5 text-brand-ice flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+            </svg>
+            <span>Call: {business.phones.primaryFormatted}</span>
+          </Button>
+
+          <Button
+            href={business.phones.whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            variant="whatsapp"
+            size="lg"
+            class="w-full xs:w-auto justify-center font-bold px-6 py-3.5 min-h-[48px] text-sm sm:text-base shadow-card hover:shadow-hover"
+            aria-label="Chat with Patel Cool Tech on WhatsApp"
+          >
+            <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12.031 2C6.495 2 2 6.495 2 12.031c0 1.97.57 3.811 1.558 5.368L2.094 22l4.743-1.442a9.98 9.98 0 005.194 1.473h.004c5.535 0 10.03-4.495 10.03-10.031 0-2.68-1.043-5.2-2.935-7.093A9.972 9.972 0 0012.031 2zm0 18.257h-.003a8.217 8.217 0 01-4.186-1.144l-.3-.178-3.11.946.963-3.033-.195-.311a8.22 8.22 0 01-1.26-4.506c0-4.544 3.697-8.241 8.243-8.241 2.2 0 4.27.859 5.827 2.417a8.196 8.196 0 012.413 5.826c0 4.546-3.698 8.244-8.242 8.244z"/>
+            </svg>
+            <span>WhatsApp Us</span>
+          </Button>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <!-- Who We Are Section -->
+  <section class="py-12 sm:py-16 bg-white border-b border-brand-border">
+    <Container>
+      <div class="max-w-3xl">
+        <span class="text-xs font-bold uppercase tracking-wider text-brand-blue mb-2 block">
+          Local HVAC Commitment
+        </span>
+        <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-brand-navy mb-4">
+          Who We Are
+        </h2>
+        <div class="space-y-4 text-sm sm:text-base text-brand-text-muted leading-relaxed">
+          <p>
+            Patel Cool Tech is an independent, locally operated air conditioning service provider based in Indore, Madhya Pradesh. We specialize in doorstep split AC and window AC technical services for homeowners, apartments, shops, and offices.
+          </p>
+          <p>
+            Unlike aggregator apps or corporate middlemen who outsource job requests to random unknown workers, we operate directly. When you reach out to Patel Cool Tech, you are speaking directly with the technicians who will visit your location, troubleshoot your unit, and perform the work.
+          </p>
+          <p>
+            We focus on genuine troubleshooting: testing capacitors before replacing them, locating leaks before recommending refrigerant refilling, and using proper high-pressure equipment for coil washing.
+          </p>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <!-- Technicians / Team Section -->
+  <section class="py-12 sm:py-16 bg-brand-surface border-b border-brand-border">
+    <Container>
+      <div class="max-w-3xl mb-8 sm:mb-10">
+        <span class="text-xs font-bold uppercase tracking-wider text-brand-blue mb-1.5 block">
+          Technicians &amp; Management
+        </span>
+        <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-brand-navy">
+          Meet Mahendra Patel &amp; Satyam Patel
+        </h2>
+        <p class="text-sm sm:text-base text-brand-text-muted mt-2 leading-relaxed">
+          The hands-on professionals responsible for every inspection, installation, and service visit.
+        </p>
+      </div>
+
+      <!-- AboutTeam Component -->
+      <AboutTeam />
+    </Container>
+  </section>
+
+  <!-- What We Help With Section -->
+  <section class="py-12 sm:py-16 bg-white border-b border-brand-border">
+    <Container>
+      <div class="max-w-3xl mb-8 sm:mb-10">
+        <span class="text-xs font-bold uppercase tracking-wider text-brand-blue mb-1.5 block">
+          Service Capabilities
+        </span>
+        <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-brand-navy">
+          What We Help With
+        </h2>
+        <p class="text-sm sm:text-base text-brand-text-muted mt-2 leading-relaxed">
+          We handle all core residential and commercial air conditioning needs across major AC brands:
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {
+          services.map((service) => (
+            <div class="p-6 bg-brand-surface rounded-2xl border border-brand-border shadow-soft flex flex-col justify-between hover:border-brand-blue/40 transition-colors">
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-brand-blue mb-1 block">
+                  {service.category === 'both' ? 'Home & Office' : service.category}
+                </span>
+                <h3 class="text-base sm:text-lg font-bold text-brand-navy mb-2">
+                  {service.title}
+                </h3>
+                <p class="text-xs sm:text-sm text-brand-text-muted leading-relaxed mb-4">
+                  {service.shortDescription}
+                </p>
+              </div>
+
+              <div class="pt-3 border-t border-brand-border/60">
+                <a
+                  href={`/services/${service.slug}/`}
+                  class="inline-flex items-center text-xs font-bold text-brand-blue hover:text-brand-ice transition-colors min-h-[44px] py-1"
+                  aria-label={`View detailed scope for ${service.title}`}
+                >
+                  <span>Learn about {service.title}</span>
+                  <span aria-hidden="true" class="ml-1">&rarr;</span>
+                </a>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </Container>
+  </section>
+
+  <!-- Why Customers Can Contact Us Directly -->
+  <section class="py-12 sm:py-16 bg-brand-surface border-b border-brand-border">
+    <Container>
+      <div class="max-w-3xl mb-8 sm:mb-10">
+        <span class="text-xs font-bold uppercase tracking-wider text-brand-blue mb-1.5 block">
+          Customer Trust
+        </span>
+        <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-brand-navy">
+          Why Contact Us Directly?
+        </h2>
+        <p class="text-sm sm:text-base text-brand-text-muted mt-2 leading-relaxed">
+          Choosing an independent local technician provides clear practical advantages over impersonal booking portals:
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {
+          whyDirectPoints.map((item) => (
+            <div class="p-6 bg-white rounded-2xl border border-brand-border shadow-soft">
+              <div class="w-10 h-10 rounded-xl bg-brand-blue-light text-brand-blue flex items-center justify-center mb-4">
+                {item.icon === 'phone' && (
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                )}
+                {item.icon === 'check' && (
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                )}
+                {item.icon === 'location' && (
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                )}
+                {item.icon === 'shield' && (
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                )}
+              </div>
+              <h3 class="text-base sm:text-lg font-bold text-brand-navy mb-2">
+                {item.title}
+              </h3>
+              <p class="text-xs sm:text-sm text-brand-text-muted leading-relaxed">
+                {item.description}
+              </p>
+            </div>
+          ))
+        }
+      </div>
+    </Container>
+  </section>
+
+  <!-- Service Areas Section -->
+  <ServiceAreas />
+
+  <!-- Relevant Services & Work Portfolio Navigation Strip -->
+  <section class="py-10 bg-white border-b border-brand-border">
+    <Container class="text-center">
+      <p class="text-sm text-brand-text-muted mb-4">
+        Looking for specific technical scope or sample workflows?
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <Button
+          href="/services/"
+          variant="outline"
+          size="sm"
+          class="font-semibold min-h-[44px]"
+        >
+          View All Services &rarr;
+        </Button>
+        <Button
+          href="/our-work/"
+          variant="outline"
+          size="sm"
+          class="font-semibold min-h-[44px]"
+        >
+          Explore Work Portfolio &rarr;
+        </Button>
+        <Button
+          href="/contact/"
+          variant="primary"
+          size="sm"
+          class="font-semibold min-h-[44px]"
+        >
+          Contact Us Directly &rarr;
+        </Button>
+      </div>
+    </Container>
+  </section>
+
+  <!-- Final Call / WhatsApp CTA -->
+  <section class="py-14 sm:py-18 bg-brand-navy text-white text-center">
+    <Container>
+      <div class="max-w-2xl mx-auto">
+        <h2 class="text-2xl xs:text-3xl sm:text-4xl font-extrabold text-white mb-4">
+          Need AC Service in Indore, Rau, or Pithampur?
+        </h2>
+        <p class="text-sm sm:text-base text-slate-300 mb-8 leading-relaxed">
+          Get in touch with Mahendra Patel and Satyam Patel directly. We will discuss your air conditioner's symptom and arrange an on-site visit.
+        </p>
+
+        <div class="flex flex-col xs:flex-row items-stretch xs:items-center justify-center gap-3.5 max-w-md mx-auto">
+          <Button
+            href={business.phones.primaryTel}
+            variant="secondary"
+            size="lg"
+            class="w-full xs:w-auto font-bold justify-center min-h-[48px] px-6 text-base"
+            aria-label={`Call Patel Cool Tech at ${business.phones.primaryFormatted}`}
+          >
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+            </svg>
+            <span>Call: {business.phones.primaryFormatted}</span>
+          </Button>
+
+          <Button
+            href={business.phones.whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            variant="whatsapp"
+            size="lg"
+            class="w-full xs:w-auto font-bold justify-center min-h-[48px] px-6 text-base"
+            aria-label="Chat with Patel Cool Tech on WhatsApp"
+          >
+            <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12.031 2C6.495 2 2 6.495 2 12.031c0 1.97.57 3.811 1.558 5.368L2.094 22l4.743-1.442a9.98 9.98 0 005.194 1.473h.004c5.535 0 10.03-4.495 10.03-10.031 0-2.68-1.043-5.2-2.935-7.093A9.972 9.972 0 0012.031 2zm0 18.257h-.003a8.217 8.217 0 01-4.186-1.144l-.3-.178-3.11.946.963-3.033-.195-.311a8.22 8.22 0 01-1.26-4.506c0-4.544 3.697-8.241 8.243-8.241 2.2 0 4.27.859 5.827 2.417a8.196 8.196 0 012.413 5.826c0 4.546-3.698 8.244-8.242 8.244z"/>
+            </svg>
+            <span>WhatsApp Us</span>
+          </Button>
+        </div>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>

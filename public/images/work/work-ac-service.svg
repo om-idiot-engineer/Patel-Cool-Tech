@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%" fill="none">
+  <defs>
+    <linearGradient id="servBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F0F9FF" />
+      <stop offset="100%" stop-color="#E0F2FE" />
+    </linearGradient>
+    <linearGradient id="coilFin" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#0284C7" stop-opacity="0.3" />
+    </linearGradient>
+    <linearGradient id="sprayGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284C7" />
+      <stop offset="60%" stop-color="#38BDF8" stop-opacity="0.6" />
+      <stop offset="100%" stop-color="#BAE6FD" stop-opacity="0.1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Clean cool background -->
+  <rect width="800" height="600" fill="url(#servBg)" />
+
+  <!-- Evaporator Cooling Coil Frame -->
+  <rect x="140" y="130" width="520" height="300" rx="16" fill="#FFFFFF" stroke="#BAE6FD" stroke-width="2" />
+  
+  <!-- Cooling Coil Fin Array (Vertical fin lines) -->
+  <g stroke="#94A3B8" stroke-width="2" opacity="0.35">
+    <!-- Clean side (Right) -->
+    <line x1="420" y1="150" x2="420" y2="410" stroke="#0284C7" opacity="0.7" />
+    <line x1="440" y1="150" x2="440" y2="410" stroke="#0284C7" opacity="0.7" />
+    <line x1="460" y1="150" x2="460" y2="410" stroke="#0284C7" opacity="0.7" />
+    <line x1="480" y1="150" x2="480" y2="410" stroke="#0284C7" opacity="0.7" />
+    <line x1="500" y1="150" x2="500" y2="410" stroke="#0284C7" opacity="0.7" />
+    <line x1="520" y1="150" x2="520" y2="410" stroke="#0284C7" opacity="0.7" />
+    <line x1="540" y1="150" x2="540" y2="410" stroke="#0284C7" opacity="0.7" />
+    <line x1="560" y1="150" x2="560" y2="410" stroke="#0284C7" opacity="0.7" />
+    <line x1="580" y1="150" x2="580" y2="410" stroke="#0284C7" opacity="0.7" />
+    <line x1="600" y1="150" x2="600" y2="410" stroke="#0284C7" opacity="0.7" />
+    <line x1="620" y1="150" x2="620" y2="410" stroke="#0284C7" opacity="0.7" />
+
+    <!-- Left side fin lines -->
+    <line x1="180" y1="150" x2="180" y2="410" />
+    <line x1="200" y1="150" x2="200" y2="410" />
+    <line x1="220" y1="150" x2="220" y2="410" />
+    <line x1="240" y1="150" x2="240" y2="410" />
+    <line x1="260" y1="150" x2="260" y2="410" />
+    <line x1="280" y1="150" x2="280" y2="410" />
+    <line x1="300" y1="150" x2="300" y2="410" />
+    <line x1="320" y1="150" x2="320" y2="410" />
+    <line x1="340" y1="150" x2="340" y2="410" />
+    <line x1="360" y1="150" x2="360" y2="410" />
+    <line x1="380" y1="150" x2="380" y2="410" />
+    <line x1="400" y1="150" x2="400" y2="410" />
+  </g>
+
+  <!-- Copper hairpin tubes on evaporator coil -->
+  <g stroke="#C2410C" stroke-width="6" stroke-linecap="round" fill="none">
+    <path d="M 160 180 Q 140 210, 160 240 H 640 Q 660 270, 640 300 H 160 Q 140 330, 160 360 H 640" />
+  </g>
+
+  <!-- High-Pressure Jet Spray Gun -->
+  <g transform="translate(100, 360) rotate(-25)">
+    <!-- Gun handle -->
+    <rect x="0" y="0" width="30" height="90" rx="8" fill="#1E293B" />
+    <!-- Trigger -->
+    <path d="M 28 20 Q 40 40, 28 60" stroke="#0284C7" stroke-width="5" fill="none" stroke-linecap="round" />
+    <!-- Barrel -->
+    <rect x="25" y="-12" width="160" height="24" rx="4" fill="#64748B" />
+    <rect x="180" y="-8" width="40" height="16" rx="2" fill="#0284C7" />
+    <!-- Brass nozzle tip -->
+    <polygon points="220,-6 235,-3 235,7 220,10" fill="#F59E0B" />
+  </g>
+
+  <!-- Fan Jet Spray Pattern -->
+  <polygon points="280,270 490,170 510,380" fill="url(#sprayGrad)" />
+  <circle cx="340" cy="275" r="4" fill="#38BDF8" opacity="0.6" />
+  <circle cx="390" cy="250" r="5" fill="#0284C7" opacity="0.5" />
+  <circle cx="430" cy="300" r="3" fill="#38BDF8" opacity="0.7" />
+  <circle cx="460" cy="220" r="6" fill="#38BDF8" opacity="0.6" />
+
+  <!-- Clean sparkle / hygiene indicators -->
+  <g transform="translate(560, 200)" fill="#0284C7">
+    <path d="M 12 0 L 15 9 L 24 12 L 15 15 L 12 24 L 9 15 L 0 12 L 9 9 Z" />
+  </g>
+  <g transform="translate(610, 260) scale(0.7)" fill="#38BDF8">
+    <path d="M 12 0 L 15 9 L 24 12 L 15 15 L 12 24 L 9 15 L 0 12 L 9 9 Z" />
+  </g>
+  <g transform="translate(530, 340) scale(0.85)" fill="#0284C7">
+    <path d="M 12 0 L 15 9 L 24 12 L 15 15 L 12 24 L 9 15 L 0 12 L 9 9 Z" />
+  </g>
+
+  <!-- Technical badge overlay -->
+  <g transform="translate(48, 500)">
+    <rect x="0" y="0" width="310" height="52" rx="10" fill="#0B1F3A" opacity="0.95" />
+    <circle cx="28" cy="26" r="12" fill="#0284C7" />
+    <path d="M22 26 L26 30 L34 22" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+    <text x="52" y="24" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF">DEEP JET-SPRAY SERVICING</text>
+    <text x="52" y="40" font-family="system-ui, sans-serif" font-size="11" fill="#94A3B8">Coil, Blower &amp; Drain Line Sanitization</text>
+  </g>
+</svg>

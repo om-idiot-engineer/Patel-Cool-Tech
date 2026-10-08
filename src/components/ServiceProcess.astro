@@ -1,0 +1,72 @@
+---
+import Container from './Container.astro';
+import SectionHeading from './SectionHeading.astro';
+import type { ServiceProcessStep } from '../data/servicePages';
+
+interface Props {
+  heading?: string;
+  intro?: string;
+  disclaimer?: string;
+  steps: ServiceProcessStep[];
+}
+
+const {
+  heading = 'How the Service Works',
+  intro = 'A structured, careful approach to ensure your cooling system operates safely and effectively.',
+  disclaimer = 'Typical process may include the following steps (sequence may adapt to site layout and unit condition):',
+  steps,
+} = Astro.props;
+---
+
+<section class="py-12 sm:py-16 bg-brand-surface border-b border-brand-border">
+  <Container>
+    <SectionHeading
+      badge="Workflow"
+      title={heading}
+      subtitle={intro}
+      align="center"
+    />
+
+    <!-- Process Disclaimer Notice -->
+    <div class="max-w-3xl mx-auto -mt-4 mb-8 text-center text-xs sm:text-sm text-brand-text-subtle italic">
+      {disclaimer}
+    </div>
+
+    <!-- Steps Grid / Timeline -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {
+        steps.map((step) => (
+          <div class="relative bg-white rounded-2xl p-6 sm:p-7 border border-brand-border hover:border-brand-blue/30 hover:shadow-card transition-all duration-200 flex flex-col justify-between group">
+            <div>
+              <!-- Step Number Badge -->
+              <div class="flex items-center justify-between mb-4">
+                <span class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-brand-blue-light text-brand-blue font-extrabold text-sm group-hover:bg-brand-blue group-hover:text-white transition-colors duration-200">
+                  {step.stepNumber < 10 ? `0${step.stepNumber}` : step.stepNumber}
+                </span>
+                <span class="text-[11px] font-semibold uppercase tracking-wider text-brand-text-subtle">
+                  Step {step.stepNumber}
+                </span>
+              </div>
+
+              <!-- Step Title -->
+              <h3 class="text-base sm:text-lg font-bold text-brand-navy mb-2.5 group-hover:text-brand-blue transition-colors">
+                {step.title}
+              </h3>
+
+              <!-- Step Description -->
+              <p class="text-xs sm:text-sm text-brand-text-muted leading-relaxed">
+                {step.description}
+              </p>
+            </div>
+
+            <!-- Bottom Progress Line Indicator -->
+            <div class="mt-5 pt-3 border-t border-brand-border/60 flex items-center justify-between text-[11px] text-brand-text-subtle">
+              <span>On-Site Procedure</span>
+              <span class="w-1.5 h-1.5 rounded-full bg-brand-ice"></span>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </Container>
+</section>

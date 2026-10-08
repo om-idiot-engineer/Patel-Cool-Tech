@@ -1,0 +1,51 @@
+---
+import { brands, brandSectionHeadline, brandSectionSubtext, brandDisclaimer } from '../data/brands';
+import Container from './Container.astro';
+import SectionHeading from './SectionHeading.astro';
+---
+
+<section class="py-12 sm:py-16 lg:py-20 bg-brand-surface border-b border-brand-border">
+  <Container>
+    <SectionHeading
+      badge="Supported Makes"
+      title={brandSectionHeadline}
+      subtitle={brandSectionSubtext}
+      align="center"
+    />
+
+    <!-- Clean, Responsive Brand Grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5 max-w-5xl mx-auto">
+      {
+        brands.map((brand, idx) => {
+          // If 7 items, let the 7th item span cleanly across 2 columns on 2-col layout or span on 4-col
+          const isLast = idx === brands.length - 1;
+          return (
+            <div
+              class:list={[
+                'flex flex-col items-center justify-center p-4 sm:p-5 rounded-xl bg-white border border-brand-border/90 hover:border-brand-blue/40 hover:shadow-soft transition-all duration-150 text-center',
+                isLast ? 'col-span-2 sm:col-span-1 lg:col-span-2 xl:col-span-1' : '',
+              ]}
+            >
+              <span class="text-base sm:text-lg font-bold text-brand-navy tracking-tight">
+                {brand.name}
+              </span>
+              <span class="mt-1 text-[11px] sm:text-xs text-brand-text-subtle">
+                Service &amp; Repair Support
+              </span>
+            </div>
+          );
+        })
+      }
+    </div>
+
+    <!-- Independent Service Clarification & Legal Disclaimer -->
+    <div class="mt-8 sm:mt-10 max-w-3xl mx-auto p-4 rounded-xl bg-brand-surface-alt border border-brand-border text-center">
+      <p class="text-xs sm:text-[13px] text-brand-text-muted leading-relaxed">
+        <strong>Independent Service Notice:</strong> We provide independent air conditioning maintenance, diagnosis, and repair support for split and window systems from leading manufacturers.
+      </p>
+      <p class="mt-1.5 text-[11px] sm:text-xs text-brand-text-subtle leading-normal">
+        {brandDisclaimer}
+      </p>
+    </div>
+  </Container>
+</section>

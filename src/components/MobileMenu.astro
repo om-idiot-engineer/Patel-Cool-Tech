@@ -1,0 +1,224 @@
+---
+import { business } from '../data/business';
+import { siteConfig } from '../data/site';
+
+const currentPath = Astro.url.pathname;
+const isCurrent = (href: string) => {
+  if (href === '/') {
+    return currentPath === '/' || currentPath === '';
+  }
+  return currentPath.startsWith(href);
+};
+---
+
+<!-- Background Backdrop Overlay -->
+<div
+  id="mobile-menu-backdrop"
+  class="fixed inset-0 z-50 bg-brand-navy/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 md:hidden"
+  aria-hidden="true"
+></div>
+
+<!-- Slide-out Drawer Panel -->
+<div
+  id="mobile-menu-drawer"
+  class="fixed inset-y-0 left-0 z-50 w-[85%] max-w-sm bg-white shadow-2xl flex flex-col justify-between overflow-y-auto p-5 sm:p-6 transform -translate-x-full transition-transform duration-300 ease-in-out md:hidden"
+  aria-hidden="true"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Mobile Navigation Menu"
+>
+  <!-- Top Header in Drawer -->
+  <div>
+    <div class="flex items-center justify-between pb-4 border-b border-brand-border">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg bg-brand-navy flex items-center justify-center text-brand-ice flex-shrink-0">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+        <div>
+          <span class="font-extrabold text-base text-brand-navy tracking-tight block leading-tight">PATEL COOL TECH</span>
+          <span class="text-[11px] text-brand-text-muted font-medium flex items-center gap-1 mt-0.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            <span>Indore, Madhya Pradesh</span>
+          </span>
+        </div>
+      </div>
+      <button
+        type="button"
+        id="mobile-menu-close-btn"
+        class="p-2 rounded-lg text-brand-text-muted hover:text-brand-navy hover:bg-brand-surface-alt focus-visible:outline-brand-ice min-h-[48px] min-w-[48px] flex items-center justify-center border border-transparent hover:border-brand-border transition-colors"
+        aria-label="Close navigation menu"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Navigation Links -->
+    <nav class="mt-5 flex flex-col space-y-1" aria-label="Mobile primary navigation">
+      {
+        siteConfig.navItems.map((item) => {
+          const active = isCurrent(item.href);
+          return (
+            <a
+              href={item.href}
+              class:list={[
+                'mobile-nav-link px-3.5 py-3 rounded-lg text-base font-semibold transition-colors flex items-center justify-between min-h-[48px]',
+                active
+                  ? 'bg-brand-surface-alt text-brand-blue font-bold border-l-4 border-brand-ice pl-3'
+                  : 'text-brand-navy hover:bg-brand-surface hover:text-brand-blue',
+              ]}
+              aria-current={active ? 'page' : undefined}
+            >
+              <span>{item.label}</span>
+              <svg class="w-4 h-4 text-brand-text-subtle" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          );
+        })
+      }
+    </nav>
+  </div>
+
+  <!-- Quick Contact & Local Trust Footer in Drawer -->
+  <div class="pt-5 border-t border-brand-border mt-6 space-y-4">
+    <div class="space-y-2.5">
+      <!-- Call Now Action -->
+      <a
+        href={business.phones.primaryTel}
+        class="w-full flex items-center justify-center gap-2.5 px-4 py-3 bg-brand-navy text-white rounded-lg font-semibold text-sm min-h-[48px] hover:bg-brand-navy-light shadow-soft transition-colors active:scale-[0.99]"
+        aria-label="Call Patel Cool Tech now"
+      >
+        <svg class="w-4 h-4 text-brand-ice flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+        </svg>
+        <span>Call: {business.phones.primaryFormatted}</span>
+      </a>
+
+      <!-- WhatsApp Action -->
+      <a
+        href={business.phones.whatsappUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="w-full flex items-center justify-center gap-2.5 px-4 py-3 bg-brand-whatsapp text-white rounded-lg font-semibold text-sm min-h-[48px] hover:bg-brand-whatsapp-hover shadow-soft transition-colors active:scale-[0.99]"
+        aria-label="Chat with Patel Cool Tech on WhatsApp"
+      >
+        <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12.031 2C6.495 2 2 6.495 2 12.031c0 1.97.57 3.811 1.558 5.368L2.094 22l4.743-1.442a9.98 9.98 0 005.194 1.473h.004c5.535 0 10.03-4.495 10.03-10.031 0-2.68-1.043-5.2-2.935-7.093A9.972 9.972 0 0012.031 2zm0 18.257h-.003a8.217 8.217 0 01-4.186-1.144l-.3-.178-3.11.946.963-3.033-.195-.311a8.22 8.22 0 01-1.26-4.506c0-4.544 3.697-8.241 8.243-8.241 2.2 0 4.27.859 5.827 2.417a8.196 8.196 0 012.413 5.826c0 4.546-3.698 8.244-8.242 8.244z"/>
+        </svg>
+        <span>Chat on WhatsApp</span>
+      </a>
+    </div>
+
+    <!-- Verified Local Technician Details -->
+    <div class="text-xs text-brand-text-muted pt-1">
+      <p class="font-medium text-brand-navy">Technicians: {business.technicians.map((t) => t.name).join(' & ')}</p>
+      <p class="mt-0.5 text-brand-text-subtle">Serving Indore, Rau, Pithampur & nearby areas.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function setupMobileMenu() {
+    const drawer = document.getElementById('mobile-menu-drawer');
+    const backdrop = document.getElementById('mobile-menu-backdrop');
+    const closeBtn = document.getElementById('mobile-menu-close-btn');
+    const toggleBtn = document.getElementById('mobile-menu-toggle-btn');
+    const navLinks = document.querySelectorAll('.mobile-nav-link');
+
+    if (!drawer || !backdrop || !closeBtn || !toggleBtn) return;
+
+    function getFocusableElements(): HTMLElement[] {
+      if (!drawer) return [];
+      const focusable = drawer.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      return Array.from(focusable).filter((el) => !el.hasAttribute('disabled') && el.offsetParent !== null);
+    }
+
+    function openMenu() {
+      drawer?.classList.remove('-translate-x-full');
+      backdrop?.classList.remove('pointer-events-none', 'opacity-0');
+      backdrop?.classList.add('opacity-100', 'pointer-events-auto');
+      drawer?.setAttribute('aria-hidden', 'false');
+      toggleBtn?.setAttribute('aria-expanded', 'true');
+      toggleBtn?.setAttribute('aria-label', 'Close navigation menu');
+      document.body.style.overflow = 'hidden';
+
+      // Move focus inside the drawer
+      closeBtn?.focus();
+    }
+
+    function closeMenu() {
+      drawer?.classList.add('-translate-x-full');
+      backdrop?.classList.remove('opacity-100', 'pointer-events-auto');
+      backdrop?.classList.add('opacity-0', 'pointer-events-none');
+      drawer?.setAttribute('aria-hidden', 'true');
+      toggleBtn?.setAttribute('aria-expanded', 'false');
+      toggleBtn?.setAttribute('aria-label', 'Open navigation menu');
+      document.body.style.overflow = '';
+
+      // Return focus to toggle button
+      toggleBtn?.focus();
+    }
+
+    toggleBtn.addEventListener('click', () => {
+      const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+      if (isExpanded) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    });
+
+    closeBtn.addEventListener('click', closeMenu);
+    backdrop.addEventListener('click', closeMenu);
+
+    navLinks.forEach((link) => {
+      link.addEventListener('click', closeMenu);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      const isOpen = drawer.getAttribute('aria-hidden') === 'false';
+      if (!isOpen) return;
+
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeMenu();
+        return;
+      }
+
+      // Accessible Focus Trap
+      if (event.key === 'Tab') {
+        const focusable = getFocusableElements();
+        if (focusable.length === 0) return;
+
+        const firstElement = focusable[0];
+        const lastElement = focusable[focusable.length - 1];
+
+        if (event.shiftKey) {
+          if (document.activeElement === firstElement) {
+            event.preventDefault();
+            lastElement.focus();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            event.preventDefault();
+            firstElement.focus();
+          }
+        }
+      }
+    });
+  }
+
+  // Setup on initial load and handle Astro page transitions
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupMobileMenu);
+  } else {
+    setupMobileMenu();
+  }
+  document.addEventListener('astro:page-load', setupMobileMenu);
+</script>

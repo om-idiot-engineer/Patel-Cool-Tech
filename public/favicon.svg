@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" rx="14" fill="#0B1F3A"/>
+  <!-- Cooling snowflake / airflow symbol -->
+  <path d="M32 10v44M10 32h44M16.5 16.5l31 31M47.5 16.5l-31 31" stroke="#0284C7" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="32" cy="32" r="6" fill="#38BDF8"/>
+  <path d="M28 20l4-4 4 4M28 44l4 4 4-4M20 28l-4 4 4 4M44 28l4 4-4 4" stroke="#38BDF8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

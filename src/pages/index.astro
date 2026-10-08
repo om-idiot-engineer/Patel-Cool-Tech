@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import ServicesOverview from '../components/ServicesOverview.astro';
+import WhyChooseUs from '../components/WhyChooseUs.astro';
+import WorkPreview from '../components/WorkPreview.astro';
+import BrandsSection from '../components/BrandsSection.astro';
+import ServiceAreas from '../components/ServiceAreas.astro';
+import AboutPreview from '../components/AboutPreview.astro';
+import ContactCTA from '../components/ContactCTA.astro';
+import { siteConfig } from '../data/site';
+---
+
+<BaseLayout
+  title="AC Installation, Repair & Service in Indore"
+  description={siteConfig.defaultDescription}
+>
+  <!-- 1. Hero Section (Phase 2 Above-the-Fold Foundation) -->
+  <Hero />
+
+  <!-- 2. Services Overview Section (#services) -->
+  <ServicesOverview />
+
+  <!-- 3. Why Patel Cool Tech Section (Factual Benefits & Checklist) -->
+  <WhyChooseUs />
+
+  <!-- 4. Our Work Preview Section (#work) -->
+  <WorkPreview />
+
+  <!-- 5. Major Brands Section (Independent Service Support) -->
+  <BrandsSection />
+
+  <!-- 6. Service Areas Section (Indore, Rau, Pithampur) -->
+  <ServiceAreas />
+
+  <!-- 7. About / Team Introduction Section (#about) -->
+  <AboutPreview />
+
+  <!-- 8. Final Contact CTA Section (#contact) -->
+  <ContactCTA />
+</BaseLayout>
