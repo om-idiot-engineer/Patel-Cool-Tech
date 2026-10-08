@@ -1,82 +1,396 @@
 ---
-import { workItems } from '../data/work';
+import type { WorkItemDB } from '../types/database';
+import { defaultFallbackWork } from '../utils/supabase';
 
 interface Props {
-  columns?: 2 | 4;
+  items?: WorkItemDB[];
+  columns?: 2 | 3 | 4;
+  showFilters?: boolean;
 }
 
-const { columns = 2 } = Astro.props;
-const gridClass = columns === 4 
-  ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'
-  : 'grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8';
+const {
+  items = defaultFallbackWork,
+  columns = 3,
+  showFilters = true,
+} = Astro.props;
+
+const categories = [
+  'All',
+  'Installation',
+  'Repair',
+  'AC Service',
+  'Gas Refilling',
+  'Maintenance / AMC',
+];
+
+const gridColsClass = {
+  2: 'grid-cols-1 md:grid-cols-2',
+  3: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+  4: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4',
+}[columns];
 ---
 
-<div class={`grid ${gridClass} items-stretch`}>
-  {
-    workItems.map((item) => (
-      <article class="flex flex-col bg-white rounded-2xl overflow-hidden border border-brand-border/90 hover:border-brand-blue/50 transition-all duration-200 hover:shadow-card group">
-        <!-- Visual Container (Placeholder SVG architecture, ready for drop-in webp/jpg photography) -->
-        <div class="relative w-full aspect-[16/10] bg-brand-surface-alt overflow-hidden border-b border-brand-border/60">
-          <img
-            src={item.image}
-            alt={item.alt}
-            width="800"
-            height="500"
-            loading="lazy"
-            decoding="async"
-            class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
-          />
-          <!-- Category Chip -->
-          <span class="absolute top-3 left-3 px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-brand-navy/90 text-white backdrop-blur-sm shadow-sm">
-            {item.category}
-          </span>
+<div class="work-gallery-root" data-gallery-id="main-work-gallery">
+  {showFilters && (
+    <!-- Interactive Category Filter Chips -->
+    <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 mb-8 sm:mb-10 reveal-init" role="tablist" aria-label="Work category filters">
+      {categories.map((cat, idx) => (
+        <button
+          type="button"
+          class:list={[
+            'gallery-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold tracking-wide transition-all duration-200 min-h-[44px] cursor-pointer focus-visible:outline-2 focus-visible:outline-brand-ice border',
+            idx === 0
+              ? 'bg-brand-navy text-white border-brand-navy shadow-sm'
+              : 'bg-white text-brand-navy border-brand-border hover:bg-brand-surface hover:border-brand-blue/30',
+          ]}
+          data-filter={cat}
+          role="tab"
+          aria-selected={idx === 0 ? 'true' : 'false'}
+        >
+          {cat}
+        </button>
+      ))}
+    </div>
+  )}
 
-          <!-- Technical Reference Badge -->
-          <span class="absolute bottom-2.5 right-3 px-2 py-0.5 rounded text-[10px] font-medium bg-white/90 text-brand-text-muted backdrop-blur-sm border border-brand-border/60">
-            Field Workflow
-          </span>
-        </div>
+  <!-- Responsive Work Grid -->
+  <div class={`grid ${gridColsClass} gap-6 lg:gap-8 items-stretch gallery-grid`}>
+    {
+      items.map((item, index) => {
+        const isVideo = item.media_type === 'video' || Boolean(item.video_url);
+        return (
+          <article
+            class="gallery-item flex flex-col bg-white rounded-2xl overflow-hidden border border-brand-border/90 hover:border-brand-blue/50 transition-all duration-300 hover:shadow-hover card-hover-effect group cursor-pointer reveal-init"
+            data-category={item.category}
+            data-index={index}
+            data-title={item.title}
+            data-description={item.description || ''}
+            data-image={item.image_url}
+            data-video={item.video_url || ''}
+            data-mediatype={isVideo ? 'video' : 'image'}
+            data-serviceurl={item.service_url || '/services/'}
+          >
+            <!-- Media Visual Container -->
+            <div class="relative w-full aspect-[4/3] bg-brand-surface-alt overflow-hidden">
+              <img
+                src={item.thumbnail_url || item.image_url}
+                alt={item.alt_text || item.title}
+                width="800"
+                height="600"
+                loading="lazy"
+                decoding="async"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
 
-        <!-- Content Details -->
-        <div class="p-6 flex flex-col flex-grow justify-between">
-          <div>
-            <h3 class="text-xl font-bold text-brand-navy mb-2 leading-snug group-hover:text-brand-blue transition-colors">
-              {item.title}
-            </h3>
-            <p class="text-sm text-brand-text-muted leading-relaxed mb-4">
-              {item.shortDescription}
-            </p>
+              <!-- Dark Vignette on Hover -->
+              <div class="absolute inset-0 bg-brand-navy/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
-            <!-- Key Scope Points -->
-            <ul class="space-y-2 mb-6 border-t border-brand-border/60 pt-4" role="list">
-              {item.keyPoints.map((point) => (
-                <li class="flex items-start gap-2 text-xs sm:text-sm text-brand-text">
-                  <svg class="w-4 h-4 text-brand-ice flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+              <!-- Top Left: Category Badge -->
+              <span class="absolute top-3 left-3 px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider bg-brand-navy/90 text-white backdrop-blur-md shadow-sm border border-white/10">
+                {item.category}
+              </span>
+
+              <!-- Video Play Badge / Image Zoom Cue -->
+              {isVideo ? (
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <div class="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-brand-navy/85 text-white border border-brand-ice/40 flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform duration-200">
+                    <svg class="w-6 h-6 text-brand-ice ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </div>
+                </div>
+              ) : (
+                <div class="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-white/90 text-brand-navy backdrop-blur-sm shadow-sm border border-brand-border">
+                    <svg class="w-3.5 h-3.5 text-brand-ice" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+                    </svg>
+                    <span>Inspect</span>
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <!-- Content Details -->
+            <div class="p-6 flex flex-col flex-grow justify-between">
+              <div>
+                <h3 class="text-lg sm:text-xl font-bold text-brand-navy mb-2 leading-snug group-hover:text-brand-blue transition-colors">
+                  {item.title}
+                </h3>
+                <p class="text-xs sm:text-sm text-brand-text-muted leading-relaxed line-clamp-3">
+                  {item.description}
+                </p>
+              </div>
+
+              <!-- Action Link / Card Trigger -->
+              <div class="mt-5 pt-3.5 border-t border-brand-border/60 flex items-center justify-between text-xs">
+                <span class="inline-flex items-center gap-1.5 font-bold text-brand-blue group-hover:text-brand-ice transition-colors">
+                  <span>View Details &bull; Full View</span>
+                  <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                   </svg>
-                  <span>{point}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+                </span>
+                <span class="text-brand-text-subtle font-medium">Field Verified</span>
+              </div>
+            </div>
+          </article>
+        );
+      })
+    }
+  </div>
 
-          <!-- Bottom Action & Internal Linking to Dedicated Service Page -->
-          <div class="pt-4 border-t border-brand-border/60 flex flex-col xs:flex-row items-stretch xs:items-center justify-between gap-3">
-            <a
-              href={item.serviceUrl}
-              class="inline-flex items-center justify-center gap-1.5 text-sm font-bold text-brand-blue hover:text-brand-navy transition-colors py-2 min-h-[48px] focus-visible:outline-2 focus-visible:outline-brand-blue rounded-md"
-              aria-label={`View detailed ${item.title} specifications and service workflow`}
-            >
-              <span>{item.serviceName}</span>
-              <span aria-hidden="true">&rarr;</span>
-            </a>
-
-            <span class="text-[11px] text-brand-text-subtle text-center xs:text-right">
-              Split &amp; Window Units
-            </span>
-          </div>
+  <!-- LIGHTBOX / MEDIA VIEWER MODAL -->
+  <div
+    id="gallery-lightbox"
+    class="fixed inset-0 z-50 bg-brand-navy-dark/90 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-3 sm:p-6"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Work Media Viewer"
+    aria-hidden="true"
+  >
+    <div class="relative w-full max-w-4xl max-h-[92vh] bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col transform scale-95 transition-transform duration-300" id="lightbox-container">
+      <!-- Top Bar: Category & Close -->
+      <div class="p-4 sm:p-5 bg-brand-navy text-white flex items-center justify-between border-b border-white/10">
+        <div class="flex items-center gap-2.5">
+          <span id="lb-category" class="px-2.5 py-0.5 rounded-md text-xs font-bold uppercase tracking-wider bg-brand-ice text-white"></span>
+          <span id="lb-counter" class="text-xs text-slate-300 font-medium"></span>
         </div>
-      </article>
-    ))
-  }
+        <button
+          type="button"
+          id="lb-close-btn"
+          class="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-colors focus-visible:outline-2 focus-visible:outline-brand-ice min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
+          aria-label="Close media viewer"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Center Media Container -->
+      <div class="relative bg-slate-950 flex items-center justify-center min-h-[260px] sm:min-h-[420px] max-h-[58vh] overflow-hidden select-none">
+        <!-- Image Viewer -->
+        <img
+          id="lb-image"
+          src=""
+          alt=""
+          class="max-w-full max-h-[58vh] object-contain transition-opacity duration-200"
+        />
+
+        <!-- Video Viewer -->
+        <video
+          id="lb-video"
+          src=""
+          controls
+          playsinline
+          preload="metadata"
+          class="hidden max-w-full max-h-[58vh] object-contain"
+        ></video>
+
+        <!-- Navigation Buttons -->
+        <button
+          type="button"
+          id="lb-prev-btn"
+          class="absolute left-3 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-brand-navy/70 hover:bg-brand-navy text-white backdrop-blur-sm transition-all focus-visible:outline-2 focus-visible:outline-brand-ice min-h-[44px] min-w-[44px] flex items-center justify-center shadow-lg cursor-pointer"
+          aria-label="Previous work project"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+
+        <button
+          type="button"
+          id="lb-next-btn"
+          class="absolute right-3 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-brand-navy/70 hover:bg-brand-navy text-white backdrop-blur-sm transition-all focus-visible:outline-2 focus-visible:outline-brand-ice min-h-[44px] min-w-[44px] flex items-center justify-center shadow-lg cursor-pointer"
+          aria-label="Next work project"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Bottom Details & Direct CTAs -->
+      <div class="p-5 sm:p-6 bg-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-t border-brand-border">
+        <div class="max-w-lg">
+          <h4 id="lb-title" class="text-lg sm:text-xl font-bold text-brand-navy leading-snug"></h4>
+          <p id="lb-desc" class="text-xs sm:text-sm text-brand-text-muted mt-1 leading-relaxed"></p>
+        </div>
+        <div class="flex items-center gap-2.5 w-full sm:w-auto flex-shrink-0">
+          <a
+            id="lb-service-link"
+            href="/services/"
+            class="flex-1 sm:flex-initial inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-brand-navy hover:bg-brand-navy-light text-white font-bold text-xs sm:text-sm transition-colors min-h-[44px]"
+          >
+            <span>Service Details &rarr;</span>
+          </a>
+          <a
+            href="https://wa.me/919575664203?text=Hello%20Patel%20Cool%20Tech%2C%20I%20saw%20your%20work%20portfolio%20and%20need%20AC%20service"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-brand-whatsapp hover:bg-brand-whatsapp-hover text-white font-bold text-xs sm:text-sm transition-colors min-h-[44px]"
+          >
+            WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
+<script>
+  function setupWorkGallery() {
+    const filterButtons = document.querySelectorAll<HTMLButtonElement>('.gallery-filter-btn');
+    const items = document.querySelectorAll<HTMLElement>('.gallery-item');
+    const lightbox = document.getElementById('gallery-lightbox');
+    const container = document.getElementById('lightbox-container');
+    const closeBtn = document.getElementById('lb-close-btn');
+    const prevBtn = document.getElementById('lb-prev-btn');
+    const nextBtn = document.getElementById('lb-next-btn');
+    const lbImage = document.getElementById('lb-image') as HTMLImageElement | null;
+    const lbVideo = document.getElementById('lb-video') as HTMLVideoElement | null;
+    const lbTitle = document.getElementById('lb-title');
+    const lbCategory = document.getElementById('lb-category');
+    const lbCounter = document.getElementById('lb-counter');
+    const lbDesc = document.getElementById('lb-desc');
+    const lbServiceLink = document.getElementById('lb-service-link') as HTMLAnchorElement | null;
+
+    if (!lightbox) return;
+
+    // Filter functionality
+    filterButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const filter = btn.getAttribute('data-filter') || 'All';
+        filterButtons.forEach((b) => {
+          b.classList.remove('bg-brand-navy', 'text-white', 'border-brand-navy');
+          b.classList.add('bg-white', 'text-brand-navy', 'border-brand-border');
+          b.setAttribute('aria-selected', 'false');
+        });
+        btn.classList.add('bg-brand-navy', 'text-white', 'border-brand-navy');
+        btn.classList.remove('bg-white', 'border-brand-border');
+        btn.setAttribute('aria-selected', 'true');
+
+        items.forEach((item) => {
+          const itemCat = item.getAttribute('data-category');
+          if (filter === 'All' || itemCat === filter) {
+            item.style.display = 'flex';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // Lightbox state
+    let activeIndex = 0;
+    const visibleItems = () => Array.from(items).filter((el) => el.style.display !== 'none');
+
+    function updateLightbox(idx: number) {
+      const activeList = visibleItems();
+      if (activeList.length === 0) return;
+      if (idx < 0) idx = activeList.length - 1;
+      if (idx >= activeList.length) idx = 0;
+      activeIndex = idx;
+
+      const item = activeList[activeIndex];
+      const title = item.getAttribute('data-title') || '';
+      const desc = item.getAttribute('data-description') || '';
+      const image = item.getAttribute('data-image') || '';
+      const video = item.getAttribute('data-video') || '';
+      const mediatype = item.getAttribute('data-mediatype') || 'image';
+      const category = item.getAttribute('data-category') || '';
+      const serviceUrl = item.getAttribute('data-serviceurl') || '/services/';
+
+      if (lbTitle) lbTitle.textContent = title;
+      if (lbDesc) lbDesc.textContent = desc;
+      if (lbCategory) lbCategory.textContent = category;
+      if (lbCounter) lbCounter.textContent = `${activeIndex + 1} / ${activeList.length}`;
+      if (lbServiceLink) lbServiceLink.href = serviceUrl;
+
+      if (mediatype === 'video' && video) {
+        if (lbImage) lbImage.classList.add('hidden');
+        if (lbVideo) {
+          lbVideo.classList.remove('hidden');
+          lbVideo.src = video;
+          lbVideo.load();
+        }
+      } else {
+        if (lbVideo) {
+          lbVideo.pause();
+          lbVideo.classList.add('hidden');
+          lbVideo.removeAttribute('src');
+        }
+        if (lbImage) {
+          lbImage.classList.remove('hidden');
+          lbImage.src = image;
+          lbImage.alt = title;
+        }
+      }
+    }
+
+    function openLightbox(idx: number) {
+      updateLightbox(idx);
+      lightbox?.classList.remove('opacity-0', 'pointer-events-none');
+      lightbox?.classList.add('opacity-100', 'pointer-events-auto');
+      lightbox?.setAttribute('aria-hidden', 'false');
+      container?.classList.remove('scale-95');
+      container?.classList.add('scale-100');
+      document.body.style.overflow = 'hidden';
+      closeBtn?.focus();
+    }
+
+    function closeLightbox() {
+      if (lbVideo) {
+        lbVideo.pause();
+        lbVideo.removeAttribute('src');
+      }
+      lightbox?.classList.add('opacity-0', 'pointer-events-none');
+      lightbox?.classList.remove('opacity-100', 'pointer-events-auto');
+      lightbox?.setAttribute('aria-hidden', 'true');
+      container?.classList.add('scale-95');
+      container?.classList.remove('scale-100');
+      document.body.style.overflow = '';
+    }
+
+    // Attach click handlers to items
+    items.forEach((item) => {
+      item.addEventListener('click', () => {
+        const activeList = visibleItems();
+        const indexInVisible = activeList.indexOf(item);
+        openLightbox(indexInVisible >= 0 ? indexInVisible : 0);
+      });
+    });
+
+    closeBtn?.addEventListener('click', closeLightbox);
+    prevBtn?.addEventListener('click', () => updateLightbox(activeIndex - 1));
+    nextBtn?.addEventListener('click', () => updateLightbox(activeIndex + 1));
+
+    // Backdrop click
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) {
+        closeLightbox();
+      }
+    });
+
+    // Keyboard controls
+    document.addEventListener('keydown', (e) => {
+      if (lightbox.getAttribute('aria-hidden') === 'false') {
+        if (e.key === 'Escape') {
+          closeLightbox();
+        } else if (e.key === 'ArrowLeft') {
+          updateLightbox(activeIndex - 1);
+        } else if (e.key === 'ArrowRight') {
+          updateLightbox(activeIndex + 1);
+        }
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupWorkGallery);
+  } else {
+    setupWorkGallery();
+  }
+  document.addEventListener('astro:page-load', setupWorkGallery);
+</script>

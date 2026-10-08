@@ -1,6 +1,7 @@
 ---
 import { business } from '../data/business';
 import { siteConfig } from '../data/site';
+import BrandLogo from './BrandLogo.astro';
 
 const currentPath = Astro.url.pathname;
 const isCurrent = (href: string) => {
@@ -14,14 +15,14 @@ const isCurrent = (href: string) => {
 <!-- Background Backdrop Overlay -->
 <div
   id="mobile-menu-backdrop"
-  class="fixed inset-0 z-50 bg-brand-navy/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 md:hidden"
+  class="fixed inset-0 z-50 bg-brand-navy-dark/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 md:hidden"
   aria-hidden="true"
 ></div>
 
 <!-- Slide-out Drawer Panel -->
 <div
   id="mobile-menu-drawer"
-  class="fixed inset-y-0 left-0 z-50 w-[85%] max-w-sm bg-white shadow-2xl flex flex-col justify-between overflow-y-auto p-5 sm:p-6 transform -translate-x-full transition-transform duration-300 ease-in-out md:hidden"
+  class="fixed inset-y-0 left-0 z-50 w-[86%] max-w-sm bg-white shadow-2xl flex flex-col justify-between overflow-y-auto p-5 sm:p-6 transform -translate-x-full transition-transform duration-300 ease-out md:hidden"
   aria-hidden="true"
   role="dialog"
   aria-modal="true"
@@ -30,34 +31,21 @@ const isCurrent = (href: string) => {
   <!-- Top Header in Drawer -->
   <div>
     <div class="flex items-center justify-between pb-4 border-b border-brand-border">
-      <div class="flex items-center gap-2.5">
-        <div class="w-8 h-8 rounded-lg bg-brand-navy flex items-center justify-center text-brand-ice flex-shrink-0">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-          </svg>
-        </div>
-        <div>
-          <span class="font-extrabold text-base text-brand-navy tracking-tight block leading-tight">PATEL COOL TECH</span>
-          <span class="text-[11px] text-brand-text-muted font-medium flex items-center gap-1 mt-0.5">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-            <span>Indore, Madhya Pradesh</span>
-          </span>
-        </div>
-      </div>
+      <BrandLogo size="sm" />
       <button
         type="button"
         id="mobile-menu-close-btn"
-        class="p-2 rounded-lg text-brand-text-muted hover:text-brand-navy hover:bg-brand-surface-alt focus-visible:outline-brand-ice min-h-[48px] min-w-[48px] flex items-center justify-center border border-transparent hover:border-brand-border transition-colors"
+        class="p-2.5 rounded-xl text-brand-text-muted hover:text-brand-navy hover:bg-brand-surface-alt active:bg-brand-border focus-visible:outline-brand-ice min-h-[48px] min-w-[48px] flex items-center justify-center border border-transparent hover:border-brand-border transition-colors"
         aria-label="Close navigation menu"
       >
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
     </div>
 
     <!-- Navigation Links -->
-    <nav class="mt-5 flex flex-col space-y-1" aria-label="Mobile primary navigation">
+    <nav class="mt-5 flex flex-col space-y-1.5" aria-label="Mobile primary navigation">
       {
         siteConfig.navItems.map((item) => {
           const active = isCurrent(item.href);
@@ -65,16 +53,16 @@ const isCurrent = (href: string) => {
             <a
               href={item.href}
               class:list={[
-                'mobile-nav-link px-3.5 py-3 rounded-lg text-base font-semibold transition-colors flex items-center justify-between min-h-[48px]',
+                'mobile-nav-link px-4 py-3.5 rounded-xl text-base font-semibold transition-all flex items-center justify-between min-h-[48px]',
                 active
-                  ? 'bg-brand-surface-alt text-brand-blue font-bold border-l-4 border-brand-ice pl-3'
-                  : 'text-brand-navy hover:bg-brand-surface hover:text-brand-blue',
+                  ? 'bg-brand-blue-light text-brand-blue font-bold border-l-4 border-brand-ice pl-3.5 shadow-sm'
+                  : 'text-brand-navy hover:bg-brand-surface hover:text-brand-blue active:bg-brand-surface-alt',
               ]}
               aria-current={active ? 'page' : undefined}
             >
               <span>{item.label}</span>
-              <svg class="w-4 h-4 text-brand-text-subtle" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              <svg class="w-4 h-4 text-brand-ice" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
               </svg>
             </a>
           );
@@ -89,11 +77,11 @@ const isCurrent = (href: string) => {
       <!-- Call Now Action -->
       <a
         href={business.phones.primaryTel}
-        class="w-full flex items-center justify-center gap-2.5 px-4 py-3 bg-brand-navy text-white rounded-lg font-semibold text-sm min-h-[48px] hover:bg-brand-navy-light shadow-soft transition-colors active:scale-[0.99]"
+        class="w-full flex items-center justify-center gap-2.5 px-4 py-3.5 bg-brand-navy text-white rounded-xl font-bold text-sm min-h-[48px] hover:bg-brand-navy-light shadow-card transition-all active:scale-[0.98]"
         aria-label="Call Patel Cool Tech now"
       >
         <svg class="w-4 h-4 text-brand-ice flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
         </svg>
         <span>Call: {business.phones.primaryFormatted}</span>
       </a>
@@ -103,7 +91,7 @@ const isCurrent = (href: string) => {
         href={business.phones.whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"
-        class="w-full flex items-center justify-center gap-2.5 px-4 py-3 bg-brand-whatsapp text-white rounded-lg font-semibold text-sm min-h-[48px] hover:bg-brand-whatsapp-hover shadow-soft transition-colors active:scale-[0.99]"
+        class="w-full flex items-center justify-center gap-2.5 px-4 py-3.5 bg-brand-whatsapp text-white rounded-xl font-bold text-sm min-h-[48px] hover:bg-brand-whatsapp-hover shadow-card transition-all active:scale-[0.98]"
         aria-label="Chat with Patel Cool Tech on WhatsApp"
       >
         <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -114,9 +102,9 @@ const isCurrent = (href: string) => {
     </div>
 
     <!-- Verified Local Technician Details -->
-    <div class="text-xs text-brand-text-muted pt-1">
-      <p class="font-medium text-brand-navy">Technicians: {business.technicians.map((t) => t.name).join(' & ')}</p>
-      <p class="mt-0.5 text-brand-text-subtle">Serving Indore, Rau, Pithampur & nearby areas.</p>
+    <div class="text-xs text-brand-text-muted pt-2 border-t border-brand-border/60">
+      <p class="font-semibold text-brand-navy">Technicians: {business.technicians.map((t) => t.name).join(' & ')}</p>
+      <p class="mt-0.5 text-brand-text-subtle">Indore, Rau, Pithampur &amp; nearby areas.</p>
     </div>
   </div>
 </div>
@@ -147,8 +135,6 @@ const isCurrent = (href: string) => {
       toggleBtn?.setAttribute('aria-expanded', 'true');
       toggleBtn?.setAttribute('aria-label', 'Close navigation menu');
       document.body.style.overflow = 'hidden';
-
-      // Move focus inside the drawer
       closeBtn?.focus();
     }
 
@@ -160,8 +146,6 @@ const isCurrent = (href: string) => {
       toggleBtn?.setAttribute('aria-expanded', 'false');
       toggleBtn?.setAttribute('aria-label', 'Open navigation menu');
       document.body.style.overflow = '';
-
-      // Return focus to toggle button
       toggleBtn?.focus();
     }
 
@@ -191,7 +175,6 @@ const isCurrent = (href: string) => {
         return;
       }
 
-      // Accessible Focus Trap
       if (event.key === 'Tab') {
         const focusable = getFocusableElements();
         if (focusable.length === 0) return;
@@ -214,7 +197,6 @@ const isCurrent = (href: string) => {
     });
   }
 
-  // Setup on initial load and handle Astro page transitions
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', setupMobileMenu);
   } else {

@@ -1,0 +1,286 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { defaultSiteSettings } from '../../utils/supabase';
+
+const settings = defaultSiteSettings;
+---
+
+<AdminLayout title="Website Settings" activeTab="settings">
+  <!-- Top bar -->
+  <div class="pb-6 border-b border-slate-800">
+    <span class="text-xs font-bold uppercase tracking-wider text-brand-ice">Owner Configuration</span>
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-0.5">Website &amp; Brand Settings</h1>
+    <p class="text-xs sm:text-sm text-slate-400 mt-1">
+      Update contact phone numbers, WhatsApp, hero media, and business identity.
+    </p>
+  </div>
+
+  <!-- Notification Toast -->
+  <div id="settings-toast" class="hidden fixed bottom-6 right-6 z-50 px-5 py-3.5 rounded-xl bg-emerald-900 border border-emerald-700 text-white text-sm font-semibold shadow-2xl flex items-center gap-3 transition-opacity duration-300">
+    <svg class="w-5 h-5 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+    </svg>
+    <span>Settings updated successfully.</span>
+  </div>
+
+  <form id="settings-form" class="mt-8 space-y-8 max-w-4xl">
+    <!-- Section 1: Business Identity & Contact Details -->
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-5">
+      <div>
+        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+          <svg class="w-5 h-5 text-brand-ice" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+          </svg>
+          <span>Business Information &amp; Contact</span>
+        </h2>
+        <p class="text-xs text-slate-400 mt-0.5">Primary business name and customer contact lines</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label for="set-biz-name" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+            Business Name
+          </label>
+          <input
+            type="text"
+            id="set-biz-name"
+            value={settings.business_name}
+            class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-sm min-h-[44px]"
+          />
+        </div>
+
+        <div>
+          <label for="set-tagline" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+            Tagline
+          </label>
+          <input
+            type="text"
+            id="set-tagline"
+            value={settings.tagline}
+            class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-sm min-h-[44px]"
+          />
+        </div>
+
+        <div>
+          <label for="set-phone-primary" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+            Primary Phone Number
+          </label>
+          <input
+            type="text"
+            id="set-phone-primary"
+            value={settings.phone_primary}
+            class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-sm min-h-[44px]"
+          />
+        </div>
+
+        <div>
+          <label for="set-phone-secondary" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+            Secondary Phone Number
+          </label>
+          <input
+            type="text"
+            id="set-phone-secondary"
+            value={settings.phone_secondary}
+            class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-sm min-h-[44px]"
+          />
+        </div>
+
+        <div>
+          <label for="set-whatsapp" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+            WhatsApp Number (with country code)
+          </label>
+          <input
+            type="text"
+            id="set-whatsapp"
+            value={settings.whatsapp_number}
+            class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-sm min-h-[44px]"
+          />
+        </div>
+
+        <div>
+          <label for="set-email" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+            Business Email
+          </label>
+          <input
+            type="email"
+            id="set-email"
+            value={settings.email}
+            class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-sm min-h-[44px]"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label for="set-service-areas" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+          Service Areas
+        </label>
+        <input
+          type="text"
+          id="set-service-areas"
+          value={settings.service_areas}
+          class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-sm min-h-[44px]"
+        />
+      </div>
+    </div>
+
+    <!-- Section 2: Hero Visual & Copy Customization -->
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-5">
+      <div>
+        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+          <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <span>Hero Media &amp; Headlines</span>
+        </h2>
+        <p class="text-xs text-slate-400 mt-0.5">Customize the main showcase on the customer home page</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label for="set-hero-type" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+            Hero Media Type
+          </label>
+          <select
+            id="set-hero-type"
+            class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-sm min-h-[44px]"
+          >
+            <option value="image">High-Quality Image</option>
+            <option value="video">Autoplay Work Video (Muted)</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="set-hero-url" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+            Hero Media URL
+          </label>
+          <input
+            type="text"
+            id="set-hero-url"
+            value={settings.hero_media_url}
+            class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-sm min-h-[44px]"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label for="set-hero-heading" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+          Main Hero Heading (H1)
+        </label>
+        <input
+          type="text"
+          id="set-hero-heading"
+          value={settings.hero_heading}
+          class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-sm min-h-[44px]"
+        />
+      </div>
+
+      <div>
+        <label for="set-hero-desc" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+          Hero Supporting Description
+        </label>
+        <textarea
+          id="set-hero-desc"
+          rows="3"
+          class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-sm"
+        >{settings.hero_description}</textarea>
+      </div>
+    </div>
+
+    <!-- Section 3: Official Brand Logo & Card Assets -->
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-5">
+      <div>
+        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+          <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+          </svg>
+          <span>Official Brand Logo</span>
+        </h2>
+        <p class="text-xs text-slate-400 mt-0.5">Upload official visiting card logo asset to replace default vector badge</p>
+      </div>
+
+      <div>
+        <label for="set-logo-url" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+          Official Logo Image URL (PNG / SVG / WebP)
+        </label>
+        <input
+          type="text"
+          id="set-logo-url"
+          value={settings.logo_url}
+          placeholder="Leave blank to use the handcrafted technical BrandLogo vector mark"
+          class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-brand-ice text-sm min-h-[44px]"
+        />
+        <p class="text-[11px] text-slate-400 mt-1">
+          When empty, the website displays the built-in aerodynamic cooling logo mark.
+        </p>
+      </div>
+    </div>
+
+    <!-- Submit Save Button -->
+    <div class="pt-2 flex items-center justify-end">
+      <button
+        type="submit"
+        id="save-settings-btn"
+        class="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-brand-ice hover:bg-brand-ice-hover text-white font-bold text-sm shadow-lg transition-all active:scale-[0.98] min-h-[48px] cursor-pointer"
+      >
+        <span>Save All Settings</span>
+      </button>
+    </div>
+  </form>
+
+  <script>
+    import { supabase, isSupabaseConfigured } from '../../utils/supabase';
+
+    const form = document.getElementById('settings-form');
+    const toast = document.getElementById('settings-toast');
+
+    function showToast() {
+      if (toast) {
+        toast.classList.remove('hidden');
+        toast.classList.add('opacity-100');
+        setTimeout(() => {
+          toast.classList.add('hidden');
+        }, 3500);
+      }
+    }
+
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const bizName = (document.getElementById('set-biz-name') as HTMLInputElement | null)?.value || '';
+      const tagline = (document.getElementById('set-tagline') as HTMLInputElement | null)?.value || '';
+      const phone1 = (document.getElementById('set-phone-primary') as HTMLInputElement | null)?.value || '';
+      const phone2 = (document.getElementById('set-phone-secondary') as HTMLInputElement | null)?.value || '';
+      const whatsapp = (document.getElementById('set-whatsapp') as HTMLInputElement | null)?.value || '';
+      const email = (document.getElementById('set-email') as HTMLInputElement | null)?.value || '';
+      const serviceAreas = (document.getElementById('set-service-areas') as HTMLInputElement | null)?.value || '';
+      const heroType = (document.getElementById('set-hero-type') as HTMLSelectElement | null)?.value as any;
+      const heroUrl = (document.getElementById('set-hero-url') as HTMLInputElement | null)?.value || '';
+      const heroHeading = (document.getElementById('set-hero-heading') as HTMLInputElement | null)?.value || '';
+      const heroDesc = (document.getElementById('set-hero-desc') as HTMLTextAreaElement | null)?.value || '';
+      const logoUrl = (document.getElementById('set-logo-url') as HTMLInputElement | null)?.value || '';
+
+      const updatedPayload = {
+        id: 'default',
+        business_name: bizName,
+        tagline,
+        phone_primary: phone1,
+        phone_secondary: phone2,
+        whatsapp_number: whatsapp,
+        email,
+        service_areas: serviceAreas,
+        hero_media_type: heroType,
+        hero_media_url: heroUrl,
+        hero_heading: heroHeading,
+        hero_description: heroDesc,
+        logo_url: logoUrl,
+        updated_at: new Date().toISOString(),
+      };
+
+      if (isSupabaseConfigured && supabase) {
+        await supabase.from('site_settings').upsert(updatedPayload);
+      }
+
+      showToast();
+    });
+  </script>
+</AdminLayout>

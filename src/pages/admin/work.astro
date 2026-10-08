@@ -1,0 +1,597 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Work Portfolio Manager" activeTab="work">
+  <!-- Top bar -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+    <div>
+      <span class="text-xs font-bold uppercase tracking-wider text-brand-ice">Content Management</span>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-0.5">Work Portfolio Items</h1>
+      <p class="text-xs sm:text-sm text-slate-400 mt-1">
+        Add photos, videos, descriptions, and category tags for jobs completed across Indore.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      id="open-add-modal-btn"
+      class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-brand-ice hover:bg-brand-ice-hover text-white font-bold text-sm shadow-md transition-all active:scale-[0.98] min-h-[48px] cursor-pointer"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+      </svg>
+      <span>+ Add New Work</span>
+    </button>
+  </div>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="hidden fixed bottom-6 right-6 z-50 px-5 py-3.5 rounded-xl bg-emerald-900 border border-emerald-700 text-white text-sm font-semibold shadow-2xl flex items-center gap-3 transition-opacity duration-300">
+    <svg class="w-5 h-5 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+    </svg>
+    <span id="toast-message">Action completed successfully.</span>
+  </div>
+
+  <!-- Work Items Grid / List -->
+  <div class="mt-8">
+    <div id="work-items-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Items populated via client-side script -->
+      <div class="col-span-full py-12 text-center text-slate-500">
+        <div class="inline-block animate-spin w-6 h-6 border-2 border-brand-ice border-t-transparent rounded-full mb-3"></div>
+        <p class="text-sm">Loading portfolio items...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD / EDIT WORK MODAL -->
+  <div
+    id="work-modal"
+    class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-3 sm:p-6"
+    role="dialog"
+    aria-modal="true"
+    aria-hidden="true"
+  >
+    <div class="relative w-full max-w-2xl max-h-[90vh] bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col transform scale-95 transition-transform duration-300" id="work-modal-card">
+      <!-- Header -->
+      <div class="p-5 sm:p-6 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
+        <div>
+          <h2 id="modal-title" class="text-xl font-bold text-white">Add New Work Project</h2>
+          <p class="text-xs text-slate-400 mt-0.5">Upload photo or video of work completed</p>
+        </div>
+        <button
+          type="button"
+          id="close-modal-btn"
+          class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Form Body (Scrollable) -->
+      <form id="work-form" class="p-5 sm:p-6 space-y-4 overflow-y-auto flex-grow text-sm">
+        <input type="hidden" id="form-work-id" value="" />
+
+        <div>
+          <label for="work-title" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+            Project Title *
+          </label>
+          <input
+            type="text"
+            id="work-title"
+            required
+            placeholder="e.g. Split AC Installation with Copper Trunking"
+            class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-brand-ice min-h-[44px]"
+          />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="work-category" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+              Category *
+            </label>
+            <select
+              id="work-category"
+              required
+              class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice min-h-[44px]"
+            >
+              <option value="Installation">Installation</option>
+              <option value="Repair">Repair</option>
+              <option value="AC Service">AC Service</option>
+              <option value="Gas Refilling">Gas Refilling</option>
+              <option value="Maintenance / AMC">Maintenance / AMC</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="work-media-type" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+              Media Type *
+            </label>
+            <select
+              id="work-media-type"
+              required
+              class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice min-h-[44px]"
+            >
+              <option value="image">Photograph (Image)</option>
+              <option value="video">Work Video Clip</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Media Upload Drag & Drop -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+            Upload Photo / Video File
+          </label>
+          <div class="border-2 border-dashed border-slate-700 hover:border-brand-ice/60 rounded-2xl p-4 sm:p-6 text-center bg-slate-950/60 transition-colors">
+            <input type="file" id="media-file-input" accept="image/*,video/mp4,video/webm" class="hidden" />
+            <div id="upload-idle-state" class="cursor-pointer" onclick="document.getElementById('media-file-input').click()">
+              <svg class="w-8 h-8 text-brand-ice mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              </svg>
+              <p class="text-xs sm:text-sm font-semibold text-white">Tap to upload photo or video</p>
+              <p class="text-[11px] text-slate-400 mt-0.5">Supports JPG, PNG, WebP, MP4, WebM (under 25MB)</p>
+            </div>
+            <div id="upload-progress-state" class="hidden text-center py-2">
+              <div class="inline-block animate-spin w-5 h-5 border-2 border-brand-ice border-t-transparent rounded-full mb-2"></div>
+              <p class="text-xs text-brand-ice-light font-bold" id="upload-status-text">Uploading to storage...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Or Media URL -->
+        <div>
+          <label for="work-image-url" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+            Image / Media URL *
+          </label>
+          <input
+            type="text"
+            id="work-image-url"
+            required
+            placeholder="/images/work/ac-installation.jpg or storage URL"
+            class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-brand-ice min-h-[44px]"
+          />
+        </div>
+
+        <div id="video-url-container" class="hidden">
+          <label for="work-video-url" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+            Video Clip URL (MP4 / WebM)
+          </label>
+          <input
+            type="text"
+            id="work-video-url"
+            placeholder="https://.../video.mp4"
+            class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-brand-ice min-h-[44px]"
+          />
+        </div>
+
+        <div>
+          <label for="work-description" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+            Description
+          </label>
+          <textarea
+            id="work-description"
+            rows="3"
+            placeholder="Describe the job, installation methods, tools used, or client issue resolved."
+            class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-brand-ice"
+          ></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+          <div>
+            <label for="work-sort" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+              Display Order
+            </label>
+            <input
+              type="number"
+              id="work-sort"
+              value="1"
+              min="0"
+              class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice min-h-[44px]"
+            />
+          </div>
+
+          <div class="flex items-center gap-2 pt-6">
+            <input
+              type="checkbox"
+              id="work-published"
+              checked
+              class="w-4 h-4 rounded text-brand-ice bg-slate-950 border-slate-700 focus:ring-brand-ice"
+            />
+            <label for="work-published" class="text-xs font-bold text-slate-200">
+              Published Live
+            </label>
+          </div>
+
+          <div class="flex items-center gap-2 pt-6">
+            <input
+              type="checkbox"
+              id="work-featured"
+              checked
+              class="w-4 h-4 rounded text-brand-ice bg-slate-950 border-slate-700 focus:ring-brand-ice"
+            />
+            <label for="work-featured" class="text-xs font-bold text-slate-200">
+              Featured on Home
+            </label>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="pt-4 border-t border-slate-800 flex items-center justify-end gap-3">
+          <button
+            type="button"
+            id="cancel-modal-btn"
+            class="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 transition-colors min-h-[44px]"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            id="save-work-btn"
+            class="px-6 py-2.5 rounded-xl bg-brand-ice hover:bg-brand-ice-hover text-white text-xs font-bold shadow-md transition-all active:scale-[0.98] min-h-[44px] cursor-pointer"
+          >
+            Save Project
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- DELETE CONFIRMATION DIALOG -->
+  <div
+    id="delete-modal"
+    class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-4"
+    role="dialog"
+    aria-modal="true"
+    aria-hidden="true"
+  >
+    <div class="w-full max-w-sm bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl text-center">
+      <div class="w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 mx-auto flex items-center justify-center mb-4">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+      </div>
+      <h3 class="text-lg font-bold text-white">Delete this work item?</h3>
+      <p class="text-xs text-slate-400 mt-2">
+        This will remove the item from the public portfolio. This action cannot be undone.
+      </p>
+      <div class="mt-6 flex items-center justify-center gap-3">
+        <button
+          type="button"
+          id="cancel-delete-btn"
+          class="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 transition-colors min-h-[44px]"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          id="confirm-delete-btn"
+          class="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-md transition-colors min-h-[44px] cursor-pointer"
+        >
+          Yes, Delete Item
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import { supabase, isSupabaseConfigured, defaultFallbackWork } from '../../utils/supabase';
+    import type { WorkItemDB } from '../../types/database';
+
+    let localWorkItems: WorkItemDB[] = [...defaultFallbackWork];
+    let deleteTargetId: string | null = null;
+
+    const container = document.getElementById('work-items-container');
+    const modal = document.getElementById('work-modal');
+    const modalCard = document.getElementById('work-modal-card');
+    const openAddBtn = document.getElementById('open-add-modal-btn');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    const cancelModalBtn = document.getElementById('cancel-modal-btn');
+    const form = document.getElementById('work-form') as HTMLFormElement | null;
+    const mediaTypeSelect = document.getElementById('work-media-type') as HTMLSelectElement | null;
+    const videoUrlContainer = document.getElementById('video-url-container');
+    const fileInput = document.getElementById('media-file-input') as HTMLInputElement | null;
+    const uploadIdleState = document.getElementById('upload-idle-state');
+    const uploadProgressState = document.getElementById('upload-progress-state');
+    const imageUrlInput = document.getElementById('work-image-url') as HTMLInputElement | null;
+    const toast = document.getElementById('toast');
+    const toastMsg = document.getElementById('toast-message');
+
+    // Delete modal elements
+    const deleteModal = document.getElementById('delete-modal');
+    const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
+    const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+
+    function showToast(msg: string) {
+      if (toast && toastMsg) {
+        toastMsg.textContent = msg;
+        toast.classList.remove('hidden');
+        toast.classList.add('opacity-100');
+        setTimeout(() => {
+          toast.classList.add('hidden');
+        }, 3500);
+      }
+    }
+
+    async function loadItems() {
+      if (isSupabaseConfigured && supabase) {
+        const { data, error } = await supabase
+          .from('work_items')
+          .select('*')
+          .order('sort_order', { ascending: true });
+        if (!error && data && data.length > 0) {
+          localWorkItems = data as WorkItemDB[];
+        }
+      }
+      renderCards();
+    }
+
+    function renderCards() {
+      if (!container) return;
+      if (localWorkItems.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full py-12 text-center text-slate-400">
+            <p class="text-base font-bold">No portfolio items found</p>
+            <p class="text-xs mt-1">Click "+ Add New Work" above to upload your first project.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = localWorkItems.map((item) => `
+        <article class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden flex flex-col justify-between group">
+          <div class="relative w-full aspect-[4/3] bg-slate-950 overflow-hidden">
+            <img
+              src="${item.thumbnail_url || item.image_url}"
+              alt="${item.title}"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+            <span class="absolute top-3 left-3 px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-slate-950/80 text-white backdrop-blur-sm border border-white/10">
+              ${item.category}
+            </span>
+            <span class="absolute top-3 right-3 px-2 py-0.5 rounded text-[10px] font-semibold ${item.published ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-700/50' : 'bg-amber-950/80 text-amber-300 border border-amber-700/50'}">
+              ${item.published ? 'Published' : 'Draft'}
+            </span>
+          </div>
+          <div class="p-5 flex flex-col flex-grow justify-between">
+            <div>
+              <h3 class="text-base font-bold text-white mb-1">${item.title}</h3>
+              <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed">${item.description || ''}</p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between">
+              <span class="text-[11px] text-slate-500 font-medium">Order: #${item.sort_order}</span>
+              <div class="flex items-center gap-2">
+                <button
+                  type="button"
+                  class="edit-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 transition-colors cursor-pointer"
+                  data-id="${item.id}"
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  class="delete-btn px-2.5 py-1.5 rounded-lg text-xs font-bold text-rose-400 hover:bg-rose-950/50 transition-colors cursor-pointer"
+                  data-id="${item.id}"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+      `).join('');
+
+      // Attach edit and delete handlers
+      document.querySelectorAll('.edit-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-id');
+          const item = localWorkItems.find((i) => i.id === id);
+          if (item) openModal(item);
+        });
+      });
+
+      document.querySelectorAll('.delete-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-id');
+          if (id) openDeleteDialog(id);
+        });
+      });
+    }
+
+    function openModal(item?: WorkItemDB) {
+      if (!modal || !modalCard) return;
+      const modalTitle = document.getElementById('modal-title');
+      const formId = document.getElementById('form-work-id') as HTMLInputElement | null;
+      const titleInput = document.getElementById('work-title') as HTMLInputElement | null;
+      const catSelect = document.getElementById('work-category') as HTMLSelectElement | null;
+      const mediaSelect = document.getElementById('work-media-type') as HTMLSelectElement | null;
+      const descInput = document.getElementById('work-description') as HTMLTextAreaElement | null;
+      const sortInput = document.getElementById('work-sort') as HTMLInputElement | null;
+      const pubCheckbox = document.getElementById('work-published') as HTMLInputElement | null;
+      const featCheckbox = document.getElementById('work-featured') as HTMLInputElement | null;
+      const videoInput = document.getElementById('work-video-url') as HTMLInputElement | null;
+
+      if (item) {
+        if (modalTitle) modalTitle.textContent = 'Edit Work Project';
+        if (formId) formId.value = item.id;
+        if (titleInput) titleInput.value = item.title;
+        if (catSelect) catSelect.value = item.category;
+        if (mediaSelect) mediaSelect.value = item.media_type;
+        if (imageUrlInput) imageUrlInput.value = item.image_url;
+        if (videoInput) videoInput.value = item.video_url || '';
+        if (descInput) descInput.value = item.description || '';
+        if (sortInput) sortInput.value = String(item.sort_order || 1);
+        if (pubCheckbox) pubCheckbox.checked = item.published;
+        if (featCheckbox) featCheckbox.checked = item.featured;
+      } else {
+        if (modalTitle) modalTitle.textContent = 'Add New Work Project';
+        form?.reset();
+        if (formId) formId.value = '';
+      }
+
+      // Toggle video container
+      if (mediaSelect?.value === 'video') {
+        videoUrlContainer?.classList.remove('hidden');
+      } else {
+        videoUrlContainer?.classList.add('hidden');
+      }
+
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      modal.classList.add('opacity-100', 'pointer-events-auto');
+      modal.setAttribute('aria-hidden', 'false');
+      modalCard.classList.remove('scale-95');
+      modalCard.classList.add('scale-100');
+    }
+
+    function closeModal() {
+      if (!modal || !modalCard) return;
+      modal.classList.add('opacity-0', 'pointer-events-none');
+      modal.classList.remove('opacity-100', 'pointer-events-auto');
+      modal.setAttribute('aria-hidden', 'true');
+      modalCard.classList.add('scale-95');
+      modalCard.classList.remove('scale-100');
+    }
+
+    function openDeleteDialog(id: string) {
+      deleteTargetId = id;
+      if (!deleteModal) return;
+      deleteModal.classList.remove('opacity-0', 'pointer-events-none');
+      deleteModal.classList.add('opacity-100', 'pointer-events-auto');
+    }
+
+    function closeDeleteDialog() {
+      deleteTargetId = null;
+      if (!deleteModal) return;
+      deleteModal.classList.add('opacity-0', 'pointer-events-none');
+      deleteModal.classList.remove('opacity-100', 'pointer-events-auto');
+    }
+
+    // Toggle video field on select change
+    mediaTypeSelect?.addEventListener('change', () => {
+      if (mediaTypeSelect.value === 'video') {
+        videoUrlContainer?.classList.remove('hidden');
+      } else {
+        videoUrlContainer?.classList.add('hidden');
+      }
+    });
+
+    // Handle File Upload to Supabase Storage
+    fileInput?.addEventListener('change', async () => {
+      const file = fileInput.files?.[0];
+      if (!file) return;
+
+      uploadIdleState?.classList.add('hidden');
+      uploadProgressState?.classList.remove('hidden');
+
+      if (isSupabaseConfigured && supabase) {
+        try {
+          const fileExt = file.name.split('.').pop();
+          const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+          const filePath = `work/${fileName}`;
+
+          const { error: uploadError } = await supabase.storage
+            .from('work-media')
+            .upload(filePath, file);
+
+          if (uploadError) throw uploadError;
+
+          const { data: { publicUrl } } = supabase.storage
+            .from('work-media')
+            .getPublicUrl(filePath);
+
+          if (imageUrlInput) imageUrlInput.value = publicUrl;
+          if (file.type.startsWith('video') && videoUrlContainer) {
+            const videoInput = document.getElementById('work-video-url') as HTMLInputElement | null;
+            if (videoInput) videoInput.value = publicUrl;
+          }
+          showToast('Media uploaded to storage successfully.');
+        } catch (err: any) {
+          alert('Storage upload failed: ' + err.message);
+        }
+      } else {
+        // Fallback demo local object URL
+        const objectUrl = URL.createObjectURL(file);
+        if (imageUrlInput) imageUrlInput.value = objectUrl;
+        showToast('Demo preview image attached.');
+      }
+
+      uploadIdleState?.classList.remove('hidden');
+      uploadProgressState?.classList.add('hidden');
+    });
+
+    // Form submission
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formId = (document.getElementById('form-work-id') as HTMLInputElement | null)?.value;
+      const title = (document.getElementById('work-title') as HTMLInputElement | null)?.value || '';
+      const category = (document.getElementById('work-category') as HTMLSelectElement | null)?.value as any;
+      const media_type = (document.getElementById('work-media-type') as HTMLSelectElement | null)?.value as any;
+      const image_url = (document.getElementById('work-image-url') as HTMLInputElement | null)?.value || '';
+      const video_url = (document.getElementById('work-video-url') as HTMLInputElement | null)?.value || null;
+      const description = (document.getElementById('work-description') as HTMLTextAreaElement | null)?.value || '';
+      const sort_order = Number((document.getElementById('work-sort') as HTMLInputElement | null)?.value || 1);
+      const published = (document.getElementById('work-published') as HTMLInputElement | null)?.checked ?? true;
+      const featured = (document.getElementById('work-featured') as HTMLInputElement | null)?.checked ?? true;
+
+      const itemPayload: Partial<WorkItemDB> = {
+        title,
+        category,
+        media_type,
+        image_url,
+        video_url,
+        thumbnail_url: image_url,
+        description,
+        sort_order,
+        published,
+        featured,
+        updated_at: new Date().toISOString(),
+      };
+
+      if (isSupabaseConfigured && supabase) {
+        if (formId) {
+          await supabase.from('work_items').update(itemPayload).eq('id', formId);
+        } else {
+          await supabase.from('work_items').insert([{ ...itemPayload, created_at: new Date().toISOString() }]);
+        }
+      } else {
+        // Demo update
+        if (formId) {
+          const idx = localWorkItems.findIndex((i) => i.id === formId);
+          if (idx >= 0) localWorkItems[idx] = { ...localWorkItems[idx], ...itemPayload } as WorkItemDB;
+        } else {
+          localWorkItems.unshift({
+            ...itemPayload,
+            id: `work-custom-${Date.now()}`,
+          } as WorkItemDB);
+        }
+      }
+
+      closeModal();
+      showToast('Work project saved successfully.');
+      loadItems();
+    });
+
+    // Confirm Delete
+    confirmDeleteBtn?.addEventListener('click', async () => {
+      if (!deleteTargetId) return;
+      if (isSupabaseConfigured && supabase) {
+        await supabase.from('work_items').delete().eq('id', deleteTargetId);
+      } else {
+        localWorkItems = localWorkItems.filter((i) => i.id !== deleteTargetId);
+      }
+      closeDeleteDialog();
+      showToast('Work item deleted.');
+      loadItems();
+    });
+
+    cancelDeleteBtn?.addEventListener('click', closeDeleteDialog);
+    openAddBtn?.addEventListener('click', () => openModal());
+    closeModalBtn?.addEventListener('click', closeModal);
+    cancelModalBtn?.addEventListener('click', closeModal);
+
+    loadItems();
+  </script>
+</AdminLayout>

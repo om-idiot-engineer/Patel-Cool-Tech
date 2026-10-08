@@ -2,42 +2,36 @@
 import { business } from '../data/business';
 import { siteConfig } from '../data/site';
 import Container from './Container.astro';
+import BrandLogo from './BrandLogo.astro';
 
 const currentYear = new Date().getFullYear();
 ---
 
-<footer class="bg-brand-navy-dark text-white pt-12 pb-24 sm:pb-12 border-t border-slate-800" role="contentinfo">
+<footer class="bg-brand-navy-dark text-white pt-14 pb-24 sm:pb-12 border-t border-slate-800" role="contentinfo">
   <Container>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 pb-10 border-b border-slate-800">
-      <!-- Business Info -->
-      <div class="space-y-3">
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-lg bg-brand-navy-light flex items-center justify-center text-brand-ice">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-          </div>
-          <span class="font-bold text-lg tracking-tight text-white">{business.name}</span>
-        </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 pb-12 border-b border-slate-800">
+      <!-- Business Info with BrandLogo -->
+      <div class="space-y-4">
+        <BrandLogo variant="light" size="md" />
         <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
           {business.shortDescription}
         </p>
-        <div class="pt-2 text-xs text-slate-400">
-          <span class="font-medium text-slate-200">Technicians & Management:</span>
-          <p>{business.technicians.map((t) => t.name).join(' & ')}</p>
+        <div class="pt-2 text-xs text-slate-400 border-t border-slate-800/80">
+          <span class="font-semibold text-slate-200">Technicians:</span>
+          <p class="text-slate-300 mt-0.5">{business.technicians.map((t) => t.name).join(' & ')}</p>
         </div>
       </div>
 
       <!-- Quick Links -->
       <div>
-        <h3 class="font-semibold text-sm uppercase tracking-wider text-slate-200 mb-4">
-          Quick Links
+        <h3 class="font-bold text-sm uppercase tracking-wider text-slate-200 mb-4">
+          Quick Navigation
         </h3>
         <ul class="space-y-2.5 text-sm">
           {
             siteConfig.footerNavItems.map((item) => (
               <li>
-                <a href={item.href} class="text-slate-300 hover:text-brand-ice transition-colors">
+                <a href={item.href} class="text-slate-300 hover:text-brand-ice transition-colors inline-block py-0.5">
                   {item.label}
                 </a>
               </li>
@@ -48,16 +42,16 @@ const currentYear = new Date().getFullYear();
 
       <!-- Service Areas -->
       <div>
-        <h3 class="font-semibold text-sm uppercase tracking-wider text-slate-200 mb-4">
+        <h3 class="font-bold text-sm uppercase tracking-wider text-slate-200 mb-4">
           Service Coverage
         </h3>
-        <ul class="space-y-2 text-sm text-slate-300">
+        <ul class="space-y-2.5 text-sm text-slate-300">
           {
             business.serviceAreas.featuredAreas.map((area) => (
               <li class="flex items-start gap-2">
                 <svg class="w-4 h-4 text-brand-ice flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
                 <span>
                   <strong class="font-medium text-white">{area.name}</strong>
@@ -74,45 +68,51 @@ const currentYear = new Date().getFullYear();
 
       <!-- Direct Contact (NAP) -->
       <div>
-        <h3 class="font-semibold text-sm uppercase tracking-wider text-slate-200 mb-4">
-          Contact Details
+        <h3 class="font-bold text-sm uppercase tracking-wider text-slate-200 mb-4">
+          Contact Technicians
         </h3>
-        <ul class="space-y-3 text-sm text-slate-300">
+        <ul class="space-y-3.5 text-sm text-slate-300">
           <li class="flex items-center gap-2.5">
-            <svg class="w-4 h-4 text-brand-ice flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-            </svg>
+            <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-brand-ice flex-shrink-0">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+            </div>
             <div class="flex flex-col">
-              <a href={business.phones.primaryTel} class="hover:text-brand-ice transition-colors font-semibold text-white py-1 inline-block">
+              <a href={business.phones.primaryTel} class="hover:text-brand-ice transition-colors font-bold text-white">
                 {business.phones.primaryFormatted}
               </a>
-              <a href={business.phones.secondaryTel} class="hover:text-brand-ice transition-colors text-xs text-slate-400 py-1 inline-block">
+              <a href={business.phones.secondaryTel} class="hover:text-brand-ice transition-colors text-xs text-slate-400">
                 {business.phones.secondaryFormatted}
               </a>
             </div>
           </li>
 
           <li class="flex items-center gap-2.5">
-            <svg class="w-4 h-4 text-brand-ice flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-            <a href={`mailto:${business.email}`} class="hover:text-brand-ice transition-colors break-all py-1 inline-block">
+            <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-brand-ice flex-shrink-0">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <a href={`mailto:${business.email}`} class="hover:text-brand-ice transition-colors break-all">
               {business.email}
             </a>
           </li>
 
           <li class="flex items-start gap-2.5">
-            <svg class="w-4 h-4 text-brand-ice flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
+            <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-brand-ice flex-shrink-0 mt-0.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
             <div class="flex flex-col">
               <span>{business.city}, {business.state}, {business.country}</span>
               <a
                 href={business.googleBusinessProfile.mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="text-xs text-brand-ice hover:underline mt-0.5 inline-flex items-center gap-1 py-1"
+                class="text-xs text-brand-ice hover:underline mt-1 inline-flex items-center gap-1"
                 aria-label="View Patel Cool Tech on Google Maps (opens in new tab)"
               >
                 <span>View on Google Maps</span>
@@ -132,8 +132,15 @@ const currentYear = new Date().getFullYear();
           {business.disclaimers.brands}
         </p>
       </div>
-      <div class="text-[11px] text-slate-400">
-        <span>Indore &bull; Rau &bull; Pithampur AC Service</span>
+      <div class="flex items-center gap-4 text-[11px] text-slate-400">
+        <span>Indore &bull; Rau &bull; Pithampur</span>
+        <span>&bull;</span>
+        <a href="/admin/" class="text-slate-500 hover:text-slate-300 transition-colors flex items-center gap-1" title="Owner Admin Portal">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+          <span>Owner Portal</span>
+        </a>
       </div>
     </div>
   </Container>

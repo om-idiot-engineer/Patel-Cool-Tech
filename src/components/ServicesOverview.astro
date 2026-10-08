@@ -4,31 +4,33 @@ import Container from './Container.astro';
 import SectionHeading from './SectionHeading.astro';
 ---
 
-<section id="services" class="py-12 sm:py-16 lg:py-20 bg-white border-b border-brand-border scroll-mt-20">
+<section id="services" class="py-14 sm:py-20 lg:py-24 bg-white border-b border-brand-border scroll-mt-20 relative">
   <Container>
-    <SectionHeading
-      badge="Our Services"
-      title="AC Services for Homes & Businesses"
-      subtitle="Complete on-site air conditioning solutions across Indore, Rau, and Pithampur. From precision installation and diagnostics to deep jet-spray servicing and gas refilling."
-      align="center"
-    />
+    <div class="reveal-init">
+      <SectionHeading
+        badge="Our Services"
+        title="AC Services for Homes &amp; Businesses"
+        subtitle="Complete on-site air conditioning solutions across Indore, Rau, and Pithampur. From precision installation and diagnostics to deep jet-spray servicing and gas refilling."
+        align="center"
+      />
+    </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch mt-10">
       {
         services.map((service, index) => {
-          // Last item in a 5-item grid spans nicely on lg screens or stays balanced
           const isLastOnLg = index === 4;
           return (
             <article
               class:list={[
-                'flex flex-col justify-between bg-brand-surface rounded-2xl p-6 sm:p-7 border border-brand-border/80 transition-all duration-200 hover:border-brand-blue/40 hover:shadow-card group',
+                'flex flex-col justify-between bg-brand-surface rounded-2xl p-6 sm:p-7 border border-brand-border/90 transition-all duration-300 hover:border-brand-blue/50 hover:shadow-hover card-hover-effect group reveal-init',
+                `stagger-${(index % 3) + 1}`,
                 isLastOnLg ? 'md:col-span-2 lg:col-span-1' : '',
               ]}
             >
               <div>
                 <!-- Service Icon & Category Tag -->
                 <div class="flex items-center justify-between gap-4 mb-5">
-                  <div class="w-12 h-12 rounded-xl bg-brand-blue-light text-brand-blue flex items-center justify-center flex-shrink-0 group-hover:bg-brand-blue group-hover:text-white transition-colors duration-200">
+                  <div class="w-12 h-12 rounded-xl bg-brand-blue-light text-brand-blue flex items-center justify-center flex-shrink-0 group-hover:bg-brand-navy group-hover:text-brand-ice transition-colors duration-200 shadow-sm">
                     {service.id === 'ac-installation' && (
                       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -55,14 +57,14 @@ import SectionHeading from './SectionHeading.astro';
                       </svg>
                     )}
                   </div>
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-white border border-brand-border text-brand-text-subtle capitalize">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white border border-brand-border text-brand-text-subtle capitalize shadow-sm">
                     {service.category === 'both' ? 'Homes & Offices' : service.category}
                   </span>
                 </div>
 
                 <!-- Service Title & Factual Description -->
-                <h3 class="text-lg sm:text-xl font-bold text-brand-navy mb-2.5">
-                  <a href={`/services/${service.slug}/`} class="hover:text-brand-blue transition-colors">
+                <h3 class="text-xl font-bold text-brand-navy mb-2.5 group-hover:text-brand-blue transition-colors">
+                  <a href={`/services/${service.slug}/`} class="hover:underline">
                     {service.title}
                   </a>
                 </h3>
@@ -73,7 +75,7 @@ import SectionHeading from './SectionHeading.astro';
                 <!-- Key Factual Features -->
                 <ul class="space-y-2 mb-6 border-t border-brand-border/60 pt-4" role="list">
                   {service.features.slice(0, 3).map((feature) => (
-                    <li class="flex items-start gap-2 text-xs sm:text-sm text-brand-text">
+                    <li class="flex items-start gap-2.5 text-xs sm:text-sm text-brand-text">
                       <svg class="w-4 h-4 text-brand-ice flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                       </svg>
@@ -84,15 +86,15 @@ import SectionHeading from './SectionHeading.astro';
               </div>
 
               <!-- Direct link to dedicated service page -->
-              <div class="pt-2 border-t border-brand-border/60">
+              <div class="pt-3 border-t border-brand-border/60">
                 <a
                   href={`/services/${service.slug}/`}
-                  class="inline-flex items-center justify-between w-full text-sm font-semibold text-brand-blue group-hover:text-brand-ice transition-colors duration-150 py-2 min-h-[48px] focus-visible:outline-2 focus-visible:outline-brand-blue rounded-md"
+                  class="inline-flex items-center justify-between w-full text-sm font-bold text-brand-blue group-hover:text-brand-navy transition-colors duration-150 py-2 min-h-[48px] focus-visible:outline-2 focus-visible:outline-brand-blue rounded-md"
                   aria-label={`View details and process for ${service.title}`}
                 >
                   <span>Learn more about {service.title}</span>
-                  <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  <svg class="w-4 h-4 transform group-hover:translate-x-1.5 transition-transform duration-150 text-brand-ice" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                   </svg>
                 </a>
               </div>
@@ -103,14 +105,14 @@ import SectionHeading from './SectionHeading.astro';
     </div>
 
     <!-- Explore All Services Directory CTA -->
-    <div class="mt-10 sm:mt-12 text-center">
+    <div class="mt-12 text-center reveal-init">
       <a
         href="/services/"
-        class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-surface-alt hover:bg-brand-blue-light/50 border border-brand-border text-brand-navy font-bold text-sm sm:text-base transition-all duration-150 shadow-soft hover:shadow-card focus-visible:outline-2 focus-visible:outline-brand-blue"
+        class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-brand-surface-alt hover:bg-brand-blue-light/70 border border-brand-border text-brand-navy font-bold text-sm sm:text-base transition-all duration-200 shadow-soft hover:shadow-card focus-visible:outline-2 focus-visible:outline-brand-blue group"
       >
         <span>View Complete AC Services Directory</span>
-        <svg class="w-4 h-4 text-brand-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        <svg class="w-4 h-4 text-brand-blue group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
         </svg>
       </a>
     </div>

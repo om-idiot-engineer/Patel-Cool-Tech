@@ -14,15 +14,17 @@ interface Props {
   ogImage?: string;
   noindex?: boolean;
   additionalSchema?: Record<string, any> | Record<string, any>[];
+  hideHeaderFooter?: boolean;
 }
 
 const {
   title,
   description = siteConfig.defaultDescription,
   canonicalUrl: propCanonicalUrl,
-  ogImage,
+  ogImage = '/images/hero/hero-technician.jpg',
   noindex = false,
   additionalSchema,
+  hideHeaderFooter = false,
 } = Astro.props;
 
 const canonicalUrl = (() => {
@@ -54,6 +56,10 @@ const schemaData = generateLocalBusinessSchema();
     {!noindex && <link rel="canonical" href={canonicalUrl} />}
     {noindex && <meta name="robots" content="noindex, nofollow" />}
 
+    <!-- Preconnect for performance typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     {!noindex && <meta property="og:url" content={canonicalUrl} />}
@@ -80,26 +86,72 @@ const schemaData = generateLocalBusinessSchema();
       <script type="application/ld+json" set:html={JSON.stringify(additionalSchema)} />
     )}
   </head>
-  <body class="flex flex-col min-h-full bg-white text-brand-text">
+  <body class="flex flex-col min-h-full bg-white text-brand-text antialiased selection:bg-brand-ice selection:text-white">
     <!-- Accessible Skip to Main Content Link -->
     <a
       href="#main-content"
-      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-50 px-4 py-2 bg-brand-navy text-white font-semibold rounded-md shadow-lg outline-none"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-50 px-4 py-2.5 bg-brand-navy text-white font-semibold rounded-lg shadow-xl outline-none ring-2 ring-brand-ice"
     >
       Skip to main content
     </a>
 
-    <!-- Global Header & Mobile Navigation Drawer -->
-    <Header />
-    <MobileMenu />
+    {!hideHeaderFooter && (
+      <>
+        <!-- Global Header & Mobile Navigation Drawer -->
+        <Header />
+        <MobileMenu />
+      </>
+    )}
 
     <!-- Main Content Area -->
     <main id="main-content" class="flex-grow">
       <slot />
     </main>
 
-    <!-- Global Footer & Mobile Direct CTA -->
-    <Footer />
-    <StickyMobileCTA />
+    {!hideHeaderFooter && (
+      <>
+        <!-- Global Footer & Mobile Direct CTA -->
+        <Footer />
+        <StickyMobileCTA />
+      </>
+    )}
+
+    <!-- Scroll Reveal Observer Script -->
+    <script>
+      function initScrollReveal() {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          document.querySelectorAll('.reveal-init').forEach((el) => {
+            el.classList.add('reveal-visible');
+          });
+          return;
+        }
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('reveal-visible');
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          {
+            threshold: 0.1,
+            rootMargin: '0px 0px -40px 0px',
+          }
+        );
+
+        document.querySelectorAll('.reveal-init').forEach((el) => {
+          observer.observe(el);
+        });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initScrollReveal);
+      } else {
+        initScrollReveal();
+      }
+      document.addEventListener('astro:page-load', initScrollReveal);
+    </script>
   </body>
 </html>

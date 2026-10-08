@@ -39,36 +39,44 @@ const reasons = [
 ];
 ---
 
-<section class="py-12 sm:py-16 lg:py-20 bg-brand-surface border-b border-brand-border">
-  <Container>
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+<section class="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-brand-navy-dark via-brand-navy to-brand-navy-dark text-white border-y border-brand-navy-light/40 relative overflow-hidden">
+  <!-- Subtle technical ambient cooling glow -->
+  <div class="absolute top-1/4 -right-20 w-96 h-96 bg-brand-ice/15 rounded-full blur-3xl pointer-events-none" aria-hidden="true"></div>
+  <div class="absolute -bottom-20 -left-20 w-80 h-80 bg-brand-blue/20 rounded-full blur-3xl pointer-events-none" aria-hidden="true"></div>
+
+  <Container class="relative z-10">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
       <!-- Left Column: Context, Technicians, Direct Conversion -->
-      <div class="lg:col-span-5 flex flex-col items-start text-left">
-        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase bg-brand-blue-light text-brand-blue border border-brand-border mb-3">
+      <div class="lg:col-span-5 flex flex-col items-start text-left reveal-init">
+        <span class="inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wide uppercase bg-brand-ice/15 text-brand-ice-light border border-brand-ice/30 mb-4 backdrop-blur-sm">
+          <span class="w-2 h-2 rounded-full bg-brand-ice animate-pulse mr-2"></span>
           Direct &amp; Practical AC Care
         </span>
-        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-brand-navy">
+        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
           Why Patel Cool Tech
         </h2>
-        <p class="mt-3.5 text-base sm:text-lg text-brand-text-muted leading-relaxed">
-          Air conditioning requires precise diagnostics, careful handling of refrigerant pressures, and proper electrical safety. We offer straightforward on-site service backed by direct communication.
+        <p class="mt-4 text-base sm:text-lg text-slate-300 leading-relaxed font-normal">
+          Air conditioning requires precise diagnostics, careful handling of refrigerant pressures, and proper electrical safety. We deliver straightforward on-site service backed by direct communication.
         </p>
 
-        <!-- Direct Contact Summary Card -->
-        <div class="mt-6 p-5 sm:p-6 bg-white rounded-2xl border border-brand-border shadow-soft w-full">
+        <!-- Direct Contact Summary Card (Navy Dark Glass) -->
+        <div class="mt-8 p-6 sm:p-7 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 shadow-darkCard w-full">
           <div class="flex items-center gap-3 mb-3">
-            <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
-            <h3 class="text-sm font-bold uppercase tracking-wider text-brand-navy">Direct On-Call Support</h3>
+            <span class="relative flex h-3 w-3">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+            </span>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-200">Direct On-Call Support</h3>
           </div>
-          <p class="text-sm text-brand-text-muted mb-4 leading-relaxed">
-            Need urgent cooling assistance or have questions regarding a repair or installation? Contact technicians <strong class="text-brand-text font-semibold">{technicianNames}</strong> directly.
+          <p class="text-sm text-slate-300 mb-5 leading-relaxed">
+            Need urgent cooling assistance or have questions regarding a repair or installation? Contact technicians <strong class="text-white font-semibold">{technicianNames}</strong> directly.
           </p>
-          <div class="flex flex-col sm:flex-row gap-2.5">
+          <div class="flex flex-col sm:flex-row gap-3">
             <Button
               href={business.phones.primaryTel}
               variant="primary"
               size="sm"
-              class="w-full sm:w-auto font-semibold justify-center min-h-[48px]"
+              class="w-full sm:w-auto font-bold justify-center min-h-[48px] shadow-iceGlow"
               aria-label={`Call ${business.phones.primaryFormatted}`}
             >
               Call {business.phones.primaryFormatted}
@@ -79,7 +87,7 @@ const reasons = [
               rel="noopener noreferrer"
               variant="whatsapp"
               size="sm"
-              class="w-full sm:w-auto font-semibold justify-center min-h-[48px]"
+              class="w-full sm:w-auto font-bold justify-center min-h-[48px]"
               aria-label="WhatsApp Patel Cool Tech"
             >
               WhatsApp Us
@@ -88,53 +96,52 @@ const reasons = [
         </div>
       </div>
 
-      <!-- Right Column: Factual Checklist / Benefit Rows -->
-      <div class="lg:col-span-7 flex flex-col divide-y divide-brand-border/80 bg-white rounded-2xl border border-brand-border p-6 sm:p-8 shadow-soft">
+      <!-- Right Column: Factual Checklist / Benefit Rows in Modern Technical Grid -->
+      <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4 reveal-init stagger-2">
         {
           reasons.map((reason, idx) => (
-            <div class:list={['flex items-start gap-4 sm:gap-5', idx === 0 ? 'pb-5' : idx === reasons.length - 1 ? 'pt-5' : 'py-5']}>
-              <!-- Technical icon badge -->
-              <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-brand-surface-alt text-brand-blue border border-brand-border flex items-center justify-center flex-shrink-0 mt-0.5">
-                {reason.icon === 'user-check' && (
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                )}
-                {reason.icon === 'home-check' && (
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                  </svg>
-                )}
-                {reason.icon === 'cpu' && (
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
-                  </svg>
-                )}
-                {reason.icon === 'wrench-double' && (
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                )}
-                {reason.icon === 'map-pin' && (
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                )}
-                {reason.icon === 'building' && (
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                  </svg>
-                )}
-              </div>
+            <div class="p-5 sm:p-6 bg-white/[0.04] hover:bg-white/[0.07] backdrop-blur-sm rounded-2xl border border-white/10 hover:border-brand-ice/40 transition-all duration-300 flex flex-col justify-between group">
+              <div>
+                <!-- Icon badge -->
+                <div class="w-11 h-11 rounded-xl bg-brand-ice/15 text-brand-ice border border-brand-ice/20 flex items-center justify-center flex-shrink-0 mb-4 group-hover:scale-110 group-hover:bg-brand-ice group-hover:text-white transition-all duration-300 shadow-sm">
+                  {reason.icon === 'user-check' && (
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  )}
+                  {reason.icon === 'home-check' && (
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                  )}
+                  {reason.icon === 'cpu' && (
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                    </svg>
+                  )}
+                  {reason.icon === 'wrench-double' && (
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  )}
+                  {reason.icon === 'map-pin' && (
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  )}
+                  {reason.icon === 'building' && (
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                  )}
+                </div>
 
-              <!-- Content -->
-              <div class="flex-grow">
-                <h3 class="text-base sm:text-lg font-bold text-brand-navy mb-1">
+                <h3 class="text-base sm:text-lg font-bold text-white mb-2 leading-snug">
                   {reason.title}
                 </h3>
-                <p class="text-sm sm:text-base text-brand-text-muted leading-relaxed">
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
                   {reason.description}
                 </p>
               </div>

@@ -1,0 +1,87 @@
+---
+import { business } from '../data/business';
+
+interface Props {
+  variant?: 'light' | 'dark' | 'auto';
+  size?: 'sm' | 'md' | 'lg';
+  showTagline?: boolean;
+  customLogoUrl?: string;
+  class?: string;
+}
+
+const {
+  variant = 'auto',
+  size = 'md',
+  showTagline = true,
+  customLogoUrl,
+  class: className = '',
+} = Astro.props;
+
+// Size classes
+const iconSizeClasses = {
+  sm: 'w-8 h-8 rounded-lg',
+  md: 'w-10 h-10 rounded-xl',
+  lg: 'w-12 h-12 rounded-2xl',
+}[size];
+
+const textSizeClasses = {
+  sm: 'text-sm sm:text-base',
+  md: 'text-base sm:text-lg lg:text-xl',
+  lg: 'text-lg sm:text-xl lg:text-2xl',
+}[size];
+
+const isLight = variant === 'light';
+---
+
+<div class={`brand-logo-container flex items-center gap-2.5 sm:gap-3 group ${className}`} data-logo-variant={variant}>
+  {customLogoUrl ? (
+    <img
+      src={customLogoUrl}
+      alt={`${business.name} official logo`}
+      class={`object-contain ${iconSizeClasses}`}
+      loading="eager"
+      decoding="async"
+    />
+  ) : (
+    <div
+      class={`brand-logo-mark ${iconSizeClasses} relative flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-105 shadow-sm ${
+        isLight
+          ? 'bg-white/10 text-brand-ice border border-white/20 backdrop-blur-md'
+          : 'bg-gradient-to-br from-brand-navy to-brand-navy-dark text-brand-ice border border-brand-blue/30 shadow-brand-navy/10'
+      }`}
+      aria-hidden="true"
+    >
+      <!-- Stylized Cooling HVAC Icon with airflow & snowflake geometry -->
+      <svg class="w-3/5 h-3/5 transition-transform duration-300 group-hover:rotate-12" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <!-- Dual cooling blades / power bolt -->
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 3L4 14h7l-1 7 9-11h-7l1-7z" />
+        <!-- Subtle cooling dot -->
+        <circle cx="19" cy="5" r="1.5" fill="#38BDF8" stroke="none" />
+      </svg>
+      <!-- Ambient corner glow -->
+      <div class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-brand-ice animate-pulse opacity-70"></div>
+    </div>
+  )}
+
+  <div class="flex flex-col leading-none">
+    <span
+      class={`font-extrabold tracking-tight transition-colors duration-200 leading-tight ${textSizeClasses} ${
+        isLight
+          ? 'text-white group-hover:text-brand-ice-light'
+          : 'text-brand-navy group-hover:text-brand-blue'
+      }`}
+    >
+      {business.name.toUpperCase()}
+    </span>
+    {showTagline && (
+      <span
+        class={`text-[10px] sm:text-xs font-medium tracking-wide flex items-center gap-1.5 mt-0.5 leading-none ${
+          isLight ? 'text-slate-300' : 'text-brand-text-muted'
+        }`}
+      >
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0 animate-pulse"></span>
+        <span class="truncate">Indore &bull; MP</span>
+      </span>
+    )}
+  </div>
+</div>

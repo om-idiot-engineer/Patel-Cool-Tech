@@ -7,6 +7,7 @@ import WorkCTA from '../components/WorkCTA.astro';
 import Button from '../components/Button.astro';
 import { business } from '../data/business';
 import { siteConfig } from '../data/site';
+import { defaultFallbackWork } from '../utils/supabase';
 
 const breadcrumbSchema = {
   '@context': 'https://schema.org',
@@ -55,7 +56,7 @@ const commonWorkCategories = [
   {
     title: 'Water Leakage Troubleshooting',
     slug: 'ac-repair',
-    description: 'Resolving indoor indoor unit water dripping, unblocking choked gravity drain lines, and clearing iced-up evaporator coils.',
+    description: 'Resolving indoor unit water dripping, unblocking choked gravity drain lines, and clearing iced-up evaporator coils.',
     linkText: 'Explore Leakage Repair',
   },
   {
@@ -69,22 +70,13 @@ const commonWorkCategories = [
 
 <BaseLayout
   title="AC Installation & Repair Work in Indore"
-  description="Explore the types of air conditioning installation, fault troubleshooting, deep servicing, and preventive maintenance work handled by Patel Cool Tech across Indore and nearby areas."
+  description="Explore genuine field work photos, installation standards, fault troubleshooting, and deep servicing workflows handled by Patel Cool Tech across Indore and nearby areas."
   canonicalUrl={`${siteConfig.siteUrl}/our-work/`}
   additionalSchema={breadcrumbSchema}
 >
   <!-- Hero Section -->
-  <section class="relative bg-gradient-to-b from-brand-surface via-white to-white pt-6 pb-12 sm:pt-8 sm:pb-16 border-b border-brand-border overflow-hidden">
-    <div class="absolute inset-0 pointer-events-none opacity-[0.03]" aria-hidden="true">
-      <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <pattern id="work-hero-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#0B1F3A" stroke-width="1" />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#work-hero-pattern)" />
-      </svg>
-    </div>
+  <section class="relative bg-gradient-to-b from-brand-surface via-white to-white pt-6 pb-12 sm:pt-10 sm:pb-16 border-b border-brand-border overflow-hidden">
+    <div class="absolute -top-32 right-1/4 w-96 h-96 bg-brand-ice/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true"></div>
 
     <Container class="relative z-10">
       <!-- Breadcrumb Navigation -->
@@ -98,18 +90,18 @@ const commonWorkCategories = [
         </ol>
       </nav>
 
-      <div class="max-w-3xl">
-        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-brand-surface-alt text-brand-navy border border-brand-border mb-4">
+      <div class="max-w-3xl reveal-init">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-white text-brand-navy border border-brand-border shadow-sm mb-4">
           <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true"></span>
-          <span class="tracking-wide uppercase text-[11px] font-bold">FIELD CAPABILITIES &bull; INDORE</span>
+          <span class="tracking-wide uppercase text-[11px] font-bold">FIELD WORK GALLERY &bull; INDORE</span>
         </div>
 
-        <h1 class="text-2xl xs:text-3xl sm:text-4xl lg:text-[2.75rem] font-extrabold tracking-tight text-brand-navy leading-[1.18] sm:leading-[1.15]">
-          Air Conditioning Installation &amp; Repair Work in Indore
+        <h1 class="text-3xl xs:text-4xl sm:text-5xl font-extrabold tracking-tight text-brand-navy leading-tight">
+          Air Conditioning Work Portfolio
         </h1>
 
         <p class="mt-4 sm:mt-5 text-base sm:text-lg text-brand-text-muted leading-relaxed">
-          Here are the kinds of air conditioning installation, fault diagnosis, deep servicing, and preventive maintenance work Patel Cool Tech handles across Indore, Rau, Pithampur, and nearby areas.
+          Documented field work delivered across Indore, Rau, Pithampur, and neighboring areas. Click any project card below to inspect high-resolution photographs, technical steps, and service specifications.
         </p>
 
         <!-- Direct Actions -->
@@ -122,7 +114,7 @@ const commonWorkCategories = [
             aria-label={`Call Patel Cool Tech at ${business.phones.primaryFormatted}`}
           >
             <svg class="w-5 h-5 text-brand-ice flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
             </svg>
             <span>Call: {business.phones.primaryFormatted}</span>
           </Button>
@@ -146,31 +138,22 @@ const commonWorkCategories = [
     </Container>
   </section>
 
-  <!-- Work Categories & Visual Overview Section -->
-  <section class="py-12 sm:py-16 bg-white border-b border-brand-border">
+  <!-- Work Categories & Visual Overview Section with Full Interactive Lightbox -->
+  <section class="py-12 sm:py-16 lg:py-20 bg-white border-b border-brand-border">
     <Container>
-      <div class="max-w-3xl mb-8 sm:mb-10">
-        <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-brand-navy">
-          Primary Field Service Categories
-        </h2>
-        <p class="text-sm sm:text-base text-brand-text-muted mt-2 leading-relaxed">
-          The illustrations below represent the standard on-site technical workflows we deliver for split and window air conditioning units. As real field photography is documented, genuine project photos will be added here.
-        </p>
-      </div>
-
-      <!-- Work Gallery Cards -->
-      <WorkGallery columns={2} />
+      <!-- Work Gallery Component with filters and Lightbox -->
+      <WorkGallery items={defaultFallbackWork} columns={3} showFilters={true} />
     </Container>
   </section>
 
   <!-- What We Commonly Handle Section -->
-  <section class="py-12 sm:py-16 bg-brand-surface border-b border-brand-border">
+  <section class="py-14 sm:py-20 bg-brand-surface border-b border-brand-border">
     <Container>
-      <div class="max-w-3xl mb-8 sm:mb-10">
+      <div class="max-w-3xl mb-8 sm:mb-10 reveal-init">
         <span class="text-xs font-bold uppercase tracking-wider text-brand-blue mb-1.5 block">
           Practical Field Experience
         </span>
-        <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-brand-navy">
+        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-brand-navy">
           What We Commonly Handle On-Site
         </h2>
         <p class="text-sm sm:text-base text-brand-text-muted mt-2 leading-relaxed">
@@ -180,8 +163,8 @@ const commonWorkCategories = [
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {
-          commonWorkCategories.map((item) => (
-            <div class="p-6 bg-white rounded-2xl border border-brand-border shadow-soft flex flex-col justify-between">
+          commonWorkCategories.map((item, idx) => (
+            <div class={`p-6 bg-white rounded-2xl border border-brand-border/90 shadow-soft flex flex-col justify-between card-hover-effect reveal-init stagger-${(idx % 3) + 1}`}>
               <div>
                 <h3 class="text-base sm:text-lg font-bold text-brand-navy mb-2.5">
                   {item.title}

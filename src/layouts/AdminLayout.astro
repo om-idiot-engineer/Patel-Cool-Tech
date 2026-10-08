@@ -1,0 +1,216 @@
+---
+import '../styles/global.css';
+import BrandLogo from '../components/BrandLogo.astro';
+import { isSupabaseConfigured } from '../utils/supabase';
+
+interface Props {
+  title: string;
+  activeTab?: 'dashboard' | 'work' | 'media' | 'settings';
+}
+
+const { title, activeTab = 'dashboard' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="h-full bg-slate-900 text-slate-100">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>{title} | Patel Cool Tech Admin</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  </head>
+  <body class="flex flex-col min-h-full bg-slate-950 text-slate-100 font-sans antialiased">
+    <!-- Admin Top Navbar -->
+    <header class="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16 sm:h-18">
+          <!-- Logo & Admin Badge -->
+          <div class="flex items-center gap-3">
+            <a href="/admin/" class="flex items-center gap-2.5">
+              <BrandLogo variant="light" size="sm" showTagline={false} />
+            </a>
+            <span class="px-2 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-brand-ice/20 text-brand-ice border border-brand-ice/30">
+              Admin CMS
+            </span>
+          </div>
+
+          <!-- Navigation Links (Desktop) -->
+          <nav class="hidden md:flex items-center space-x-1 lg:space-x-2" aria-label="Admin navigation">
+            <a
+              href="/admin/"
+              class:list={[
+                'px-3.5 py-2 rounded-xl text-sm font-semibold transition-colors',
+                activeTab === 'dashboard'
+                  ? 'bg-slate-800 text-white font-bold text-brand-ice-light'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/60',
+              ]}
+            >
+              Dashboard
+            </a>
+            <a
+              href="/admin/work/"
+              class:list={[
+                'px-3.5 py-2 rounded-xl text-sm font-semibold transition-colors',
+                activeTab === 'work'
+                  ? 'bg-slate-800 text-white font-bold text-brand-ice-light'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/60',
+              ]}
+            >
+              Work Portfolio
+            </a>
+            <a
+              href="/admin/media/"
+              class:list={[
+                'px-3.5 py-2 rounded-xl text-sm font-semibold transition-colors',
+                activeTab === 'media'
+                  ? 'bg-slate-800 text-white font-bold text-brand-ice-light'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/60',
+              ]}
+            >
+              Media Library
+            </a>
+            <a
+              href="/admin/settings/"
+              class:list={[
+                'px-3.5 py-2 rounded-xl text-sm font-semibold transition-colors',
+                activeTab === 'settings'
+                  ? 'bg-slate-800 text-white font-bold text-brand-ice-light'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/60',
+              ]}
+            >
+              Settings
+            </a>
+          </nav>
+
+          <!-- Right: View Public Site & Logout -->
+          <div class="flex items-center gap-3">
+            <a
+              href="/"
+              target="_blank"
+              class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors"
+            >
+              <span>View Site</span>
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
+
+            <button
+              type="button"
+              id="admin-logout-btn"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-rose-300 hover:text-rose-100 bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/50 transition-colors cursor-pointer"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              <span>Logout</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile Sub-navigation bar -->
+        <div class="flex md:hidden items-center justify-between py-2 border-t border-slate-800 overflow-x-auto text-xs">
+          <a
+            href="/admin/"
+            class:list={[
+              'px-2.5 py-1.5 rounded-md font-semibold whitespace-nowrap',
+              activeTab === 'dashboard' ? 'text-brand-ice font-bold bg-slate-800' : 'text-slate-400',
+            ]}
+          >
+            Dashboard
+          </a>
+          <a
+            href="/admin/work/"
+            class:list={[
+              'px-2.5 py-1.5 rounded-md font-semibold whitespace-nowrap',
+              activeTab === 'work' ? 'text-brand-ice font-bold bg-slate-800' : 'text-slate-400',
+            ]}
+          >
+            Work
+          </a>
+          <a
+            href="/admin/media/"
+            class:list={[
+              'px-2.5 py-1.5 rounded-md font-semibold whitespace-nowrap',
+              activeTab === 'media' ? 'text-brand-ice font-bold bg-slate-800' : 'text-slate-400',
+            ]}
+          >
+            Media
+          </a>
+          <a
+            href="/admin/settings/"
+            class:list={[
+              'px-2.5 py-1.5 rounded-md font-semibold whitespace-nowrap',
+              activeTab === 'settings' ? 'text-brand-ice font-bold bg-slate-800' : 'text-slate-400',
+            ]}
+          >
+            Settings
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Supabase Status Banner if unconfigured -->
+    {!isSupabaseConfigured && (
+      <div class="bg-amber-950/80 border-b border-amber-800/80 px-4 py-3 text-amber-200 text-xs">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-amber-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span>
+              <strong>Supabase Demo Mode:</strong> Configure <code>PUBLIC_SUPABASE_URL</code> and <code>PUBLIC_SUPABASE_ANON_KEY</code> in <code>.env</code> to enable live database writes and cloud storage. Currently using high-speed local data.
+            </span>
+          </div>
+          <a href="https://supabase.com" target="_blank" class="underline font-bold whitespace-nowrap hover:text-white">
+            Setup Guide &rarr;
+          </a>
+        </div>
+      </div>
+    )}
+
+    <!-- Main Admin Content Area -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+      <slot />
+    </main>
+
+    <!-- Admin Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+      <p>&copy; {new Date().getFullYear()} Patel Cool Tech &bull; Owner Administration System</p>
+    </footer>
+
+    <!-- Client-side Auth Guardian Script -->
+    <script>
+      import { supabase, isSupabaseConfigured } from '../utils/supabase';
+
+      async function checkAdminAuth() {
+        // If Supabase is not configured yet, allow demo exploration
+        if (!isSupabaseConfigured || !supabase) {
+          return;
+        }
+
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          // If no active session, redirect to login
+          window.location.href = '/admin/login/';
+        }
+      }
+
+      // Logout handler
+      const logoutBtn = document.getElementById('admin-logout-btn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', async () => {
+          if (supabase) {
+            await supabase.auth.signOut();
+          }
+          window.location.href = '/admin/login/';
+        });
+      }
+
+      checkAdminAuth();
+    </script>
+  </body>
+</html>

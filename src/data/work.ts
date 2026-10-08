@@ -1,9 +1,11 @@
 export interface WorkItem {
   id: string;
   title: string;
-  category: 'Installation' | 'Repair' | 'AC Service' | 'Maintenance / AMC';
+  category: 'Installation' | 'Repair' | 'AC Service' | 'Maintenance / AMC' | 'Gas Refilling' | 'Other';
   shortDescription: string;
   image: string;
+  videoUrl?: string;
+  mediaType?: 'image' | 'video';
   alt: string;
   serviceUrl: string;
   serviceName: string;
@@ -14,27 +16,29 @@ export interface WorkItem {
 export const workItems: WorkItem[] = [
   {
     id: 'work-installation',
-    title: 'AC Installation',
+    title: 'AC Installation & Precise Mounting',
     category: 'Installation',
     shortDescription: 'Standard wall mounting, vibration-isolated outdoor bracket placement, and leak-tested copper piping for split and window units.',
-    image: '/images/work/work-ac-installation.svg',
-    alt: 'Air conditioner indoor and outdoor unit installation layout illustration',
+    image: '/images/work/ac-installation.jpg',
+    mediaType: 'image',
+    alt: 'Professional split AC indoor unit installation with level alignment in Indore',
     serviceUrl: '/services/ac-installation/',
     serviceName: 'AC Installation Details',
     keyPoints: [
-      'Indoor unit mounting & level alignment',
+      'Indoor unit mounting & precision level alignment',
       'Outdoor condenser bracket with vibration dampers',
       'Refrigerant copper line flaring & vacuum checks',
     ],
-    isPlaceholder: true,
+    isPlaceholder: false,
   },
   {
     id: 'work-repair',
-    title: 'AC Repair & Diagnostics',
+    title: 'AC Repair & Electrical Diagnostics',
     category: 'Repair',
     shortDescription: 'On-site troubleshooting for non-cooling units, unexpected tripping, sensor faults, PCB board issues, and fan motor problems.',
-    image: '/images/work/work-ac-repair.svg',
-    alt: 'Air conditioner electrical diagnostics and component testing illustration',
+    image: '/images/work/ac-repair.jpg',
+    mediaType: 'image',
+    alt: 'Air conditioner electrical diagnostics and component testing with digital multimeter',
     serviceUrl: '/services/ac-repair/',
     serviceName: 'AC Repair Details',
     keyPoints: [
@@ -42,15 +46,16 @@ export const workItems: WorkItem[] = [
       'PCB electronic circuit & sensor testing',
       'Cooling loss & circuit breaker trip troubleshooting',
     ],
-    isPlaceholder: true,
+    isPlaceholder: false,
   },
   {
     id: 'work-service',
-    title: 'Deep AC Servicing',
+    title: 'High-Pressure Jet Spray Deep Servicing',
     category: 'AC Service',
     shortDescription: 'High-pressure wet jet coil wash, indoor blower cleaning, and drain tray flush to restore proper cooling airflow and hygiene.',
-    image: '/images/work/work-ac-service.svg',
-    alt: 'Air conditioner coil cleaning and maintenance illustration',
+    image: '/images/work/ac-service.jpg',
+    mediaType: 'image',
+    alt: 'High pressure water jet power wash on outdoor air conditioner condenser coils',
     serviceUrl: '/services/ac-service/',
     serviceName: 'Deep Servicing Details',
     keyPoints: [
@@ -58,14 +63,32 @@ export const workItems: WorkItem[] = [
       'Indoor blower drum & air filter wash',
       'Condensate drainage line clearing & disinfection',
     ],
-    isPlaceholder: true,
+    isPlaceholder: false,
+  },
+  {
+    id: 'work-gas-refilling',
+    title: 'Refrigerant Pressure Testing & Gas Charging',
+    category: 'Gas Refilling',
+    shortDescription: 'Manifold pressure gauge leak detection, nitrogen pressure testing, flare joint seals, and genuine R32 / R410A / R22 gas recharging.',
+    image: '/images/work/ac-gas-charging.jpg',
+    mediaType: 'image',
+    alt: 'Technician charging refrigerant gas with brass manifold pressure gauge set',
+    serviceUrl: '/services/ac-gas-refilling/',
+    serviceName: 'Gas Refilling Details',
+    keyPoints: [
+      'Nitrogen pressure testing for pinhole leaks',
+      'R32, R410A & R22 certified refrigerant recharging',
+      'Post-charging operating pressure & cooling verification',
+    ],
+    isPlaceholder: false,
   },
   {
     id: 'work-maintenance',
-    title: 'Preventive Maintenance',
+    title: 'Preventive Maintenance & Commercial AMC',
     category: 'Maintenance / AMC',
     shortDescription: 'Scheduled system checkups, refrigerant pressure evaluations, electrical terminal inspections, and customized AMC agreements.',
-    image: '/images/work/work-ac-maintenance.svg',
+    image: '/images/work/ac-installation.jpg',
+    mediaType: 'image',
     alt: 'Refrigerant pressure gauge and preventive AC maintenance illustration',
     serviceUrl: '/services/ac-amc/',
     serviceName: 'Maintenance & AMC Details',
@@ -74,6 +97,6 @@ export const workItems: WorkItem[] = [
       'Electrical connection tightness & terminal inspection',
       'Customized residential & commercial AMC contracts',
     ],
-    isPlaceholder: true,
+    isPlaceholder: false,
   },
 ];
