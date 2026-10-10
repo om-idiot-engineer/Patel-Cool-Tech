@@ -207,5 +207,17 @@ const schemaData = generateLocalBusinessSchema();
       }
       document.addEventListener('astro:page-load', initInteractiveMotion);
     </script>
+
+    <!-- Global Realtime Data Sync Engine -->
+    <script>
+      import { initLiveSync } from '../utils/liveSync';
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initLiveSync);
+      } else {
+        initLiveSync();
+      }
+      document.addEventListener('astro:page-load', initLiveSync);
+    </script>
   </body>
 </html>

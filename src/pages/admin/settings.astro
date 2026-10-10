@@ -542,6 +542,7 @@ const settings = await getSiteSettings();
 
   <script>
     import { supabase, isSupabaseConfigured } from '../../utils/supabase';
+    import { broadcastSettingsUpdate } from '../../utils/liveSync';
 
     const form = document.getElementById('settings-form');
     const toast = document.getElementById('settings-toast');
@@ -727,20 +728,22 @@ const settings = await getSiteSettings();
             .getPublicUrl(filePath);
 
           if (logoUrlInput) logoUrlInput.value = publicUrl;
-          try {
-            localStorage.setItem('pct_custom_logo', publicUrl);
-            window.dispatchEvent(new CustomEvent('pct:logo-updated', { detail: { logoUrl: publicUrl } }));
-          } catch (ignore) {}
+          broadcastSettingsUpdate({ logo_url: publicUrl });
           updateLogoPreview(publicUrl);
 
           // Auto-save setting to Supabase site_settings
-          await supabase.from('site_settings').upsert({
+          const { error: upsertErr } = await supabase.from('site_settings').upsert({
             id: 'default',
             logo_url: publicUrl,
             updated_at: new Date().toISOString(),
           });
 
-          showToast('Official Logo uploaded & saved successfully!');
+          if (upsertErr) {
+            console.error('Supabase upsert error:', upsertErr);
+            showToast('Logo uploaded, but saving to DB failed: ' + upsertErr.message);
+          } else {
+            showToast('Official Logo uploaded & saved successfully!');
+          }
         } catch (err: any) {
           console.error('Logo upload error:', err);
           // If storage bucket isn't created or fails, fall back to Base64 data URL
@@ -748,9 +751,7 @@ const settings = await getSiteSettings();
           reader.onload = (e) => {
             const dataUrl = e.target?.result as string;
             if (logoUrlInput) logoUrlInput.value = dataUrl;
-            try {
-              localStorage.setItem('pct_custom_logo', dataUrl);
-            } catch (ignore) {}
+            broadcastSettingsUpdate({ logo_url: dataUrl });
             updateLogoPreview(dataUrl);
             showToast('Logo attached locally. Click "Save All Settings" to confirm.');
           };
@@ -762,9 +763,7 @@ const settings = await getSiteSettings();
         reader.onload = (e) => {
           const dataUrl = e.target?.result as string;
           if (logoUrlInput) logoUrlInput.value = dataUrl;
-          try {
-            localStorage.setItem('pct_custom_logo', dataUrl);
-          } catch (ignore) {}
+          broadcastSettingsUpdate({ logo_url: dataUrl });
           updateLogoPreview(dataUrl);
           showToast('Logo selected! Tap "Save All Settings" to apply.');
         };
@@ -778,10 +777,7 @@ const settings = await getSiteSettings();
     removeLogoBtn?.addEventListener('click', async () => {
       if (confirm('Reset logo to default technical vector badge?')) {
         if (logoUrlInput) logoUrlInput.value = '';
-        try {
-          localStorage.removeItem('pct_custom_logo');
-          window.dispatchEvent(new CustomEvent('pct:logo-updated', { detail: { logoUrl: '' } }));
-        } catch (ignore) {}
+        broadcastSettingsUpdate({ logo_url: '' });
         updateLogoPreview('');
 
         if (isSupabaseConfigured && supabase) {
@@ -824,6 +820,7 @@ const settings = await getSiteSettings();
             .getPublicUrl(filePath);
 
           if (heroUrlInput) heroUrlInput.value = publicUrl;
+          broadcastSettingsUpdate({ hero_media_url: publicUrl });
           showToast('Hero media uploaded successfully.');
         } catch (err: any) {
           alert('Hero upload failed: ' + err.message);
@@ -831,6 +828,7 @@ const settings = await getSiteSettings();
       } else {
         const objectUrl = URL.createObjectURL(file);
         if (heroUrlInput) heroUrlInput.value = objectUrl;
+        broadcastSettingsUpdate({ hero_media_url: objectUrl });
         showToast('Hero media attached for preview.');
       }
 
@@ -863,6 +861,7 @@ const settings = await getSiteSettings();
 
           if (techMahendraUrlInput) techMahendraUrlInput.value = publicUrl;
           updateMahendraPreview(publicUrl);
+          broadcastSettingsUpdate({ tech_mahendra_photo_url: publicUrl });
 
           await supabase.from('site_settings').upsert({
             id: 'default',
@@ -878,6 +877,7 @@ const settings = await getSiteSettings();
             const dataUrl = e.target?.result as string;
             if (techMahendraUrlInput) techMahendraUrlInput.value = dataUrl;
             updateMahendraPreview(dataUrl);
+            broadcastSettingsUpdate({ tech_mahendra_photo_url: dataUrl });
             showToast('Photo attached locally. Click "Save Changes" to confirm.');
           };
           reader.readAsDataURL(file);
@@ -888,6 +888,7 @@ const settings = await getSiteSettings();
           const dataUrl = e.target?.result as string;
           if (techMahendraUrlInput) techMahendraUrlInput.value = dataUrl;
           updateMahendraPreview(dataUrl);
+          broadcastSettingsUpdate({ tech_mahendra_photo_url: dataUrl });
           showToast('Photo attached locally. Click "Save Changes" to confirm.');
         };
         reader.readAsDataURL(file);
@@ -900,6 +901,7 @@ const settings = await getSiteSettings();
       if (confirm("Reset Mahendra Patel's photo to default monogram (MP)?")) {
         if (techMahendraUrlInput) techMahendraUrlInput.value = '';
         updateMahendraPreview('');
+        broadcastSettingsUpdate({ tech_mahendra_photo_url: '' });
 
         if (isSupabaseConfigured && supabase) {
           await supabase.from('site_settings').upsert({
@@ -938,6 +940,7 @@ const settings = await getSiteSettings();
 
           if (techSatyamUrlInput) techSatyamUrlInput.value = publicUrl;
           updateSatyamPreview(publicUrl);
+          broadcastSettingsUpdate({ tech_satyam_photo_url: publicUrl });
 
           await supabase.from('site_settings').upsert({
             id: 'default',
@@ -953,6 +956,7 @@ const settings = await getSiteSettings();
             const dataUrl = e.target?.result as string;
             if (techSatyamUrlInput) techSatyamUrlInput.value = dataUrl;
             updateSatyamPreview(dataUrl);
+            broadcastSettingsUpdate({ tech_satyam_photo_url: dataUrl });
             showToast('Photo attached locally. Click "Save Changes" to confirm.');
           };
           reader.readAsDataURL(file);
@@ -963,6 +967,7 @@ const settings = await getSiteSettings();
           const dataUrl = e.target?.result as string;
           if (techSatyamUrlInput) techSatyamUrlInput.value = dataUrl;
           updateSatyamPreview(dataUrl);
+          broadcastSettingsUpdate({ tech_satyam_photo_url: dataUrl });
           showToast('Photo attached locally. Click "Save Changes" to confirm.');
         };
         reader.readAsDataURL(file);
@@ -975,6 +980,7 @@ const settings = await getSiteSettings();
       if (confirm("Reset Satyam Patel's photo to default monogram (SP)?")) {
         if (techSatyamUrlInput) techSatyamUrlInput.value = '';
         updateSatyamPreview('');
+        broadcastSettingsUpdate({ tech_satyam_photo_url: '' });
 
         if (isSupabaseConfigured && supabase) {
           await supabase.from('site_settings').upsert({
@@ -1066,20 +1072,23 @@ const settings = await getSiteSettings();
         updated_at: new Date().toISOString(),
       };
 
+      // Instantly broadcast update locally and across tabs
+      broadcastSettingsUpdate(updatedPayload as any);
+
+      let dbError: any = null;
       if (isSupabaseConfigured && supabase) {
-        await supabase.from('site_settings').upsert(updatedPayload);
+        const { error } = await supabase.from('site_settings').upsert(updatedPayload);
+        if (error) {
+          dbError = error;
+          console.error('Supabase settings upsert error:', error);
+        }
       }
 
-      try {
-        if (logoUrl) {
-          localStorage.setItem('pct_custom_logo', logoUrl);
-        } else {
-          localStorage.removeItem('pct_custom_logo');
-        }
-        window.dispatchEvent(new CustomEvent('pct:logo-updated', { detail: { logoUrl } }));
-      } catch (ignore) {}
-
-      showToast('All website, logo and technician settings saved successfully!');
+      if (dbError) {
+        alert('Settings applied locally, but saving to Supabase database returned: ' + dbError.message);
+      } else {
+        showToast('All website, logo and technician settings saved successfully!');
+      }
     });
 
     const topSaveBtn = document.getElementById('top-save-settings-btn');

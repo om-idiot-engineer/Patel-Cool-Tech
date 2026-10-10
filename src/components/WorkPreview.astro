@@ -384,6 +384,137 @@ const row2Items = buildTrackItems(row2Source);
 </section>
 
 <script>
+  import type { WorkItemDB } from '../types/database';
+  import { getStoredWorkItems } from '../utils/liveSync';
+
+  let currentItemsData: WorkItemDB[] = [];
+  let isLightboxOpen = false;
+  let currentIndex = 0;
+
+  function createCardHTML(item: WorkItemDB, liveItems: WorkItemDB[]) {
+    const isVideo = item.media_type === 'video' || Boolean(item.video_url) || (Boolean(item.image_url) && /\.(mp4|webm|mov)$/i.test(item.image_url));
+    const videoSrc = item.video_url || (isVideo ? item.image_url : '');
+    const uniqueIdx = liveItems.findIndex((d) => d.id === item.id);
+    const mediaSrc = item.thumbnail_url || item.image_url;
+
+    return `
+      <div
+        class="work-preview-item flex-shrink-0 w-[220px] xs:w-[245px] sm:w-[300px] md:w-[350px] lg:w-[380px] h-[155px] xs:h-[172px] sm:h-[210px] md:h-[235px] lg:h-[250px] relative rounded-2xl sm:rounded-3xl overflow-hidden border border-brand-border/90 bg-slate-900 shadow-soft hover:shadow-[0_12px_28px_-6px_rgba(2,132,199,0.25)] hover:border-brand-ice hover:-translate-y-1 transition-all duration-300 group cursor-pointer select-none active:scale-[0.98]"
+        data-unique-idx="${uniqueIdx >= 0 ? uniqueIdx : 0}"
+        data-title="${item.title}"
+        data-description="${item.description || ''}"
+        data-image="${item.image_url}"
+        data-video="${videoSrc}"
+        data-mediatype="${isVideo ? 'video' : 'image'}"
+        data-category="${item.category}"
+        data-serviceurl="${item.service_url || '/services/'}"
+      >
+        ${isVideo ? `
+          <video
+            src="${videoSrc}#t=0.001"
+            muted
+            playsinline
+            preload="metadata"
+            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none"
+          ></video>
+        ` : `
+          <img
+            src="${mediaSrc}"
+            alt="${item.alt_text || item.title}"
+            width="400"
+            height="260"
+            loading="lazy"
+            decoding="async"
+            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+          />
+        `}
+        <div class="absolute inset-0 bg-gradient-to-t from-brand-navy-dark/95 via-brand-navy-dark/40 to-transparent pointer-events-none"></div>
+        <div class="absolute top-2.5 sm:top-3 left-2.5 sm:left-3 flex items-center gap-1.5 pointer-events-none">
+          <span class="px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold uppercase tracking-wider bg-brand-navy/85 backdrop-blur-md text-white border border-white/20 shadow-xs">
+            ${item.category}
+          </span>
+          ${isVideo ? `
+            <span class="px-2 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold uppercase tracking-wider bg-red-600/90 backdrop-blur-md text-white border border-white/20 flex items-center gap-1 shadow-xs">
+              <svg class="w-2.5 h-2.5 fill-current" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+              <span>Reel</span>
+            </span>
+          ` : ''}
+        </div>
+        ${isVideo ? `
+          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-brand-navy/90 text-white border border-brand-ice/60 flex items-center justify-center shadow-lg transform group-hover:scale-110 group-hover:bg-brand-ice transition-all duration-300">
+              <svg class="w-4 h-4 sm:w-5 sm:h-5 text-brand-ice group-hover:text-white ml-0.5 transition-colors" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </div>
+          </div>
+        ` : ''}
+        <div class="absolute inset-x-0 bottom-0 p-3 sm:p-4 text-white pointer-events-none flex flex-col justify-end">
+          <h3 class="text-xs sm:text-sm md:text-base font-bold text-white tracking-tight line-clamp-1 font-display group-hover:text-sky-300 transition-colors">
+            ${item.title}
+          </h3>
+          <div class="flex items-center justify-between text-[10px] sm:text-[11px] text-sky-200/90 font-medium mt-1">
+            <span class="inline-flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+              <span>${isVideo ? 'Watch Video Reel' : 'Tap to View Photo'}</span>
+            </span>
+            <svg class="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderMarqueeTracks(liveItems: WorkItemDB[]) {
+    if (!liveItems || liveItems.length === 0) return;
+    currentItemsData = liveItems;
+
+    const row1Track = document.getElementById('preview-track-row1');
+    const row2Track = document.getElementById('preview-track-row2');
+    if (!row1Track || !row2Track) return;
+
+    const explicitTop = liveItems.filter((i) => i.row_position === 'top');
+    const explicitBottom = liveItems.filter((i) => i.row_position === 'bottom');
+
+    let row1Source = liveItems;
+    let row2Source = liveItems;
+
+    if (explicitTop.length > 0 && explicitBottom.length > 0) {
+      row1Source = explicitTop;
+      row2Source = explicitBottom;
+    } else if (explicitTop.length > 0) {
+      row1Source = explicitTop;
+      row2Source = liveItems.filter((i) => i.row_position !== 'top');
+      if (row2Source.length === 0) row2Source = explicitTop;
+    } else if (explicitBottom.length > 0) {
+      row2Source = explicitBottom;
+      row1Source = liveItems.filter((i) => i.row_position !== 'bottom');
+      if (row1Source.length === 0) row1Source = explicitBottom;
+    } else {
+      const count = liveItems.length;
+      const shift = count >= 4 ? Math.floor(count / 2) : 1;
+      row1Source = liveItems;
+      row2Source = count > 1 ? [...liveItems.slice(shift), ...liveItems.slice(0, shift)] : liveItems;
+    }
+
+    const buildTrackItems = (sourceList: WorkItemDB[]) => {
+      if (sourceList.length === 0) return [];
+      const repetitions = Math.max(2, Math.ceil(8 / sourceList.length));
+      const half: WorkItemDB[] = [];
+      for (let i = 0; i < repetitions; i++) {
+        half.push(...sourceList);
+      }
+      return [...half, ...half];
+    };
+
+    row1Track.innerHTML = buildTrackItems(row1Source).map((item) => createCardHTML(item, liveItems)).join('');
+    row2Track.innerHTML = buildTrackItems(row2Source).map((item) => createCardHTML(item, liveItems)).join('');
+  }
+
   function setupWorkPreviewLightbox() {
     const lightbox = document.getElementById('preview-lightbox');
     const container = document.getElementById('preview-lb-container');
@@ -399,18 +530,26 @@ const row2Items = buildTrackItems(row2Source);
     const lbServiceLink = document.getElementById('preview-lb-service-link') as HTMLAnchorElement | null;
 
     const dataEl = document.getElementById('work-preview-data');
-    const itemsData = dataEl ? JSON.parse(dataEl.textContent || '[]') : [];
-    const totalCount = itemsData.length;
-    if (!lightbox || totalCount === 0) return;
+    if (currentItemsData.length === 0) {
+      currentItemsData = dataEl ? JSON.parse(dataEl.textContent || '[]') : [];
+    }
 
-    let currentIndex = 0;
+    // Check cached items
+    const cachedItems = getStoredWorkItems();
+    if (cachedItems && cachedItems.length > 0) {
+      renderMarqueeTracks(cachedItems);
+    }
 
     function showItem(idx: number) {
+      const totalCount = currentItemsData.length;
+      if (totalCount === 0) return;
       if (idx < 0) idx = totalCount - 1;
       if (idx >= totalCount) idx = 0;
       currentIndex = idx;
 
-      const item = itemsData[currentIndex];
+      const item = currentItemsData[currentIndex];
+      if (!item) return;
+
       const title = item.title || '';
       const desc = item.description || '';
       const image = item.image_url || '';
@@ -454,6 +593,7 @@ const row2Items = buildTrackItems(row2Source);
       container?.classList.remove('scale-95');
       container?.classList.add('scale-100');
       document.body.style.overflow = 'hidden';
+      isLightboxOpen = true;
     }
 
     function closeLightbox() {
@@ -466,12 +606,13 @@ const row2Items = buildTrackItems(row2Source);
       container?.classList.remove('scale-100');
       container?.classList.add('scale-95');
       document.body.style.overflow = '';
+      isLightboxOpen = false;
     }
 
-    // High performance O(1) event delegation on the carousel container
-    const carouselSection = document.getElementById('work-preview-carousel');
-    if (carouselSection) {
-      carouselSection.onclick = (e) => {
+    // Delegated click listener on #work section so clicks on row 1 or row 2 open the lightbox
+    const workSection = document.getElementById('work');
+    if (workSection) {
+      workSection.onclick = (e) => {
         const target = e.target as HTMLElement | null;
         const item = target?.closest<HTMLElement>('.work-preview-item');
         if (item) {
@@ -485,12 +626,14 @@ const row2Items = buildTrackItems(row2Source);
     if (prevBtn) prevBtn.onclick = () => showItem(currentIndex - 1);
     if (nextBtn) nextBtn.onclick = () => showItem(currentIndex + 1);
 
-    lightbox.onclick = (e) => {
-      if (e.target === lightbox) closeLightbox();
-    };
+    if (lightbox) {
+      lightbox.onclick = (e) => {
+        if (e.target === lightbox) closeLightbox();
+      };
+    }
 
     document.onkeydown = (e) => {
-      if (!lightbox || lightbox.classList.contains('pointer-events-none')) return;
+      if (!isLightboxOpen) return;
       if (e.key === 'Escape') closeLightbox();
       if (e.key === 'ArrowLeft') showItem(currentIndex - 1);
       if (e.key === 'ArrowRight') showItem(currentIndex + 1);
@@ -503,4 +646,10 @@ const row2Items = buildTrackItems(row2Source);
     setupWorkPreviewLightbox();
   }
   document.addEventListener('astro:page-load', setupWorkPreviewLightbox);
+
+  window.addEventListener('pct:work-updated', (e: any) => {
+    if (Array.isArray(e.detail)) {
+      renderMarqueeTracks(e.detail);
+    }
+  });
 </script>

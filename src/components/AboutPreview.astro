@@ -176,3 +176,49 @@ const technicianProfiles = [
     </div>
   </Container>
 </section>
+
+<script>
+  import { getStoredSettings } from '../utils/liveSync';
+
+  function syncTechPhotos(data?: any) {
+    const settings = data || getStoredSettings();
+    if (!settings) return;
+
+    const containers = document.querySelectorAll<HTMLElement>('.tech-avatar-container');
+    containers.forEach((container) => {
+      const initials = container.dataset.techInitials;
+      const name = container.dataset.techName || '';
+      const ring = container.dataset.techRing || '';
+      const gradient = container.dataset.techGradient || '';
+      const contentBox = container.querySelector<HTMLElement>('.tech-avatar-content');
+      if (!contentBox) return;
+
+      const photoUrl = initials === 'MP' ? settings.tech_mahendra_photo_url : settings.tech_satyam_photo_url;
+
+      if (photoUrl && photoUrl.trim().length > 0) {
+        contentBox.innerHTML = `
+          <img
+            src="${photoUrl}"
+            alt="${name}"
+            class="tech-avatar-img w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl lg:rounded-3xl object-cover shadow-md ring-2 ${ring} group-hover:scale-105 transition-transform duration-200"
+            loading="lazy"
+          />
+        `;
+      } else {
+        contentBox.innerHTML = `
+          <div class="tech-avatar-monogram w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl lg:rounded-3xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white font-extrabold text-xl sm:text-2xl lg:text-3xl shadow-md ring-2 ${ring} group-hover:scale-105 transition-transform duration-200">
+            <span class="tracking-wider">${initials}</span>
+          </div>
+        `;
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => syncTechPhotos());
+  } else {
+    syncTechPhotos();
+  }
+  document.addEventListener('astro:page-load', () => syncTechPhotos());
+  window.addEventListener('pct:settings-updated', (e: any) => syncTechPhotos(e.detail));
+</script>

@@ -420,6 +420,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   <script>
     import { supabase, isSupabaseConfigured, defaultFallbackWork } from '../../utils/supabase';
     import type { WorkItemDB } from '../../types/database';
+    import { broadcastWorkItemsUpdate } from '../../utils/liveSync';
 
     let localWorkItems: WorkItemDB[] = [...defaultFallbackWork];
     let deleteTargetId: string | null = null;
@@ -471,6 +472,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           .order('sort_order', { ascending: true });
         if (!error && data && data.length > 0) {
           localWorkItems = data as WorkItemDB[];
+          broadcastWorkItemsUpdate(localWorkItems);
         }
       }
       renderCards();
@@ -658,6 +660,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           }
           const item = localWorkItems.find((i) => i.id === id);
           if (item) item.row_position = targetRow;
+          broadcastWorkItemsUpdate(localWorkItems);
 
           showToast(`Moved project to ${targetRow === 'top' ? 'Top Line' : 'Bottom Line'}.`);
           renderCards();
@@ -841,41 +844,60 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         updated_at: new Date().toISOString(),
       };
 
-      if (isSupabaseConfigured && supabase) {
-        if (formId) {
-          await supabase.from('work_items').update(itemPayload).eq('id', formId);
-        } else {
-          await supabase.from('work_items').insert([{ ...itemPayload, created_at: new Date().toISOString() }]);
-        }
+      // Instant optimistic local update
+      if (formId) {
+        const idx = localWorkItems.findIndex((i) => i.id === formId);
+        if (idx >= 0) localWorkItems[idx] = { ...localWorkItems[idx], ...itemPayload } as WorkItemDB;
       } else {
-        // Demo local state
-        if (formId) {
-          const idx = localWorkItems.findIndex((i) => i.id === formId);
-          if (idx >= 0) localWorkItems[idx] = { ...localWorkItems[idx], ...itemPayload } as WorkItemDB;
-        } else {
-          localWorkItems.unshift({
-            ...itemPayload,
-            id: `work-custom-${Date.now()}`,
-          } as WorkItemDB);
-        }
+        localWorkItems.unshift({
+          ...itemPayload,
+          id: `work-item-${Date.now()}`,
+          created_at: new Date().toISOString(),
+        } as WorkItemDB);
       }
+      broadcastWorkItemsUpdate(localWorkItems);
+      renderCards();
 
-      closeModal();
-      showToast('Work project saved successfully.');
-      loadItems();
+      try {
+        if (isSupabaseConfigured && supabase) {
+          if (formId) {
+            const { error } = await supabase.from('work_items').update(itemPayload).eq('id', formId);
+            if (error) throw error;
+          } else {
+            const { error } = await supabase.from('work_items').insert([{ ...itemPayload, created_at: new Date().toISOString() }]);
+            if (error) throw error;
+          }
+        }
+
+        closeModal();
+        showToast('Work project saved successfully.');
+        await loadItems();
+      } catch (err: any) {
+        console.error('Work save error:', err);
+        alert('Could not save work project to cloud: ' + (err.message || 'Unknown error'));
+      }
     });
 
     // Confirm Delete
     confirmDeleteBtn?.addEventListener('click', async () => {
       if (!deleteTargetId) return;
-      if (isSupabaseConfigured && supabase) {
-        await supabase.from('work_items').delete().eq('id', deleteTargetId);
-      } else {
-        localWorkItems = localWorkItems.filter((i) => i.id !== deleteTargetId);
+      const targetId = deleteTargetId;
+      localWorkItems = localWorkItems.filter((i) => i.id !== targetId);
+      broadcastWorkItemsUpdate(localWorkItems);
+      renderCards();
+
+      try {
+        if (isSupabaseConfigured && supabase) {
+          const { error } = await supabase.from('work_items').delete().eq('id', targetId);
+          if (error) throw error;
+        }
+        closeDeleteDialog();
+        showToast('Work item deleted.');
+        await loadItems();
+      } catch (err: any) {
+        console.error('Work delete error:', err);
+        alert('Could not delete item: ' + (err.message || 'Unknown error'));
       }
-      closeDeleteDialog();
-      showToast('Work item deleted.');
-      loadItems();
     });
 
     cancelDeleteBtn?.addEventListener('click', closeDeleteDialog);

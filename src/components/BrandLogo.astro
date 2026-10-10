@@ -95,12 +95,15 @@ const isLight = variant === 'light';
 </div>
 
 <script>
+  import { getStoredLogo } from '../utils/liveSync';
+
   function applyLogoToContainers(logoUrl: string | null) {
-    if (!logoUrl) return;
     const containers = document.querySelectorAll<HTMLElement>('.brand-logo-container');
     containers.forEach((container) => {
-      const visual = container.querySelector<HTMLElement>('.brand-logo-visual') || container;
+      const visual = container.querySelector<HTMLElement>('.brand-logo-visual');
+      if (!visual) return;
       const size = container.dataset.logoSize || 'md';
+      const isLight = container.dataset.logoVariant === 'light';
 
       const sizeClasses =
         size === 'sm'
@@ -109,37 +112,67 @@ const isLight = variant === 'light';
           ? 'max-h-12 sm:max-h-14 max-w-[180px] w-auto object-contain rounded-lg'
           : 'max-h-10 sm:max-h-11 max-w-[150px] w-auto object-contain rounded-md';
 
-      let img = visual.querySelector('img.brand-logo-img') as HTMLImageElement | null;
-      if (!img) {
-        visual.innerHTML = `
-          <img
-            src="${logoUrl}"
-            alt="Patel Cool Tech official logo"
-            class="brand-logo-img ${sizeClasses}"
-            loading="eager"
-            decoding="async"
-          />
-        `;
-      } else if (img.src !== logoUrl) {
-        img.src = logoUrl;
+      const iconSizeClasses =
+        size === 'sm' ? 'w-8 h-8 rounded-lg' : size === 'lg' ? 'w-12 h-12 rounded-2xl' : 'w-10 h-10 rounded-xl';
+
+      if (logoUrl && logoUrl.trim().length > 0) {
+        let img = visual.querySelector('img.brand-logo-img') as HTMLImageElement | null;
+        if (!img) {
+          visual.innerHTML = `
+            <img
+              src="${logoUrl}"
+              alt="Patel Cool Tech official logo"
+              class="brand-logo-img ${sizeClasses}"
+              loading="eager"
+              decoding="async"
+            />
+          `;
+        } else if (img.src !== logoUrl) {
+          img.src = logoUrl;
+        }
+      } else {
+        const existingImg = visual.querySelector('img.brand-logo-img');
+        if (existingImg) {
+          visual.innerHTML = `
+            <div
+              class="brand-logo-mark ${iconSizeClasses} relative flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-105 shadow-sm ${
+                isLight
+                  ? 'bg-white/10 text-brand-ice border border-white/20 backdrop-blur-md'
+                  : 'bg-gradient-to-br from-brand-navy to-brand-navy-dark text-brand-ice border border-brand-blue/30 shadow-brand-navy/10'
+              }"
+              aria-hidden="true"
+            >
+              <svg class="w-3/5 h-3/5 transition-transform duration-300 group-hover:rotate-12" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 3L4 14h7l-1 7 9-11h-7l1-7z" />
+                <circle cx="19" cy="5" r="1.5" fill="#38BDF8" stroke="none" />
+              </svg>
+              <div class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-brand-ice animate-pulse opacity-70"></div>
+            </div>
+          `;
+        }
       }
     });
   }
 
-  function syncLocalBrandLogo() {
-    try {
-      const cachedLogo = localStorage.getItem('pct_custom_logo');
-      if (cachedLogo) {
-        applyLogoToContainers(cachedLogo);
-      }
-    } catch (_) {}
+  function syncBrandLogo(url?: string | null) {
+    const targetUrl = typeof url === 'string' ? url : getStoredLogo();
+    if (targetUrl) {
+      applyLogoToContainers(targetUrl);
+    }
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', syncLocalBrandLogo);
+    document.addEventListener('DOMContentLoaded', () => syncBrandLogo());
   } else {
-    syncLocalBrandLogo();
+    syncBrandLogo();
   }
-  document.addEventListener('astro:page-load', syncLocalBrandLogo);
-  window.addEventListener('pct:logo-updated', syncLocalBrandLogo);
+  document.addEventListener('astro:page-load', () => syncBrandLogo());
+  window.addEventListener('pct:logo-updated', (e: any) => {
+    applyLogoToContainers(e.detail?.logoUrl);
+  });
+  window.addEventListener('pct:settings-updated', (e: any) => {
+    if (typeof e.detail?.logo_url === 'string') {
+      applyLogoToContainers(e.detail.logo_url);
+    }
+  });
 </script>

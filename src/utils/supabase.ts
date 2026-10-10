@@ -130,18 +130,42 @@ export const defaultSiteSettings: SiteSettingsDB = {
   tech_satyam_photo_url: '',
 };
 
-// In-memory single-flight promise cache to guarantee O(1) network fetch time complexity across components and pages
+// In-memory single-flight promise cache to guarantee O(1) network fetch time complexity across components during build
 let cachedWorkItemsPromise: Promise<WorkItemDB[]> | null = null;
 let cachedSiteSettingsPromise: Promise<SiteSettingsDB> | null = null;
+
+export function clearServerCache(): void {
+  cachedWorkItemsPromise = null;
+  cachedSiteSettingsPromise = null;
+}
 
 /**
  * Fetch published work items for public pages.
  * Falls back safely to defaultFallbackWork if Supabase is unconfigured or fails.
- * Cached in-memory to prevent duplicate network requests across components during page generation.
+ * Cached in-memory during static build to prevent duplicate network requests across components.
  */
 export async function getPublishedWorkItems(): Promise<WorkItemDB[]> {
   if (!supabase) {
     return defaultFallbackWork;
+  }
+
+  if (import.meta.env.DEV) {
+    try {
+      const { data, error } = await supabase
+        .from('work_items')
+        .select('*')
+        .eq('published', true)
+        .order('sort_order', { ascending: true })
+        .order('created_at', { ascending: false });
+
+      if (error || !data || data.length === 0) {
+        return defaultFallbackWork;
+      }
+      return data as WorkItemDB[];
+    } catch (err) {
+      console.warn('Could not fetch work items from Supabase, using fallback:', err);
+      return defaultFallbackWork;
+    }
   }
 
   if (!cachedWorkItemsPromise) {
@@ -171,11 +195,29 @@ export async function getPublishedWorkItems(): Promise<WorkItemDB[]> {
 
 /**
  * Fetch site settings.
- * Cached in-memory to guarantee O(1) time complexity across header, footer, hero, and pages.
+ * Cached in-memory during static build to guarantee O(1) time complexity across header, footer, hero, and pages.
  */
 export async function getSiteSettings(): Promise<SiteSettingsDB> {
   if (!supabase) {
     return defaultSiteSettings;
+  }
+
+  if (import.meta.env.DEV) {
+    try {
+      const { data, error } = await supabase
+        .from('site_settings')
+        .select('*')
+        .eq('id', 'default')
+        .single();
+
+      if (error || !data) {
+        return defaultSiteSettings;
+      }
+      return data as SiteSettingsDB;
+    } catch (err) {
+      console.warn('Could not fetch settings from Supabase, using fallback:', err);
+      return defaultSiteSettings;
+    }
   }
 
   if (!cachedSiteSettingsPromise) {
@@ -201,3 +243,4 @@ export async function getSiteSettings(): Promise<SiteSettingsDB> {
 
   return cachedSiteSettingsPromise;
 }
+

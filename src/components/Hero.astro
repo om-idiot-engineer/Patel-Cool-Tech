@@ -240,3 +240,33 @@ const runningServices = [
     </div>
   </Container>
 </section>
+
+<script>
+  import { getStoredSettings } from '../utils/liveSync';
+
+  function syncHeroText(data?: any) {
+    const settings = data || getStoredSettings();
+    if (!settings) return;
+
+    if (settings.hero_heading) {
+      const h1 = document.getElementById('hero-heading-text');
+      if (h1 && h1.textContent !== settings.hero_heading) {
+        h1.textContent = settings.hero_heading;
+      }
+    }
+    if (settings.hero_description) {
+      const p = document.getElementById('hero-desc-text');
+      if (p && p.textContent !== settings.hero_description) {
+        p.textContent = settings.hero_description;
+      }
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => syncHeroText());
+  } else {
+    syncHeroText();
+  }
+  document.addEventListener('astro:page-load', () => syncHeroText());
+  window.addEventListener('pct:settings-updated', (e: any) => syncHeroText(e.detail));
+</script>

@@ -305,13 +305,14 @@ const {
     freshLed?.addEventListener('click', toggleMode);
     freshTurboBtn?.addEventListener('click', toggleMode);
 
-    // Sync logo from local cache if customized
-    function syncDynamicBrandLogo() {
+    // Sync logo from live sync if customized
+    function syncDynamicBrandLogo(url?: string | null) {
       const badge = document.getElementById('ac-brand-badge');
       if (!badge) return;
 
-      function renderLogo(url: string) {
-        if (!url || !badge) return;
+      const targetUrl = typeof url === 'string' ? url : (localStorage.getItem('pct_custom_logo') || '');
+
+      if (targetUrl) {
         const fallback = document.getElementById('ac-brand-default-mark') || document.getElementById('ac-brand-logo-fallback');
         if (fallback) fallback.remove();
 
@@ -324,21 +325,23 @@ const {
           img.loading = 'eager';
           badge.appendChild(img);
         }
-        if (img.src !== url) {
-          img.src = url;
+        if (img.src !== targetUrl) {
+          img.src = targetUrl;
+        }
+      } else {
+        const img = document.getElementById('ac-brand-logo-img');
+        if (img) img.remove();
+        if (!document.getElementById('ac-brand-default-mark')) {
+          badge.innerHTML = `<div id="ac-brand-default-mark" class="flex items-center justify-center"><span id="ac-brand-logo-fallback" class="text-xs lg:text-sm select-none">❄️</span></div>`;
         }
       }
-
-      try {
-        const cachedLogo = localStorage.getItem('pct_custom_logo');
-        if (cachedLogo) {
-          renderLogo(cachedLogo);
-        }
-      } catch (e) {}
     }
 
     syncDynamicBrandLogo();
-    window.addEventListener('pct:logo-updated', syncDynamicBrandLogo);
+    window.addEventListener('pct:logo-updated', (e: any) => syncDynamicBrandLogo(e.detail?.logoUrl));
+    window.addEventListener('pct:settings-updated', (e: any) => {
+      if (typeof e.detail?.logo_url === 'string') syncDynamicBrandLogo(e.detail.logo_url);
+    });
   }
 
   setupRealisticAc();
