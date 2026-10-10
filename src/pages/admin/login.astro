@@ -267,6 +267,7 @@ const settings = await getSiteSettings();
             }
 
             // Successfully authenticated owner!
+            sessionStorage.setItem('pct_admin_authenticated', 'true');
             if (btnText) btnText.textContent = 'Access granted. Opening dashboard...';
             window.location.replace('/admin/');
           } catch (err: any) {

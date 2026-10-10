@@ -34,27 +34,14 @@ const settings = await getSiteSettings();
     <script is:inline>
       (function() {
         try {
-          var authenticated = false;
-          var targetOwnerEmail = 'patelcooltech@gmail.com';
-          for (var i = 0; i < localStorage.length; i++) {
-            var k = localStorage.key(i);
-            if (k && k.indexOf('-auth-token') !== -1) {
-              var raw = localStorage.getItem(k);
-              if (raw && raw.indexOf('access_token') !== -1) {
-                try {
-                  var data = JSON.parse(raw);
-                  var token = data.access_token || (data.currentSession && data.currentSession.access_token);
-                  var user = data.user || (data.currentSession && data.currentSession.user);
-                  if (token && user && user.email && user.email.toLowerCase() === targetOwnerEmail) {
-                    authenticated = true;
-                    break;
-                  }
-                } catch (e) {}
-              }
-            }
-          }
-          if (!authenticated) {
+          var isAuth = sessionStorage.getItem('pct_admin_authenticated');
+          if (isAuth !== 'true') {
+            try {
+              localStorage.clear();
+              sessionStorage.clear();
+            } catch (e) {}
             window.location.replace('/admin/login/?unauthorized=1');
+            return;
           }
         } catch (err) {
           window.location.replace('/admin/login/?unauthorized=1');
@@ -289,7 +276,19 @@ const settings = await getSiteSettings();
       import { supabase, isSupabaseConfigured, isAuthorizedOwner } from '../utils/supabase';
 
       async function checkAdminAuth() {
+        const isAuth = sessionStorage.getItem('pct_admin_authenticated');
+        if (isAuth !== 'true') {
+          try {
+            if (supabase) await supabase.auth.signOut();
+            localStorage.clear();
+            sessionStorage.clear();
+          } catch (_) {}
+          window.location.replace('/admin/login/?unauthorized=1');
+          return;
+        }
+
         if (!isSupabaseConfigured || !supabase) {
+          try { sessionStorage.clear(); } catch (_) {}
           window.location.replace('/admin/login/?unauthorized=1');
           return;
         }
@@ -301,6 +300,8 @@ const settings = await getSiteSettings();
             // Unauthenticated or not owner: sign out and redirect immediately
             try {
               await supabase.auth.signOut();
+              localStorage.clear();
+              sessionStorage.clear();
             } catch (_) {}
             window.location.replace('/admin/login/?unauthorized=1');
             return;
