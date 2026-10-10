@@ -8,7 +8,7 @@
     "start": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
     "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
-    "deploy": "npm run build && wrangler pages deploy dist --project-name patel-cool-tech --branch main"
+    "deploy": "npm run build && npx wrangler pages deploy dist --project-name patel-cool-tech --branch main"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
