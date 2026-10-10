@@ -138,6 +138,8 @@ const settings = await getSiteSettings();
 </header>
 
 <script>
+  let isHeaderScrollBound = false;
+
   function setupHeaderScroll() {
     const header = document.getElementById('site-header');
     const container = document.getElementById('header-nav-container');
@@ -179,7 +181,10 @@ const settings = await getSiteSettings();
       }
     }
 
-    window.addEventListener('scroll', onScroll, { passive: true });
+    if (!isHeaderScrollBound) {
+      window.addEventListener('scroll', onScroll, { passive: true });
+      isHeaderScrollBound = true;
+    }
     updateHeader();
   }
 

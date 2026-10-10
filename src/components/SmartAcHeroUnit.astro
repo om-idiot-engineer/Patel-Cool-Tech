@@ -297,10 +297,15 @@ const {
       }
     }
 
-    ledDisplay?.addEventListener('click', toggleMode);
-    turboSwitchBtn?.addEventListener('click', toggleMode);
+    // Idempotent event listeners
+    ledDisplay?.replaceWith(ledDisplay.cloneNode(true));
+    turboSwitchBtn?.replaceWith(turboSwitchBtn.cloneNode(true));
+    const freshLed = document.getElementById('ac-led-display');
+    const freshTurboBtn = document.getElementById('ac-turbo-switch-btn');
+    freshLed?.addEventListener('click', toggleMode);
+    freshTurboBtn?.addEventListener('click', toggleMode);
 
-    // Sync logo dynamically from owner account (localStorage / Supabase)
+    // Sync logo from local cache if customized
     function syncDynamicBrandLogo() {
       const badge = document.getElementById('ac-brand-badge');
       if (!badge) return;
@@ -324,37 +329,11 @@ const {
         }
       }
 
-      // 1. Instant check from local cache
       try {
         const cachedLogo = localStorage.getItem('pct_custom_logo');
         if (cachedLogo) {
           renderLogo(cachedLogo);
         }
-      } catch (e) {}
-
-      // 2. Fresh background fetch from Supabase
-      try {
-        import('../utils/supabase').then(({ supabase }) => {
-          if (!supabase) return;
-          supabase
-            .from('site_settings')
-            .select('logo_url, business_name')
-            .eq('id', 'default')
-            .single()
-            .then(({ data }) => {
-              if (data?.logo_url) {
-                renderLogo(data.logo_url);
-                try {
-                  localStorage.setItem('pct_custom_logo', data.logo_url);
-                } catch (e) {}
-              }
-              if (data?.business_name) {
-                const heading = document.getElementById('ac-brand-heading');
-                if (heading) heading.textContent = data.business_name;
-              }
-            })
-            .catch(() => {});
-        }).catch(() => {});
       } catch (e) {}
     }
 

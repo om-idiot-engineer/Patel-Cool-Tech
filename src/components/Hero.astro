@@ -10,7 +10,7 @@ interface Props {
 
 const { settings } = Astro.props;
 
-const heroImage = settings?.hero_media_url || '/images/hero/hero-technician.jpg';
+const heroImage = settings?.hero_media_url || '/images/hero/hero-technician.webp';
 const heroMediaType = settings?.hero_media_type || 'image';
 const heroHeading = settings?.hero_heading || 'Fast Doorstep AC Repair & Installations';
 const heroDescription = settings?.hero_description ||
@@ -240,52 +240,3 @@ const runningServices = [
     </div>
   </Container>
 </section>
-
-<script>
-  import { supabase, isSupabaseConfigured } from '../utils/supabase';
-
-  async function syncHeroText() {
-    if (!supabase || !isSupabaseConfigured) return;
-    try {
-      const { data, error } = await supabase
-        .from('site_settings')
-        .select('hero_heading, hero_description')
-        .eq('id', 'default')
-        .single();
-
-      if (!error && data) {
-        if (data.hero_heading) {
-          const h1 = document.getElementById('hero-heading-text');
-          if (h1 && h1.textContent !== data.hero_heading) h1.textContent = data.hero_heading;
-        }
-        if (data.hero_description) {
-          const p = document.getElementById('hero-desc-text');
-          if (p && p.textContent !== data.hero_description) p.textContent = data.hero_description;
-        }
-      }
-    } catch (_) {}
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', syncHeroText);
-  } else {
-    syncHeroText();
-  }
-  document.addEventListener('astro:page-load', syncHeroText);
-
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') syncHeroText();
-  });
-  window.addEventListener('focus', syncHeroText);
-
-  if (supabase) {
-    try {
-      supabase
-        .channel('public:site_settings_hero')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'site_settings' }, () => {
-          syncHeroText();
-        })
-        .subscribe();
-    } catch (_) {}
-  }
-</script>

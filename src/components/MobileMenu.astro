@@ -177,52 +177,58 @@ const settings = await getSiteSettings();
       toggleBtn?.focus();
     }
 
-    toggleBtn.addEventListener('click', () => {
+    let isKeydownBound = false;
+
+    // Direct onclick assignments ensure idempotent O(1) binding without listener accumulation
+    toggleBtn.onclick = () => {
       const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
       if (isExpanded) {
         closeMenu();
       } else {
         openMenu();
       }
-    });
+    };
 
-    closeBtn.addEventListener('click', closeMenu);
-    backdrop.addEventListener('click', closeMenu);
+    closeBtn.onclick = closeMenu;
+    backdrop.onclick = closeMenu;
 
     navLinks.forEach((link) => {
-      link.addEventListener('click', closeMenu);
+      (link as HTMLElement).onclick = closeMenu;
     });
 
-    document.addEventListener('keydown', (event) => {
-      const isOpen = drawer.getAttribute('aria-hidden') === 'false';
-      if (!isOpen) return;
+    if (!isKeydownBound) {
+      document.addEventListener('keydown', (event) => {
+        const isOpen = drawer.getAttribute('aria-hidden') === 'false';
+        if (!isOpen) return;
 
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        closeMenu();
-        return;
-      }
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          closeMenu();
+          return;
+        }
 
-      if (event.key === 'Tab') {
-        const focusable = getFocusableElements();
-        if (focusable.length === 0) return;
+        if (event.key === 'Tab') {
+          const focusable = getFocusableElements();
+          if (focusable.length === 0) return;
 
-        const firstElement = focusable[0];
-        const lastElement = focusable[focusable.length - 1];
+          const firstElement = focusable[0];
+          const lastElement = focusable[focusable.length - 1];
 
-        if (event.shiftKey) {
-          if (document.activeElement === firstElement) {
-            event.preventDefault();
-            lastElement.focus();
-          }
-        } else {
-          if (document.activeElement === lastElement) {
-            event.preventDefault();
-            firstElement.focus();
+          if (event.shiftKey) {
+            if (document.activeElement === firstElement) {
+              event.preventDefault();
+              lastElement.focus();
+            }
+          } else {
+            if (document.activeElement === lastElement) {
+              event.preventDefault();
+              firstElement.focus();
+            }
           }
         }
-      }
-    });
+      });
+      isKeydownBound = true;
+    }
   }
 
   if (document.readyState === 'loading') {
