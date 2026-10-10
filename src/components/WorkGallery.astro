@@ -57,7 +57,8 @@ const gridColsClass = {
   <div class={`grid ${gridColsClass} gap-6 lg:gap-8 items-stretch gallery-grid`}>
     {
       items.map((item, index) => {
-        const isVideo = item.media_type === 'video' || Boolean(item.video_url);
+        const isVideo = item.media_type === 'video' || Boolean(item.video_url) || (Boolean(item.image_url) && /\.(mp4|webm|mov)$/i.test(item.image_url));
+        const videoSrc = item.video_url || (isVideo ? item.image_url : '');
         return (
           <article
             class="card-spotlight gallery-item flex flex-col bg-white rounded-2xl sm:rounded-3xl overflow-hidden border border-brand-border/90 hover:border-brand-ice/60 transition-all duration-300 hover:shadow-card-elevated card-hover-effect group cursor-pointer reveal-init relative active:scale-[0.99] sm:active:scale-100"
@@ -66,7 +67,7 @@ const gridColsClass = {
             data-title={item.title}
             data-description={item.description || ''}
             data-image={item.image_url}
-            data-video={item.video_url || ''}
+            data-video={videoSrc}
             data-mediatype={isVideo ? 'video' : 'image'}
             data-serviceurl={item.service_url || '/services/'}
           >
@@ -75,15 +76,25 @@ const gridColsClass = {
 
             <!-- Media Visual Container -->
             <div class="relative w-full aspect-[4/3] bg-brand-surface-alt overflow-hidden">
-              <img
-                src={item.thumbnail_url || item.image_url}
-                alt={item.alt_text || item.title}
-                width="800"
-                height="600"
-                loading="lazy"
-                decoding="async"
-                class="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
-              />
+              {isVideo ? (
+                <video
+                  src={`${videoSrc}#t=0.001`}
+                  muted
+                  playsinline
+                  preload="metadata"
+                  class="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out pointer-events-none"
+                ></video>
+              ) : (
+                <img
+                  src={item.thumbnail_url || item.image_url}
+                  alt={item.alt_text || item.title}
+                  width="800"
+                  height="600"
+                  loading="lazy"
+                  decoding="async"
+                  class="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
+                />
+              )}
 
               <!-- Dark Vignette on Hover -->
               <div class="absolute inset-0 bg-gradient-to-t from-brand-navy-dark/70 via-brand-navy/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
@@ -246,6 +257,9 @@ const gridColsClass = {
 </div>
 
 <script>
+  import { supabase, isSupabaseConfigured } from '../utils/supabase';
+  import type { WorkItemDB } from '../types/database';
+
   function setupWorkGallery() {
     const filterButtons = document.querySelectorAll<HTMLButtonElement>('.gallery-filter-btn');
     const items = document.querySelectorAll<HTMLElement>('.gallery-item');
@@ -266,7 +280,7 @@ const gridColsClass = {
 
     // Filter functionality
     filterButtons.forEach((btn) => {
-      btn.addEventListener('click', () => {
+      btn.onclick = () => {
         const filter = btn.getAttribute('data-filter') || 'All';
         filterButtons.forEach((b) => {
           b.classList.remove('bg-brand-navy', 'text-white', 'border-brand-navy');
@@ -277,7 +291,8 @@ const gridColsClass = {
         btn.classList.remove('bg-white', 'border-brand-border');
         btn.setAttribute('aria-selected', 'true');
 
-        items.forEach((item) => {
+        const currentItems = document.querySelectorAll<HTMLElement>('.gallery-item');
+        currentItems.forEach((item) => {
           const itemCat = item.getAttribute('data-category');
           if (filter === 'All' || itemCat === filter) {
             item.style.display = 'flex';
@@ -285,15 +300,15 @@ const gridColsClass = {
             item.style.display = 'none';
           }
         });
-      });
+      };
     });
 
     // Lightbox state
     let activeIndex = 0;
-    const visibleItems = () => Array.from(items).filter((el) => el.style.display !== 'none');
+    const getVisibleItems = () => Array.from(document.querySelectorAll<HTMLElement>('.gallery-item')).filter((el) => el.style.display !== 'none');
 
     function updateLightbox(idx: number) {
-      const activeList = visibleItems();
+      const activeList = getVisibleItems();
       if (activeList.length === 0) return;
       if (idx < 0) idx = activeList.length - 1;
       if (idx >= activeList.length) idx = 0;
@@ -361,26 +376,26 @@ const gridColsClass = {
 
     // Attach click handlers to items
     items.forEach((item) => {
-      item.addEventListener('click', () => {
-        const activeList = visibleItems();
+      item.onclick = () => {
+        const activeList = getVisibleItems();
         const indexInVisible = activeList.indexOf(item);
         openLightbox(indexInVisible >= 0 ? indexInVisible : 0);
-      });
+      };
     });
 
-    closeBtn?.addEventListener('click', closeLightbox);
-    prevBtn?.addEventListener('click', () => updateLightbox(activeIndex - 1));
-    nextBtn?.addEventListener('click', () => updateLightbox(activeIndex + 1));
+    if (closeBtn) closeBtn.onclick = closeLightbox;
+    if (prevBtn) prevBtn.onclick = () => updateLightbox(activeIndex - 1);
+    if (nextBtn) nextBtn.onclick = () => updateLightbox(activeIndex + 1);
 
     // Backdrop click
-    lightbox.addEventListener('click', (e) => {
+    lightbox.onclick = (e) => {
       if (e.target === lightbox) {
         closeLightbox();
       }
-    });
+    };
 
     // Keyboard controls
-    document.addEventListener('keydown', (e) => {
+    document.onkeydown = (e) => {
       if (lightbox.getAttribute('aria-hidden') === 'false') {
         if (e.key === 'Escape') {
           closeLightbox();
@@ -390,13 +405,162 @@ const gridColsClass = {
           updateLightbox(activeIndex + 1);
         }
       }
-    });
+    };
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setupWorkGallery);
-  } else {
+  function renderLiveGallery(liveItems: WorkItemDB[]) {
+    const grid = document.querySelector('.gallery-grid');
+    if (!grid) return;
+
+    const activeFilterBtn = document.querySelector('.gallery-filter-btn[aria-selected="true"]');
+    const currentFilter = activeFilterBtn?.getAttribute('data-filter') || 'All';
+
+    grid.innerHTML = liveItems.map((item, index) => {
+      const isVideo = item.media_type === 'video' || Boolean(item.video_url) || (Boolean(item.image_url) && /\.(mp4|webm|mov)$/i.test(item.image_url));
+      const mediaSrc = item.thumbnail_url || item.image_url;
+      const videoSrc = item.video_url || (isVideo ? item.image_url : '');
+      const isHidden = currentFilter !== 'All' && item.category !== currentFilter;
+
+      return `
+        <article
+          class="card-spotlight gallery-item flex flex-col bg-white rounded-2xl sm:rounded-3xl overflow-hidden border border-brand-border/90 hover:border-brand-ice/60 transition-all duration-300 hover:shadow-card-elevated card-hover-effect group cursor-pointer reveal-init relative active:scale-[0.99] sm:active:scale-100"
+          data-category="${item.category}"
+          data-index="${index}"
+          data-title="${item.title}"
+          data-description="${item.description || ''}"
+          data-image="${item.image_url}"
+          data-video="${videoSrc}"
+          data-mediatype="${isVideo ? 'video' : 'image'}"
+          data-serviceurl="${item.service_url || '/services/'}"
+          style="${isHidden ? 'display: none;' : 'display: flex;'}"
+        >
+          <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-ice via-sky-400 to-brand-blue opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
+          <div class="relative w-full aspect-[4/3] bg-brand-surface-alt overflow-hidden">
+            ${isVideo ? `
+              <video
+                src="${videoSrc}#t=0.001"
+                muted
+                playsinline
+                preload="metadata"
+                class="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out pointer-events-none"
+              ></video>
+            ` : `
+              <img
+                src="${mediaSrc}"
+                alt="${item.alt_text || item.title}"
+                width="800"
+                height="600"
+                loading="lazy"
+                decoding="async"
+                class="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
+              />
+            `}
+            <div class="absolute inset-0 bg-gradient-to-t from-brand-navy-dark/70 via-brand-navy/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+            <span class="absolute top-3 left-3 px-3 py-1 rounded-xl text-xs font-bold uppercase tracking-wider glass-pill-dark text-white shadow-sm border border-white/20">
+              ${item.category}
+            </span>
+            ${isVideo ? `
+              <div class="absolute inset-0 flex items-center justify-center">
+                <div class="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-brand-navy/90 text-white border border-brand-ice/50 flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform duration-200">
+                  <svg class="w-6 h-6 text-brand-ice ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </div>
+              </div>
+            ` : `
+              <div class="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold glass-pill text-brand-navy shadow-sm border border-brand-border/90">
+                  <svg class="w-3.5 h-3.5 text-brand-ice" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+                  </svg>
+                  <span>Inspect</span>
+                </span>
+              </div>
+            `}
+          </div>
+
+          <div class="p-6 flex flex-col flex-grow justify-between">
+            <div>
+              <h3 class="text-lg sm:text-xl font-bold text-brand-navy mb-2 leading-snug group-hover:text-brand-blue transition-colors font-display">
+                ${item.title}
+              </h3>
+              <p class="text-xs sm:text-sm text-brand-text-muted leading-relaxed line-clamp-3">
+                ${item.description || ''}
+              </p>
+            </div>
+
+            <div class="mt-5 pt-3.5 border-t border-brand-border/60 flex items-center justify-between text-xs">
+              <span class="inline-flex items-center gap-1.5 font-bold text-brand-blue group-hover:text-brand-ice transition-colors">
+                <span>View Details &bull; Full View</span>
+                <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </span>
+              <span class="text-brand-text-subtle font-medium flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span>Field Verified</span>
+              </span>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join('');
+
     setupWorkGallery();
   }
-  document.addEventListener('astro:page-load', setupWorkGallery);
+
+  async function syncLiveWorkItems() {
+    if (!supabase || !isSupabaseConfigured) return;
+    try {
+      const { data, error } = await supabase
+        .from('work_items')
+        .select('*')
+        .eq('published', true)
+        .order('sort_order', { ascending: true })
+        .order('created_at', { ascending: false });
+
+      if (!error && data && data.length > 0) {
+        renderLiveGallery(data as WorkItemDB[]);
+      }
+    } catch (e) {
+      console.warn('Supabase work gallery sync error:', e);
+    }
+  }
+
+  // Initial load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      setupWorkGallery();
+      syncLiveWorkItems();
+    });
+  } else {
+    setupWorkGallery();
+    syncLiveWorkItems();
+  }
+  document.addEventListener('astro:page-load', () => {
+    setupWorkGallery();
+    syncLiveWorkItems();
+  });
+
+  // Re-sync on tab switch or window focus (immediate feedback after admin changes)
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      syncLiveWorkItems();
+    }
+  });
+  window.addEventListener('focus', () => {
+    syncLiveWorkItems();
+  });
+
+  // Realtime subscription for immediate updates across all active browser windows
+  if (supabase) {
+    try {
+      supabase
+        .channel('public:work_items_gallery')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'work_items' }, () => {
+          syncLiveWorkItems();
+        })
+        .subscribe();
+    } catch (_) {}
+  }
 </script>

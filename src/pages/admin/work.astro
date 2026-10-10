@@ -478,16 +478,28 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
     function createCardHTML(item: WorkItemDB) {
       const isTop = item.row_position !== 'bottom';
-      const isVideo = item.media_type === 'video' || Boolean(item.video_url);
+      const isVideo = item.media_type === 'video' || Boolean(item.video_url) || (Boolean(item.image_url) && /\.(mp4|webm|mov)$/i.test(item.image_url));
+      const videoSrc = item.video_url || (isVideo ? item.image_url : '');
 
       return `
         <article class="bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-2xl overflow-hidden flex flex-col justify-between group shadow-sm transition-all">
           <div class="relative w-full aspect-[4/3] bg-slate-950 overflow-hidden">
-            <img
-              src="${item.thumbnail_url || item.image_url}"
-              alt="${item.title}"
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            />
+            ${isVideo ? `
+              <video
+                src="${videoSrc}#t=0.001"
+                muted
+                playsinline
+                preload="metadata"
+                class="w-full h-full object-cover pointer-events-none"
+              ></video>
+            ` : `
+              <img
+                src="${item.thumbnail_url || item.image_url}"
+                alt="${item.title}"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                loading="lazy"
+              />
+            `}
             <!-- Top Badges -->
             <div class="absolute top-2.5 left-2.5 flex items-center gap-1.5">
               <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-slate-950/90 text-white backdrop-blur-sm border border-white/10">
@@ -777,9 +789,11 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             .getPublicUrl(filePath);
 
           if (imageUrlInput) imageUrlInput.value = publicUrl;
-          if (file.type.startsWith('video') && videoUrlContainer) {
+          if (file.type.startsWith('video') || /\.(mp4|webm|mov)$/i.test(file.name)) {
             const videoInput = document.getElementById('work-video-url') as HTMLInputElement | null;
             if (videoInput) videoInput.value = publicUrl;
+            if (mediaTypeSelect) mediaTypeSelect.value = 'video';
+            if (videoUrlContainer) videoUrlContainer.classList.remove('hidden');
           }
           showToast('Media uploaded to storage successfully.');
         } catch (err: any) {

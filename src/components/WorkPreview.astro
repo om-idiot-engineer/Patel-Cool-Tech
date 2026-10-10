@@ -73,10 +73,11 @@ const row2Items = buildTrackItems(row2Source);
   <div class="mt-6 sm:mt-9 relative space-y-3 sm:space-y-4">
     <!-- Row 1: Flowing Left -->
     <div class="relative overflow-hidden marquee-mask py-1">
-      <div class="marquee-track animate-marquee-left gap-3 sm:gap-4 lg:gap-5 flex items-center hover:[animation-play-state:paused] active:[animation-play-state:paused]">
+      <div id="preview-track-row1" class="marquee-track animate-marquee-left gap-3 sm:gap-4 lg:gap-5 flex items-center hover:[animation-play-state:paused] active:[animation-play-state:paused]">
         {
           row1Items.map((item) => {
-            const isVideo = item.media_type === 'video' || Boolean(item.video_url);
+            const isVideo = item.media_type === 'video' || Boolean(item.video_url) || (Boolean(item.image_url) && /\.(mp4|webm|mov)$/i.test(item.image_url));
+            const videoSrc = item.video_url || (isVideo ? item.image_url : '');
             const uniqueIdx = displayItems.findIndex((d) => d.id === item.id);
             return (
               <div
@@ -85,21 +86,31 @@ const row2Items = buildTrackItems(row2Source);
                 data-title={item.title}
                 data-description={item.description || ''}
                 data-image={item.image_url}
-                data-video={item.video_url || ''}
+                data-video={videoSrc}
                 data-mediatype={isVideo ? 'video' : 'image'}
                 data-category={item.category}
                 data-serviceurl={item.service_url || '/services/'}
               >
                 <!-- Image or Video Poster -->
-                <img
-                  src={item.thumbnail_url || item.image_url}
-                  alt={item.alt_text || item.title}
-                  width="400"
-                  height="260"
-                  loading="lazy"
-                  decoding="async"
-                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                />
+                {isVideo ? (
+                  <video
+                    src={`${videoSrc}#t=0.001`}
+                    muted
+                    playsinline
+                    preload="metadata"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none"
+                  ></video>
+                ) : (
+                  <img
+                    src={item.thumbnail_url || item.image_url}
+                    alt={item.alt_text || item.title}
+                    width="400"
+                    height="260"
+                    loading="lazy"
+                    decoding="async"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                  />
+                )}
 
                 <!-- Dark Vignette Gradient Overlay -->
                 <div class="absolute inset-0 bg-gradient-to-t from-brand-navy-dark/95 via-brand-navy-dark/40 to-transparent pointer-events-none"></div>
@@ -154,10 +165,11 @@ const row2Items = buildTrackItems(row2Source);
 
     <!-- Row 2: Flowing Right (Opposite Direction at Identical Speed) -->
     <div class="relative overflow-hidden marquee-mask py-1">
-      <div class="marquee-track animate-marquee-right gap-3 sm:gap-4 lg:gap-5 flex items-center hover:[animation-play-state:paused] active:[animation-play-state:paused]">
+      <div id="preview-track-row2" class="marquee-track animate-marquee-right gap-3 sm:gap-4 lg:gap-5 flex items-center hover:[animation-play-state:paused] active:[animation-play-state:paused]">
         {
           row2Items.map((item) => {
-            const isVideo = item.media_type === 'video' || Boolean(item.video_url);
+            const isVideo = item.media_type === 'video' || Boolean(item.video_url) || (Boolean(item.image_url) && /\.(mp4|webm|mov)$/i.test(item.image_url));
+            const videoSrc = item.video_url || (isVideo ? item.image_url : '');
             const uniqueIdx = displayItems.findIndex((d) => d.id === item.id);
             return (
               <div
@@ -166,21 +178,31 @@ const row2Items = buildTrackItems(row2Source);
                 data-title={item.title}
                 data-description={item.description || ''}
                 data-image={item.image_url}
-                data-video={item.video_url || ''}
+                data-video={videoSrc}
                 data-mediatype={isVideo ? 'video' : 'image'}
                 data-category={item.category}
                 data-serviceurl={item.service_url || '/services/'}
               >
                 <!-- Image or Video Poster -->
-                <img
-                  src={item.thumbnail_url || item.image_url}
-                  alt={item.alt_text || item.title}
-                  width="400"
-                  height="260"
-                  loading="lazy"
-                  decoding="async"
-                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                />
+                {isVideo ? (
+                  <video
+                    src={`${videoSrc}#t=0.001`}
+                    muted
+                    playsinline
+                    preload="metadata"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none"
+                  ></video>
+                ) : (
+                  <img
+                    src={item.thumbnail_url || item.image_url}
+                    alt={item.alt_text || item.title}
+                    width="400"
+                    height="260"
+                    loading="lazy"
+                    decoding="async"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                  />
+                )}
 
                 <!-- Dark Vignette Gradient Overlay -->
                 <div class="absolute inset-0 bg-gradient-to-t from-brand-navy-dark/95 via-brand-navy-dark/40 to-transparent pointer-events-none"></div>
@@ -362,7 +384,10 @@ const row2Items = buildTrackItems(row2Source);
 </section>
 
 <script>
-  function setupWorkPreviewLightbox() {
+  import { supabase, isSupabaseConfigured } from '../utils/supabase';
+  import type { WorkItemDB } from '../types/database';
+
+  function setupWorkPreviewLightbox(customData?: WorkItemDB[]) {
     const items = document.querySelectorAll<HTMLElement>('.work-preview-item');
     const lightbox = document.getElementById('preview-lightbox');
     const container = document.getElementById('preview-lb-container');
@@ -377,18 +402,13 @@ const row2Items = buildTrackItems(row2Source);
     const lbDesc = document.getElementById('preview-lb-desc');
     const lbServiceLink = document.getElementById('preview-lb-service-link') as HTMLAnchorElement | null;
 
-    const dataEl = document.getElementById('work-preview-data');
-    const itemsData: Array<{
-      id: string;
-      title: string;
-      category: string;
-      description?: string;
-      image_url: string;
-      thumbnail_url?: string | null;
-      video_url?: string | null;
-      media_type?: string;
-      service_url?: string;
-    }> = dataEl ? JSON.parse(dataEl.textContent || '[]') : [];
+    let itemsData: WorkItemDB[] = [];
+    if (customData && customData.length > 0) {
+      itemsData = customData;
+    } else {
+      const dataEl = document.getElementById('work-preview-data');
+      itemsData = dataEl ? JSON.parse(dataEl.textContent || '[]') : [];
+    }
 
     const totalCount = itemsData.length;
     if (!lightbox || totalCount === 0) return;
@@ -405,7 +425,8 @@ const row2Items = buildTrackItems(row2Source);
       const desc = item.description || '';
       const image = item.image_url || '';
       const video = item.video_url || '';
-      const isVideo = item.media_type === 'video' || Boolean(video);
+      const isVideo = item.media_type === 'video' || Boolean(video) || (Boolean(image) && /\.(mp4|webm|mov)$/i.test(image));
+      const videoSrc = video || (isVideo ? image : '');
       const category = item.category || '';
       const serviceUrl = item.service_url || '/services/';
 
@@ -415,11 +436,11 @@ const row2Items = buildTrackItems(row2Source);
       if (lbCounter) lbCounter.textContent = `${currentIndex + 1} / ${totalCount}`;
       if (lbServiceLink) lbServiceLink.href = serviceUrl;
 
-      if (isVideo && video) {
+      if (isVideo && videoSrc) {
         if (lbImage) lbImage.classList.add('hidden');
         if (lbVideo) {
           lbVideo.classList.remove('hidden');
-          lbVideo.src = video;
+          lbVideo.src = videoSrc;
           lbVideo.load();
         }
       } else {
@@ -458,28 +479,202 @@ const row2Items = buildTrackItems(row2Source);
     }
 
     items.forEach((item) => {
-      item.addEventListener('click', () => {
+      item.onclick = () => {
         const uniqueIdx = parseInt(item.getAttribute('data-unique-idx') || '0', 10);
         openLightbox(uniqueIdx);
-      });
+      };
     });
 
-    closeBtn?.addEventListener('click', closeLightbox);
-    prevBtn?.addEventListener('click', () => showItem(currentIndex - 1));
-    nextBtn?.addEventListener('click', () => showItem(currentIndex + 1));
+    if (closeBtn) closeBtn.onclick = closeLightbox;
+    if (prevBtn) prevBtn.onclick = () => showItem(currentIndex - 1);
+    if (nextBtn) nextBtn.onclick = () => showItem(currentIndex + 1);
 
-    lightbox?.addEventListener('click', (e) => {
+    lightbox.onclick = (e) => {
       if (e.target === lightbox) closeLightbox();
-    });
+    };
 
-    document.addEventListener('keydown', (e) => {
+    document.onkeydown = (e) => {
       if (!lightbox || lightbox.classList.contains('pointer-events-none')) return;
       if (e.key === 'Escape') closeLightbox();
       if (e.key === 'ArrowLeft') showItem(currentIndex - 1);
       if (e.key === 'ArrowRight') showItem(currentIndex + 1);
-    });
+    };
   }
 
-  setupWorkPreviewLightbox();
-  document.addEventListener('astro:page-load', setupWorkPreviewLightbox);
+  function renderMarqueeTracks(liveItems: WorkItemDB[]) {
+    const row1Track = document.getElementById('preview-track-row1');
+    const row2Track = document.getElementById('preview-track-row2');
+    if (!row1Track || !row2Track) return;
+
+    const explicitTop = liveItems.filter((i) => i.row_position === 'top');
+    const explicitBottom = liveItems.filter((i) => i.row_position === 'bottom');
+
+    let row1Source = liveItems;
+    let row2Source = liveItems;
+
+    if (explicitTop.length > 0 && explicitBottom.length > 0) {
+      row1Source = explicitTop;
+      row2Source = explicitBottom;
+    } else if (explicitTop.length > 0) {
+      row1Source = explicitTop;
+      row2Source = liveItems.filter((i) => i.row_position !== 'top');
+      if (row2Source.length === 0) row2Source = explicitTop;
+    } else if (explicitBottom.length > 0) {
+      row2Source = explicitBottom;
+      row1Source = liveItems.filter((i) => i.row_position !== 'bottom');
+      if (row1Source.length === 0) row1Source = explicitBottom;
+    } else {
+      const count = liveItems.length;
+      const shift = count >= 4 ? Math.floor(count / 2) : 1;
+      row1Source = liveItems;
+      row2Source = count > 1 ? [...liveItems.slice(shift), ...liveItems.slice(0, shift)] : liveItems;
+    }
+
+    const buildTrackItems = (sourceList: WorkItemDB[]) => {
+      const repetitions = Math.max(2, Math.ceil(8 / sourceList.length));
+      const half: WorkItemDB[] = [];
+      for (let i = 0; i < repetitions; i++) {
+        half.push(...sourceList);
+      }
+      return [...half, ...half];
+    };
+
+    const createCardHTML = (item: WorkItemDB) => {
+      const isVideo = item.media_type === 'video' || Boolean(item.video_url) || (Boolean(item.image_url) && /\.(mp4|webm|mov)$/i.test(item.image_url));
+      const uniqueIdx = liveItems.findIndex((d) => d.id === item.id);
+      const mediaSrc = item.thumbnail_url || item.image_url;
+      const videoSrc = item.video_url || (isVideo ? item.image_url : '');
+
+      return `
+        <div
+          class="work-preview-item flex-shrink-0 w-[220px] xs:w-[245px] sm:w-[300px] md:w-[350px] lg:w-[380px] h-[155px] xs:h-[172px] sm:h-[210px] md:h-[235px] lg:h-[250px] relative rounded-2xl sm:rounded-3xl overflow-hidden border border-brand-border/90 bg-slate-900 shadow-soft hover:shadow-[0_12px_28px_-6px_rgba(2,132,199,0.25)] hover:border-brand-ice hover:-translate-y-1 transition-all duration-300 group cursor-pointer select-none active:scale-[0.98]"
+          data-unique-idx="${uniqueIdx >= 0 ? uniqueIdx : 0}"
+          data-title="${item.title}"
+          data-description="${item.description || ''}"
+          data-image="${item.image_url}"
+          data-video="${videoSrc}"
+          data-mediatype="${isVideo ? 'video' : 'image'}"
+          data-category="${item.category}"
+          data-serviceurl="${item.service_url || '/services/'}"
+        >
+          ${isVideo ? `
+            <video
+              src="${videoSrc}#t=0.001"
+              muted
+              playsinline
+              preload="metadata"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none"
+            ></video>
+          ` : `
+            <img
+              src="${mediaSrc}"
+              alt="${item.alt_text || item.title}"
+              width="400"
+              height="260"
+              loading="lazy"
+              decoding="async"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+            />
+          `}
+          <div class="absolute inset-0 bg-gradient-to-t from-brand-navy-dark/95 via-brand-navy-dark/40 to-transparent pointer-events-none"></div>
+          <div class="absolute top-2.5 sm:top-3 left-2.5 sm:left-3 flex items-center gap-1.5 pointer-events-none">
+            <span class="px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold uppercase tracking-wider bg-brand-navy/85 backdrop-blur-md text-white border border-white/20 shadow-xs">
+              ${item.category}
+            </span>
+            ${isVideo ? `
+              <span class="px-2 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold uppercase tracking-wider bg-red-600/90 backdrop-blur-md text-white border border-white/20 flex items-center gap-1 shadow-xs">
+                <svg class="w-2.5 h-2.5 fill-current" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+                <span>Reel</span>
+              </span>
+            ` : ''}
+          </div>
+          ${isVideo ? `
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-brand-navy/90 text-white border border-brand-ice/60 flex items-center justify-center shadow-lg transform group-hover:scale-110 group-hover:bg-brand-ice transition-all duration-300">
+                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-brand-ice group-hover:text-white ml-0.5 transition-colors" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </div>
+            </div>
+          ` : ''}
+          <div class="absolute inset-x-0 bottom-0 p-3 sm:p-4 text-white pointer-events-none flex flex-col justify-end">
+            <h3 class="text-xs sm:text-sm md:text-base font-bold text-white tracking-tight line-clamp-1 font-display group-hover:text-sky-300 transition-colors">
+              ${item.title}
+            </h3>
+            <div class="flex items-center justify-between text-[10px] sm:text-[11px] text-sky-200/90 font-medium mt-1">
+              <span class="inline-flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                <span>${isVideo ? 'Watch Video Reel' : 'Tap to View Photo'}</span>
+              </span>
+              <svg class="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      `;
+    };
+
+    row1Track.innerHTML = buildTrackItems(row1Source).map(createCardHTML).join('');
+    row2Track.innerHTML = buildTrackItems(row2Source).map(createCardHTML).join('');
+
+    setupWorkPreviewLightbox(liveItems);
+  }
+
+  async function syncLiveWorkPreview() {
+    if (!supabase || !isSupabaseConfigured) return;
+    try {
+      const { data, error } = await supabase
+        .from('work_items')
+        .select('*')
+        .eq('published', true)
+        .order('sort_order', { ascending: true })
+        .order('created_at', { ascending: false });
+
+      if (!error && data && data.length > 0) {
+        renderMarqueeTracks(data as WorkItemDB[]);
+      }
+    } catch (e) {
+      console.warn('Supabase work preview sync error:', e);
+    }
+  }
+
+  // Initial setup
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      setupWorkPreviewLightbox();
+      syncLiveWorkPreview();
+    });
+  } else {
+    setupWorkPreviewLightbox();
+    syncLiveWorkPreview();
+  }
+  document.addEventListener('astro:page-load', () => {
+    setupWorkPreviewLightbox();
+    syncLiveWorkPreview();
+  });
+
+  // Re-sync on tab switch or focus
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      syncLiveWorkPreview();
+    }
+  });
+  window.addEventListener('focus', () => {
+    syncLiveWorkPreview();
+  });
+
+  // Realtime subscription
+  if (supabase) {
+    try {
+      supabase
+        .channel('public:work_items_preview')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'work_items' }, () => {
+          syncLiveWorkPreview();
+        })
+        .subscribe();
+    } catch (_) {}
+  }
 </script>

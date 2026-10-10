@@ -1,11 +1,12 @@
 ---
 import AdminLayout from '../../layouts/AdminLayout.astro';
-import { defaultFallbackWork } from '../../utils/supabase';
+import { defaultFallbackWork, getPublishedWorkItems } from '../../utils/supabase';
 
-const workItems = defaultFallbackWork;
-const totalPublished = workItems.filter(i => i.published).length;
-const totalPhotos = workItems.filter(i => i.media_type === 'image').length;
-const totalVideos = workItems.filter(i => i.media_type === 'video').length;
+const workItems = await getPublishedWorkItems();
+const displayItems = workItems.length > 0 ? workItems : defaultFallbackWork;
+const totalPublished = displayItems.filter(i => i.published).length;
+const totalPhotos = displayItems.filter(i => i.media_type === 'image').length;
+const totalVideos = displayItems.filter(i => i.media_type === 'video').length;
 ---
 
 <AdminLayout title="Dashboard" activeTab="dashboard">
@@ -182,33 +183,48 @@ const totalVideos = workItems.filter(i => i.media_type === 'video').length;
     <!-- 1. Dedicated Mobile Card View (shown only on small screens) -->
     <div class="block sm:hidden divide-y divide-slate-800/80">
       {
-        workItems.map((item) => (
-          <div class="p-3.5 flex items-center gap-3">
-            <img
-              src={item.thumbnail_url || item.image_url}
-              alt={item.title}
-              class="w-16 h-16 object-cover rounded-xl border border-slate-700 bg-slate-950 flex-shrink-0"
-            />
-            <div class="flex-grow min-w-0">
-              <div class="font-bold text-sm text-white truncate">{item.title}</div>
-              <div class="flex items-center gap-2 mt-1">
-                <span class="text-[11px] font-semibold text-brand-ice bg-brand-ice/10 px-2 py-0.5 rounded">
-                  {item.category}
-                </span>
-                <span class="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-400">
-                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                  Live
-                </span>
+        displayItems.map((item) => {
+          const isVideo = item.media_type === 'video' || Boolean(item.video_url) || (Boolean(item.image_url) && /\.(mp4|webm|mov)$/i.test(item.image_url));
+          const videoSrc = item.video_url || (isVideo ? item.image_url : '');
+          return (
+            <div class="p-3.5 flex items-center gap-3">
+              {isVideo ? (
+                <video
+                  src={`${videoSrc}#t=0.001`}
+                  muted
+                  playsinline
+                  preload="metadata"
+                  class="w-16 h-16 object-cover rounded-xl border border-slate-700 bg-slate-950 flex-shrink-0 pointer-events-none"
+                ></video>
+              ) : (
+                <img
+                  src={item.thumbnail_url || item.image_url}
+                  alt={item.title}
+                  class="w-16 h-16 object-cover rounded-xl border border-slate-700 bg-slate-950 flex-shrink-0"
+                  loading="lazy"
+                />
+              )}
+              <div class="flex-grow min-w-0">
+                <div class="font-bold text-sm text-white truncate">{item.title}</div>
+                <div class="flex items-center gap-2 mt-1">
+                  <span class="text-[11px] font-semibold text-brand-ice bg-brand-ice/10 px-2 py-0.5 rounded">
+                    {item.category}
+                  </span>
+                  <span class="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-400">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                    Live
+                  </span>
+                </div>
               </div>
+              <a
+                href="/admin/work/"
+                class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 flex-shrink-0 min-h-[38px] flex items-center"
+              >
+                Edit
+              </a>
             </div>
-            <a
-              href="/admin/work/"
-              class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 flex-shrink-0 min-h-[38px] flex items-center"
-            >
-              Edit
-            </a>
-          </div>
-        ))
+          );
+        })
       }
     </div>
 
@@ -226,15 +242,29 @@ const totalVideos = workItems.filter(i => i.media_type === 'video').length;
         </thead>
         <tbody class="divide-y divide-slate-800/60" id="work-table-body">
           {
-            workItems.map((item) => (
-              <tr class="hover:bg-slate-850/50 transition-colors">
-                <td class="py-3 px-4 sm:px-6">
-                  <img
-                    src={item.thumbnail_url || item.image_url}
-                    alt={item.title}
-                    class="w-12 h-10 object-cover rounded-lg border border-slate-700 bg-slate-950"
-                  />
-                </td>
+            displayItems.map((item) => {
+              const isVideo = item.media_type === 'video' || Boolean(item.video_url) || (Boolean(item.image_url) && /\.(mp4|webm|mov)$/i.test(item.image_url));
+              const videoSrc = item.video_url || (isVideo ? item.image_url : '');
+              return (
+                <tr class="hover:bg-slate-850/50 transition-colors">
+                  <td class="py-3 px-4 sm:px-6">
+                    {isVideo ? (
+                      <video
+                        src={`${videoSrc}#t=0.001`}
+                        muted
+                        playsinline
+                        preload="metadata"
+                        class="w-12 h-10 object-cover rounded-lg border border-slate-700 bg-slate-950 pointer-events-none"
+                      ></video>
+                    ) : (
+                      <img
+                        src={item.thumbnail_url || item.image_url}
+                        alt={item.title}
+                        class="w-12 h-10 object-cover rounded-lg border border-slate-700 bg-slate-950"
+                        loading="lazy"
+                      />
+                    )}
+                  </td>
                 <td class="py-3 px-4">
                   <div class="font-bold text-white">{item.title}</div>
                   <div class="text-xs text-brand-ice mt-0.5">{item.category}</div>
@@ -259,8 +289,9 @@ const totalVideos = workItems.filter(i => i.media_type === 'video').length;
                   </a>
                 </td>
               </tr>
-            ))
-          }
+            );
+          })
+        }
         </tbody>
       </table>
     </div>
