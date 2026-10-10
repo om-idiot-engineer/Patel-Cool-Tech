@@ -1,127 +1,386 @@
 ---
 import { business } from '../data/business';
 import Container from './Container.astro';
-import SectionHeading from './SectionHeading.astro';
-import Button from './Button.astro';
 
-const { featuredAreas, extendedCoverageNote } = business.serviceAreas;
+interface Hub {
+  id: string;
+  name: string;
+  tabLabel: string;
+  tabBadge: string;
+  isMainShop: boolean;
+  fullName: string;
+  distance: string;
+  areas: string[];
+  lat: number;
+  lon: number;
+  bbox: string;
+  hasMarker: boolean;
+  mapBadgeTitle: string;
+  mapBadgeSubtitle: string;
+  whatsappMessage: string;
+}
 
-const areaHighlights = [
+const hubs: Hub[] = [
   {
+    id: 'indore',
     name: 'Indore',
-    badge: 'City Center & Suburbs',
-    description: 'On-site AC installation in Indore, deep coil jet servicing, compressor troubleshooting, and gas refilling across residential apartments and retail spaces.',
-    highlights: ['Residential colonies & apartments', 'Commercial shops & offices', 'Split & window unit support'],
+    tabLabel: 'Indore (HQ)',
+    tabBadge: 'Physical Shop',
+    isMainShop: true,
+    fullName: 'Indore — Central Workshop & Main Hub',
+    distance: 'Main Base & Shop Location',
+    areas: ['Vijay Nagar', 'Palasia', 'Rajwada', 'Bhanwarkua', 'Super Corridor', 'Nipania', 'Annapurna', 'Bengali Square', 'Sudama Nagar', 'Sapna Sangeeta'],
+    lat: 22.671217,
+    lon: 75.8721141,
+    bbox: '75.830,22.635,75.915,22.715',
+    hasMarker: true,
+    mapBadgeTitle: '🏢 Verified Workshop: Indore HQ',
+    mapBadgeSubtitle: 'Genuine Google Maps Verified Location',
+    whatsappMessage: 'Hello Patel Cool Tech, I need AC service in Indore',
   },
   {
+    id: 'rau',
     name: 'Rau',
-    badge: 'Residential Corridor',
-    description: 'Prompt AC repair in Rau, emergency cooling fault diagnostics, drainage leakage resolution, and seasonal tune-ups along the AB Road corridor.',
-    highlights: ['Fast doorstep technician dispatch', 'Water leakage & noise resolution', 'Gas leak detection & refill'],
+    tabLabel: 'Rau (~15 km)',
+    tabBadge: 'Doorstep Service',
+    isMainShop: false,
+    fullName: 'Rau & Silicon City — Doorstep Service',
+    distance: '~15 km from Indore Workshop',
+    areas: ['Silicon City', 'AB Road Bypass', 'Treasure Fantasy', 'CAT Road', 'Rau Circle', 'Emerald Heights Area', 'Pigdamber'],
+    lat: 22.6288,
+    lon: 75.8056,
+    bbox: '75.765,22.595,75.850,22.665',
+    hasMarker: false,
+    mapBadgeTitle: '🚐 Service Coverage Zone: Rau',
+    mapBadgeSubtitle: 'Dispatched from Indore Workshop Base',
+    whatsappMessage: 'Hello Patel Cool Tech, I need on-site AC service in Rau / Silicon City',
   },
   {
+    id: 'pithampur',
     name: 'Pithampur',
-    badge: 'Industrial & Commercial Hub',
-    description: 'Reliable air conditioning maintenance, split AC servicing, and customized annual maintenance contracts (AMC) for commercial and industrial facilities.',
-    highlights: ['Multi-unit commercial facilities', 'Office space cooling maintenance', 'Scheduled preventive AMC contracts'],
+    tabLabel: 'Pithampur (~32 km)',
+    tabBadge: 'Industrial & AMC',
+    isMainShop: false,
+    fullName: 'Pithampur Industrial Area — On-Site Visits',
+    distance: '~32 km via Bypass Corridor',
+    areas: ['Sector 1', 'Sector 2', 'Sector 3', 'SEZ Zone', 'Sagore', 'Smart City Industrial Area', 'Kheda'],
+    lat: 22.6074,
+    lon: 75.6888,
+    bbox: '75.640,22.570,75.750,22.650',
+    hasMarker: false,
+    mapBadgeTitle: '🏭 Industrial Service Zone: Pithampur',
+    mapBadgeSubtitle: 'Dispatched from Indore Workshop Base',
+    whatsappMessage: 'Hello Patel Cool Tech, I need commercial/industrial AC service in Pithampur',
+  },
+  {
+    id: 'khandwa',
+    name: 'Khandwa',
+    tabLabel: 'Khandwa (~130 km)',
+    tabBadge: 'Extended Visits',
+    isMainShop: false,
+    fullName: 'Khandwa Region — Pre-Scheduled Visits',
+    distance: '~130 km via NH-347BG',
+    areas: ['Civil Lines', 'Anand Nagar', 'Jaswadi Road', 'Padawa', 'Surgaon', 'Nimar Highway Hubs'],
+    lat: 21.8314,
+    lon: 76.3498,
+    bbox: '76.305,21.790,76.395,21.870',
+    hasMarker: false,
+    mapBadgeTitle: '🚗 Regional Service Route: Khandwa',
+    mapBadgeSubtitle: 'Dispatched from Indore Workshop Base',
+    whatsappMessage: 'Hello Patel Cool Tech, I need AC installation or service in Khandwa',
   },
 ];
 ---
 
-<section class="py-12 sm:py-16 lg:py-20 bg-white border-b border-brand-border">
+<section id="service-areas" class="py-6 sm:py-10 lg:py-16 bg-slate-50/60 border-b border-brand-border/80 relative overflow-hidden">
   <Container>
-    <SectionHeading
-      badge="Service Coverage"
-      title="Serving Indore & Nearby Areas"
-      subtitle="Patel Cool Tech delivers on-site air conditioning service, repair, and installation directly at your premises with straightforward local coordination."
-      align="center"
-    />
-
-    <!-- Core Coverage Area Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch">
-      {
-        areaHighlights.map((area) => (
-          <article class="flex flex-col justify-between bg-brand-surface rounded-2xl p-6 sm:p-7 border border-brand-border/80 hover:border-brand-blue/40 hover:shadow-card transition-all duration-200 group">
-            <div>
-              <!-- Header with Location Pin -->
-              <div class="flex items-center justify-between gap-3 mb-4">
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white border border-brand-border text-brand-blue">
-                  <svg class="w-3.5 h-3.5 text-brand-ice" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <span>{area.badge}</span>
-                </span>
-                <span class="text-xs font-medium text-slate-400">Madhya Pradesh</span>
-              </div>
-
-              <!-- Location Name & Description -->
-              <h3 class="text-xl sm:text-2xl font-bold text-brand-navy mb-2.5">
-                {area.name}
-              </h3>
-              <p class="text-sm text-brand-text-muted leading-relaxed mb-5">
-                {area.description}
-              </p>
-
-              <!-- Local Bullet Points -->
-              <ul class="space-y-2 mb-6 border-t border-brand-border/60 pt-4" role="list">
-                {area.highlights.map((item) => (
-                  <li class="flex items-start gap-2 text-xs sm:text-sm text-brand-text">
-                    <svg class="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <!-- Direct Action -->
-            <div class="pt-3 border-t border-brand-border/60">
-              <Button
-                href={business.phones.whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                variant="outline"
-                size="sm"
-                class="w-full justify-center text-xs sm:text-sm font-semibold min-h-[44px]"
-                aria-label={`Inquire about AC service in ${area.name}`}
-              >
-                Request Service in {area.name}
-              </Button>
-            </div>
-          </article>
-        ))
-      }
+    <!-- Compact Minimized Section Header (Optimized for Mobile, Elegant on Desktop) -->
+    <div class="max-w-xl lg:max-w-2xl mx-auto text-center mb-4 sm:mb-6 lg:mb-8">
+      <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold font-display text-brand-navy tracking-tight">
+        Service Areas &amp; Workshop Base
+      </h2>
+      <p class="mt-1 text-xs sm:text-sm lg:text-base text-brand-text-subtle">
+        Main shop in Indore &bull; Doorstep service across Rau, Pithampur &amp; Khandwa
+      </p>
     </div>
 
-    <!-- Extended Coverage Notice Box -->
-    <div class="mt-8 sm:mt-10 p-5 sm:p-6 rounded-2xl bg-brand-surface-alt border border-brand-border flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-      <div class="flex items-start gap-3.5">
-        <div class="w-10 h-10 rounded-xl bg-brand-blue-light text-brand-blue flex items-center justify-center flex-shrink-0 mt-0.5">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+    <!-- Main Clean Card Container -->
+    <div class="rounded-2xl sm:rounded-3xl bg-white border border-brand-border shadow-elevated overflow-hidden reveal-init">
+      
+      <!-- 1. Sleek Compact Top Bar: Direct Google Maps Location Button -->
+      <div class="px-3 sm:px-4 py-2 bg-slate-900 border-b border-slate-800 flex items-center justify-end">
+        <a
+          href={business.googleBusinessProfile.mapsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-[11px] sm:text-xs font-bold transition-all active:scale-95 shadow-xs flex-shrink-0"
+          aria-label="Open Patel Cool Tech on Google Maps"
+        >
+          <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
           </svg>
-        </div>
-        <div>
-          <h4 class="text-sm sm:text-base font-bold text-brand-navy">Extended &amp; Surrounding Region Coverage</h4>
-          <p class="text-xs sm:text-sm text-brand-text-muted mt-0.5 leading-relaxed">
-            {extendedCoverageNote}
-          </p>
-        </div>
+          <span>Google Map Location</span>
+        </a>
       </div>
 
-      <div class="flex-shrink-0 w-full md:w-auto">
-        <Button
-          href={business.phones.primaryTel}
-          variant="primary"
-          size="sm"
-          class="w-full md:w-auto font-semibold min-h-[44px]"
-          aria-label="Call to confirm coverage in your area"
-        >
-          Call to Confirm Location
-        </Button>
+      <!-- 2. Segmented Hub Switcher Tabs -->
+      <div class="p-2 sm:p-2.5 bg-slate-50 border-b border-brand-border/80 flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar">
+        {
+          hubs.map((hub, idx) => (
+            <button
+              type="button"
+              class:list={[
+                'hub-tab-btn flex-shrink-0 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all border flex items-center gap-2 cursor-pointer active:scale-95',
+                idx === 0
+                  ? 'bg-brand-navy text-white border-brand-navy shadow-xs'
+                  : 'bg-white text-brand-navy border-brand-border hover:border-brand-ice/60 hover:bg-white/90',
+              ]}
+              data-hub-id={hub.id}
+            >
+              <span class:list={[
+                'w-2 h-2 rounded-full',
+                hub.isMainShop ? 'bg-emerald-400 ring-2 ring-emerald-300/40' : 'bg-sky-400'
+              ]}></span>
+              <span>{hub.tabLabel}</span>
+              <span class:list={[
+                'text-[10px] px-1.5 py-0.2 rounded font-semibold',
+                idx === 0 ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'
+              ]}>
+                {hub.tabBadge}
+              </span>
+            </button>
+          ))
+        }
+      </div>
+
+      <!-- 3. Split Layout: Active Hub Card & Intelligent Honest Map -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 items-stretch">
+        <!-- Left Column: Clean & Direct Location Details -->
+        <div class="lg:col-span-5 p-4 sm:p-6 lg:p-8 flex flex-col justify-between bg-white border-b lg:border-b-0 lg:border-r border-brand-border">
+          <div>
+            <!-- Title & Distance -->
+            <div class="flex items-baseline justify-between gap-2">
+              <h3 id="active-hub-title" class="text-base sm:text-lg lg:text-xl font-bold text-brand-navy font-display tracking-tight">
+                {hubs[0].fullName}
+              </h3>
+              <span id="active-hub-distance" class="text-xs font-semibold text-brand-text-subtle flex-shrink-0">
+                {hubs[0].distance}
+              </span>
+            </div>
+
+            <!-- Popular Localities Chips -->
+            <div class="mt-3.5">
+              <p class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                Popular Coverage Localities:
+              </p>
+              <div id="active-hub-areas" class="flex flex-wrap gap-1.5">
+                {
+                  hubs[0].areas.map((area) => (
+                    <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[11px] font-semibold border border-slate-200/70 shadow-2xs">
+                      {area}
+                    </span>
+                  ))
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Direct 1-Tap Conversion Actions -->
+          <div class="mt-4 pt-3.5 border-t border-slate-100 flex items-center gap-2.5">
+            <a
+              id="active-hub-whatsapp"
+              href={`https://wa.me/919575664203?text=${encodeURIComponent(hubs[0].whatsappMessage)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 min-h-[44px] rounded-xl bg-brand-whatsapp hover:bg-brand-whatsapp-hover text-white text-xs sm:text-sm font-bold shadow-soft transition-all active:scale-95"
+            >
+              <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
+              </svg>
+              <span>WhatsApp Booking</span>
+            </a>
+            <a
+              href={business.phones.primaryTel}
+              class="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 min-h-[44px] rounded-xl bg-brand-navy hover:bg-brand-navy-light text-white text-xs sm:text-sm font-bold shadow-soft transition-all active:scale-95"
+            >
+              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+              </svg>
+              <span>Call Technician</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Right Column: Interactive Honest Map -->
+        <div class="lg:col-span-7 relative h-[220px] sm:h-[280px] lg:h-auto min-h-[220px] lg:min-h-[460px] bg-slate-100 overflow-hidden flex flex-col">
+          <iframe
+            id="hub-map-iframe"
+            title="Patel Cool Tech Location & Service Coverage Map"
+            src={`https://www.openstreetmap.org/export/embed.html?bbox=${hubs[0].bbox}&layer=mapnik&marker=${hubs[0].lat}%2C${hubs[0].lon}`}
+            class="w-full h-full border-0 flex-1"
+            loading="lazy"
+          ></iframe>
+
+          <!-- Floating Map Status Badge (Top-Left) -->
+          <div class="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-xl border border-brand-border/90 shadow-soft max-w-[85%] sm:max-w-none">
+            <div class="flex items-center gap-2">
+              <span id="map-indicator-dot" class="relative flex h-2 w-2 flex-shrink-0">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
+              </span>
+              <div>
+                <p id="map-legend-title" class="font-bold text-brand-navy text-[11px] sm:text-xs leading-none">
+                  {hubs[0].mapBadgeTitle}
+                </p>
+                <p id="map-legend-subtitle" class="text-[9px] sm:text-[10px] text-slate-500 font-medium mt-0.5 leading-none">
+                  {hubs[0].mapBadgeSubtitle}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Return to Verified Workshop Link (shown when viewing Rau/Pithampur/Khandwa) -->
+          <button
+            id="btn-switch-indore"
+            type="button"
+            class="hidden absolute top-3 right-3 bg-white/95 hover:bg-white text-emerald-800 backdrop-blur-md px-2.5 py-1.5 rounded-xl border border-emerald-200 shadow-soft text-[10px] sm:text-[11px] font-bold transition-all active:scale-95 items-center gap-1 cursor-pointer"
+          >
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            <span>View Indore Shop</span>
+          </button>
+
+          <!-- Floating One-Click Google Maps Link (Bottom-Right) -->
+          <a
+            href={business.googleBusinessProfile.mapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="absolute bottom-3 right-3 bg-brand-navy/90 hover:bg-brand-navy text-white backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20 shadow-card flex items-center gap-1.5 text-[11px] font-bold transition-all active:scale-95"
+          >
+            <span>Open in Google Maps</span>
+            <svg class="w-3.5 h-3.5 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </a>
+        </div>
       </div>
     </div>
   </Container>
 </section>
+
+<!-- Client Script for Interactive Hub Switcher & Map Sync -->
+<script define:vars={{ hubs }}>
+  function setupServiceAreasHubs() {
+    const tabs = document.querySelectorAll('.hub-tab-btn');
+    const titleEl = document.getElementById('active-hub-title');
+    const distanceEl = document.getElementById('active-hub-distance');
+    const areasEl = document.getElementById('active-hub-areas');
+    const whatsappEl = document.getElementById('active-hub-whatsapp');
+    const iframeEl = document.getElementById('hub-map-iframe');
+    const legendTitleEl = document.getElementById('map-legend-title');
+    const legendSubtitleEl = document.getElementById('map-legend-subtitle');
+    const dotEl = document.getElementById('map-indicator-dot');
+    const btnSwitchIndore = document.getElementById('btn-switch-indore');
+
+    if (!tabs.length || !titleEl) return;
+
+    function activateHub(hubId) {
+      const selectedHub = hubs.find((h) => h.id === hubId);
+      if (!selectedHub) return;
+
+      // 1. Update tab button styles
+      tabs.forEach((tab) => {
+        const isCurrent = tab.getAttribute('data-hub-id') === hubId;
+        const badgeChild = tab.querySelector('span:last-child');
+        if (isCurrent) {
+          tab.classList.remove('bg-white', 'text-brand-navy', 'border-brand-border');
+          tab.classList.add('bg-brand-navy', 'text-white', 'border-brand-navy', 'shadow-xs');
+          if (badgeChild) {
+            badgeChild.className = 'text-[10px] px-1.5 py-0.2 rounded font-semibold bg-white/20 text-white';
+          }
+        } else {
+          tab.classList.remove('bg-brand-navy', 'text-white', 'border-brand-navy', 'shadow-xs');
+          tab.classList.add('bg-white', 'text-brand-navy', 'border-brand-border');
+          if (badgeChild) {
+            badgeChild.className = 'text-[10px] px-1.5 py-0.2 rounded font-semibold bg-slate-100 text-slate-600';
+          }
+        }
+      });
+
+      // 2. Update card details
+      titleEl.textContent = selectedHub.fullName;
+      if (distanceEl) {
+        distanceEl.textContent = selectedHub.distance;
+      }
+
+      // 3. Update area chips
+      if (areasEl) {
+        areasEl.innerHTML = selectedHub.areas
+          .map(
+            (area) =>
+              `<span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[11px] font-semibold border border-slate-200/70 shadow-2xs">${area}</span>`
+          )
+          .join('');
+      }
+
+      // 4. Update WhatsApp link
+      if (whatsappEl) {
+        whatsappEl.href = `https://wa.me/919575664203?text=${encodeURIComponent(selectedHub.whatsappMessage)}`;
+      }
+
+      // 5. Update map iframe
+      if (iframeEl) {
+        if (selectedHub.hasMarker) {
+          iframeEl.src = `https://www.openstreetmap.org/export/embed.html?bbox=${selectedHub.bbox}&layer=mapnik&marker=${selectedHub.lat}%2C${selectedHub.lon}`;
+        } else {
+          iframeEl.src = `https://www.openstreetmap.org/export/embed.html?bbox=${selectedHub.bbox}&layer=mapnik`;
+        }
+      }
+
+      // 6. Update map status badge
+      if (legendTitleEl) legendTitleEl.textContent = selectedHub.mapBadgeTitle;
+      if (legendSubtitleEl) legendSubtitleEl.textContent = selectedHub.mapBadgeSubtitle;
+
+      if (dotEl) {
+        if (selectedHub.isMainShop) {
+          dotEl.innerHTML = `
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
+          `;
+        } else {
+          dotEl.innerHTML = `
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
+          `;
+        }
+      }
+
+      // 7. Toggle "View Indore Shop" button on the map
+      if (btnSwitchIndore) {
+        if (selectedHub.isMainShop) {
+          btnSwitchIndore.classList.add('hidden');
+          btnSwitchIndore.classList.remove('flex');
+        } else {
+          btnSwitchIndore.classList.remove('hidden');
+          btnSwitchIndore.classList.add('flex');
+        }
+      }
+    }
+
+    // Attach click events to tabs
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const hubId = tab.getAttribute('data-hub-id');
+        activateHub(hubId);
+      });
+    });
+
+    // Attach click event to "View Indore Shop" quick switch button
+    if (btnSwitchIndore) {
+      btnSwitchIndore.addEventListener('click', () => {
+        activateHub('indore');
+      });
+    }
+  }
+
+  setupServiceAreasHubs();
+  document.addEventListener('astro:page-load', setupServiceAreasHubs);
+</script>

@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css';
 import BrandLogo from '../components/BrandLogo.astro';
-import { isSupabaseConfigured } from '../utils/supabase';
+import { isSupabaseConfigured, getSiteSettings } from '../utils/supabase';
 
 interface Props {
   title: string;
@@ -9,6 +9,7 @@ interface Props {
 }
 
 const { title, activeTab = 'dashboard' } = Astro.props;
+const settings = await getSiteSettings();
 ---
 
 <!doctype html>
@@ -21,23 +22,79 @@ const { title, activeTab = 'dashboard' } = Astro.props;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Immediate Pre-Render Owner Auth Check: Blocks any unauthenticated access instantly -->
+    <style is:inline id="admin-auth-guard-style">
+      body {
+        visibility: hidden !important;
+        opacity: 0 !important;
+      }
+    </style>
+    <script is:inline>
+      (function() {
+        try {
+          var authenticated = false;
+          var targetOwnerEmail = 'patelcooltech@gmail.com';
+          for (var i = 0; i < localStorage.length; i++) {
+            var k = localStorage.key(i);
+            if (k && k.indexOf('-auth-token') !== -1) {
+              var raw = localStorage.getItem(k);
+              if (raw && raw.indexOf('access_token') !== -1) {
+                try {
+                  var data = JSON.parse(raw);
+                  var token = data.access_token || (data.currentSession && data.currentSession.access_token);
+                  var user = data.user || (data.currentSession && data.currentSession.user);
+                  if (token && user && user.email && user.email.toLowerCase() === targetOwnerEmail) {
+                    authenticated = true;
+                    break;
+                  }
+                } catch (e) {}
+              }
+            }
+          }
+          if (!authenticated) {
+            window.location.replace('/admin/login/?unauthorized=1');
+          }
+        } catch (err) {
+          window.location.replace('/admin/login/?unauthorized=1');
+        }
+      })();
+    </script>
+    <noscript>
+      <style>
+        body { display: none !important; }
+      </style>
+    </noscript>
   </head>
   <body class="flex flex-col min-h-full bg-slate-950 text-slate-100 font-sans antialiased">
+    <!-- Security Verification Barrier (Dismissed once cryptographic token is verified) -->
+    <div id="auth-verifier-overlay" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-950 text-white transition-opacity duration-200">
+      <div class="flex flex-col items-center gap-3 p-6 text-center max-w-sm">
+        <div class="relative w-12 h-12 flex items-center justify-center">
+          <div class="absolute inset-0 rounded-full border-2 border-brand-ice/20 border-t-brand-ice animate-spin"></div>
+          <svg class="w-5 h-5 text-brand-ice" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+        </div>
+        <p class="text-sm font-bold text-white tracking-wide">Owner Security Check</p>
+        <p class="text-xs text-slate-400">Verifying authorized Patel Cool Tech session...</p>
+      </div>
+    </div>
     <!-- Admin Top Navbar -->
     <header class="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16 sm:h-18">
+      <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-14 sm:h-18">
           <!-- Logo & Admin Badge -->
-          <div class="flex items-center gap-3">
-            <a href="/admin/" class="flex items-center gap-2.5">
-              <BrandLogo variant="light" size="sm" showTagline={false} />
+          <div class="flex items-center gap-2 sm:gap-3">
+            <a href="/admin/" class="flex items-center gap-2" aria-label="Patel Cool Tech Admin Home">
+              <BrandLogo variant="light" size="sm" showTagline={false} customLogoUrl={settings?.logo_url} />
             </a>
-            <span class="px-2 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-brand-ice/20 text-brand-ice border border-brand-ice/30">
-              Admin CMS
+            <span class="px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-bold uppercase tracking-wider bg-brand-ice/20 text-brand-ice border border-brand-ice/30">
+              Admin
             </span>
           </div>
 
-          <!-- Navigation Links (Desktop) -->
+          <!-- Navigation Links (Desktop only - mobile uses bottom app dock) -->
           <nav class="hidden md:flex items-center space-x-1 lg:space-x-2" aria-label="Admin navigation">
             <a
               href="/admin/"
@@ -85,15 +142,24 @@ const { title, activeTab = 'dashboard' } = Astro.props;
             </a>
           </nav>
 
-          <!-- Right: View Public Site & Logout -->
-          <div class="flex items-center gap-3">
+          <!-- Right: Owner Account Badge, View Public Site & Logout -->
+          <div class="flex items-center gap-2 sm:gap-3">
+            <!-- Verified Owner Account Indicator -->
+            <div class="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-950/40 border border-emerald-800/50 text-[11px] text-emerald-300">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span class="text-emerald-400 font-semibold">Owner:</span>
+              <span id="header-owner-email" class="font-bold text-white">patelcooltech@gmail.com</span>
+            </div>
+
             <a
               href="/"
               target="_blank"
-              class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors"
+              title="View Live Public Website"
             >
-              <span>View Site</span>
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <span class="hidden xs:inline sm:inline">View Site</span>
+              <svg class="w-3.5 h-3.5 text-brand-ice" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
               </svg>
             </a>
@@ -101,102 +167,175 @@ const { title, activeTab = 'dashboard' } = Astro.props;
             <button
               type="button"
               id="admin-logout-btn"
-              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-rose-300 hover:text-rose-100 bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/50 transition-colors cursor-pointer"
+              class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold text-rose-300 hover:text-rose-100 bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/50 transition-colors cursor-pointer"
+              title="Sign Out of Admin"
             >
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
               </svg>
-              <span>Logout</span>
+              <span class="hidden sm:inline">Logout</span>
             </button>
           </div>
-        </div>
-
-        <!-- Mobile Sub-navigation bar -->
-        <div class="flex md:hidden items-center justify-between py-2 border-t border-slate-800 overflow-x-auto text-xs">
-          <a
-            href="/admin/"
-            class:list={[
-              'px-2.5 py-1.5 rounded-md font-semibold whitespace-nowrap',
-              activeTab === 'dashboard' ? 'text-brand-ice font-bold bg-slate-800' : 'text-slate-400',
-            ]}
-          >
-            Dashboard
-          </a>
-          <a
-            href="/admin/work/"
-            class:list={[
-              'px-2.5 py-1.5 rounded-md font-semibold whitespace-nowrap',
-              activeTab === 'work' ? 'text-brand-ice font-bold bg-slate-800' : 'text-slate-400',
-            ]}
-          >
-            Work
-          </a>
-          <a
-            href="/admin/media/"
-            class:list={[
-              'px-2.5 py-1.5 rounded-md font-semibold whitespace-nowrap',
-              activeTab === 'media' ? 'text-brand-ice font-bold bg-slate-800' : 'text-slate-400',
-            ]}
-          >
-            Media
-          </a>
-          <a
-            href="/admin/settings/"
-            class:list={[
-              'px-2.5 py-1.5 rounded-md font-semibold whitespace-nowrap',
-              activeTab === 'settings' ? 'text-brand-ice font-bold bg-slate-800' : 'text-slate-400',
-            ]}
-          >
-            Settings
-          </a>
         </div>
       </div>
     </header>
 
-    <!-- Supabase Status Banner if unconfigured -->
-    {!isSupabaseConfigured && (
-      <div class="bg-amber-950/80 border-b border-amber-800/80 px-4 py-3 text-amber-200 text-xs">
-        <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
-          <div class="flex items-center gap-2">
-            <svg class="w-4 h-4 text-amber-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
-            <span>
-              <strong>Supabase Demo Mode:</strong> Configure <code>PUBLIC_SUPABASE_URL</code> and <code>PUBLIC_SUPABASE_ANON_KEY</code> in <code>.env</code> to enable live database writes and cloud storage. Currently using high-speed local data.
-            </span>
-          </div>
-          <a href="https://supabase.com" target="_blank" class="underline font-bold whitespace-nowrap hover:text-white">
-            Setup Guide &rarr;
-          </a>
-        </div>
-      </div>
-    )}
-
-    <!-- Main Admin Content Area -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+    <!-- Main Admin Content Area (Extra bottom padding on mobile for dock) -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-8 pb-28 md:pb-12">
       <slot />
     </main>
 
+    <!-- Native App-Style Bottom Navigation Dock (Mobile Only) -->
+    <nav
+      class="fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-xl border-t border-slate-800 shadow-[0_-4px_24px_rgba(0,0,0,0.6)] md:hidden pb-[max(0.6rem,env(safe-area-inset-bottom))] pt-1 px-2"
+      aria-label="Mobile Admin Navigation"
+    >
+      <div class="grid grid-cols-4 items-center">
+        <!-- Tab 1: Dashboard -->
+        <a
+          href="/admin/"
+          class:list={[
+            'flex flex-col items-center justify-center py-1.5 px-1 rounded-xl transition-all active:scale-95 min-h-[50px]',
+            activeTab === 'dashboard'
+              ? 'text-brand-ice font-bold'
+              : 'text-slate-400 hover:text-slate-200',
+          ]}
+        >
+          <div class:list={[
+            'p-1 rounded-lg transition-colors',
+            activeTab === 'dashboard' ? 'bg-brand-ice/15' : 'bg-transparent',
+          ]}>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+            </svg>
+          </div>
+          <span class="text-[10px] mt-0.5 tracking-tight font-medium">Dashboard</span>
+        </a>
+
+        <!-- Tab 2: Work Items -->
+        <a
+          href="/admin/work/"
+          class:list={[
+            'flex flex-col items-center justify-center py-1.5 px-1 rounded-xl transition-all active:scale-95 min-h-[50px]',
+            activeTab === 'work'
+              ? 'text-brand-ice font-bold'
+              : 'text-slate-400 hover:text-slate-200',
+          ]}
+        >
+          <div class:list={[
+            'p-1 rounded-lg transition-colors',
+            activeTab === 'work' ? 'bg-brand-ice/15' : 'bg-transparent',
+          ]}>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <span class="text-[10px] mt-0.5 tracking-tight font-medium">Work</span>
+        </a>
+
+        <!-- Tab 3: Media -->
+        <a
+          href="/admin/media/"
+          class:list={[
+            'flex flex-col items-center justify-center py-1.5 px-1 rounded-xl transition-all active:scale-95 min-h-[50px]',
+            activeTab === 'media'
+              ? 'text-brand-ice font-bold'
+              : 'text-slate-400 hover:text-slate-200',
+          ]}
+        >
+          <div class:list={[
+            'p-1 rounded-lg transition-colors',
+            activeTab === 'media' ? 'bg-brand-ice/15' : 'bg-transparent',
+          ]}>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <span class="text-[10px] mt-0.5 tracking-tight font-medium">Media</span>
+        </a>
+
+        <!-- Tab 4: Settings -->
+        <a
+          href="/admin/settings/"
+          class:list={[
+            'flex flex-col items-center justify-center py-1.5 px-1 rounded-xl transition-all active:scale-95 min-h-[50px]',
+            activeTab === 'settings'
+              ? 'text-brand-ice font-bold'
+              : 'text-slate-400 hover:text-slate-200',
+          ]}
+        >
+          <div class:list={[
+            'p-1 rounded-lg transition-colors',
+            activeTab === 'settings' ? 'bg-brand-ice/15' : 'bg-transparent',
+          ]}>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </div>
+          <span class="text-[10px] mt-0.5 tracking-tight font-medium">Settings</span>
+        </a>
+      </div>
+    </nav>
+
     <!-- Admin Footer -->
-    <footer class="bg-slate-900 border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+    <footer class="hidden md:block bg-slate-900 border-t border-slate-800 py-6 text-center text-xs text-slate-500">
       <p>&copy; {new Date().getFullYear()} Patel Cool Tech &bull; Owner Administration System</p>
     </footer>
 
-    <!-- Client-side Auth Guardian Script -->
+    <!-- Client-side Cryptographic Auth Guardian Script -->
     <script>
-      import { supabase, isSupabaseConfigured } from '../utils/supabase';
+      import { supabase, isSupabaseConfigured, isAuthorizedOwner } from '../utils/supabase';
 
       async function checkAdminAuth() {
-        // If Supabase is not configured yet, allow demo exploration
         if (!isSupabaseConfigured || !supabase) {
+          window.location.replace('/admin/login/?unauthorized=1');
           return;
         }
 
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
-          // If no active session, redirect to login
-          window.location.href = '/admin/login/';
+        try {
+          const { data: { session }, error } = await supabase.auth.getSession();
+
+          if (error || !session || !session.user || !isAuthorizedOwner(session.user.email)) {
+            // Unauthenticated or not owner: sign out and redirect immediately
+            try {
+              await supabase.auth.signOut();
+            } catch (_) {}
+            window.location.replace('/admin/login/?unauthorized=1');
+            return;
+          }
+
+          // Verified owner confirmed! Safely reveal the protected dashboard
+          const guardStyle = document.getElementById('admin-auth-guard-style');
+          if (guardStyle) {
+            guardStyle.remove();
+          }
+          document.body.style.setProperty('visibility', 'visible', 'important');
+          document.body.style.setProperty('opacity', '1', 'important');
+          document.body.style.transition = 'opacity 0.2s ease-in';
+
+          const overlay = document.getElementById('auth-verifier-overlay');
+          if (overlay) {
+            overlay.style.opacity = '0';
+            setTimeout(() => overlay.remove(), 200);
+          }
+
+          const emailEl = document.getElementById('header-owner-email');
+          if (emailEl && session.user.email) {
+            emailEl.textContent = session.user.email;
+          }
+        } catch (err) {
+          window.location.replace('/admin/login/?unauthorized=1');
         }
+      }
+
+      // Real-time auth listener: if token revoked or sign-out triggered, immediately lock screen
+      if (supabase) {
+        supabase.auth.onAuthStateChange((event, session) => {
+          if (event === 'SIGNED_OUT' || !session || !isAuthorizedOwner(session?.user?.email)) {
+            window.location.replace('/admin/login/?logout=1');
+          }
+        });
       }
 
       // Logout handler
@@ -206,7 +345,15 @@ const { title, activeTab = 'dashboard' } = Astro.props;
           if (supabase) {
             await supabase.auth.signOut();
           }
-          window.location.href = '/admin/login/';
+          try {
+            for (let i = localStorage.length - 1; i >= 0; i--) {
+              const key = localStorage.key(i);
+              if (key && key.indexOf('-auth-token') !== -1) {
+                localStorage.removeItem(key);
+              }
+            }
+          } catch (_) {}
+          window.location.replace('/admin/login/?logout=1');
         });
       }
 

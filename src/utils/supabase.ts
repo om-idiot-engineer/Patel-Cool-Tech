@@ -7,6 +7,13 @@ import { business } from '../data/business';
 const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || '';
 
+export const OWNER_EMAIL = 'patelcooltech@gmail.com';
+
+export function isAuthorizedOwner(email?: string | null): boolean {
+  if (!email) return false;
+  return email.trim().toLowerCase() === OWNER_EMAIL.toLowerCase();
+}
+
 export const isSupabaseConfigured = Boolean(
   supabaseUrl &&
   supabaseAnonKey &&
@@ -34,6 +41,7 @@ export const defaultFallbackWork: WorkItemDB[] = [
     featured: true,
     published: true,
     sort_order: 1,
+    row_position: 'top',
     created_at: new Date().toISOString(),
   },
   {
@@ -41,7 +49,7 @@ export const defaultFallbackWork: WorkItemDB[] = [
     title: 'AC Repair & Electrical Diagnostics',
     category: 'Repair',
     description: 'On-site troubleshooting for non-cooling units, unexpected tripping, sensor faults, PCB board diagnostics, and fan motor problems.',
-    media_type: 'image',
+    media_type: 'video',
     image_url: '/images/work/ac-repair.jpg',
     thumbnail_url: '/images/work/ac-repair.jpg',
     alt_text: 'HVAC technician testing electronic PCB control board with digital multimeter',
@@ -49,6 +57,7 @@ export const defaultFallbackWork: WorkItemDB[] = [
     featured: true,
     published: true,
     sort_order: 2,
+    row_position: 'top',
     created_at: new Date().toISOString(),
   },
   {
@@ -56,7 +65,7 @@ export const defaultFallbackWork: WorkItemDB[] = [
     title: 'High-Pressure Jet Spray Deep Servicing',
     category: 'AC Service',
     description: 'High-pressure wet jet coil wash, indoor blower cleaning, and drain tray flush to restore proper cooling airflow and peak hygiene.',
-    media_type: 'image',
+    media_type: 'video',
     image_url: '/images/work/ac-service.jpg',
     thumbnail_url: '/images/work/ac-service.jpg',
     alt_text: 'High pressure water jet power wash on outdoor air conditioner condenser coils',
@@ -64,6 +73,7 @@ export const defaultFallbackWork: WorkItemDB[] = [
     featured: true,
     published: true,
     sort_order: 3,
+    row_position: 'bottom',
     created_at: new Date().toISOString(),
   },
   {
@@ -79,6 +89,7 @@ export const defaultFallbackWork: WorkItemDB[] = [
     featured: true,
     published: true,
     sort_order: 4,
+    row_position: 'bottom',
     created_at: new Date().toISOString(),
   },
   {
@@ -94,6 +105,7 @@ export const defaultFallbackWork: WorkItemDB[] = [
     featured: false,
     published: true,
     sort_order: 5,
+    row_position: 'bottom',
     created_at: new Date().toISOString(),
   },
 ];
@@ -111,9 +123,11 @@ export const defaultSiteSettings: SiteSettingsDB = {
   hero_media_type: 'image',
   hero_media_url: '/images/hero/hero-technician.jpg',
   hero_poster_url: '/images/hero/hero-technician.jpg',
-  hero_heading: 'AC Installation, Repair & Service in Indore',
-  hero_description: 'Professional AC installation, repair, servicing, gas refilling and AMC support for homes and businesses across Indore and nearby areas. Direct communication and on-site assistance by technicians Mahendra Patel & Satyam Patel.',
+  hero_heading: 'Fast Doorstep AC Repair & Installations',
+  hero_description: 'Doorstep technician visit across Indore & Rau. 100% genuine spares, upfront pricing & direct support.',
   service_areas: business.serviceAreas.core.join(', '),
+  tech_mahendra_photo_url: '',
+  tech_satyam_photo_url: '',
 };
 
 /**

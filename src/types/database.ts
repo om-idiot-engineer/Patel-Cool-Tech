@@ -22,6 +22,7 @@ export interface WorkItemDB {
   featured: boolean;
   published: boolean;
   sort_order: number;
+  row_position?: 'top' | 'bottom' | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -41,6 +42,8 @@ export interface SiteSettingsDB {
   hero_heading: string;
   hero_description: string;
   service_areas: string;
+  tech_mahendra_photo_url?: string;
+  tech_satyam_photo_url?: string;
   updated_at?: string;
 }
 

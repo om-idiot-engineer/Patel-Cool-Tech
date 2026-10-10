@@ -1,7 +1,7 @@
 ---
 interface Props {
   href?: string;
-  variant?: 'primary' | 'secondary' | 'outline' | 'whatsapp' | 'tel';
+  variant?: 'primary' | 'secondary' | 'outline' | 'whatsapp' | 'tel' | 'ice';
   size?: 'sm' | 'md' | 'lg';
   class?: string;
   target?: string;
@@ -22,20 +22,21 @@ const {
   ...rest
 } = Astro.props;
 
-const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-colors duration-150 select-none focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]';
+const baseStyles = 'inline-flex items-center justify-center font-bold rounded-xl transition-all duration-200 select-none focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.97] hover:-translate-y-0.5 active:translate-y-0 btn-shimmer-wrapper cursor-pointer';
 
 const sizeStyles = {
-  sm: 'px-3.5 py-2 text-sm min-h-[44px] gap-1.5',
-  md: 'px-5 py-2.5 text-sm sm:text-base min-h-[44px] gap-2',
-  lg: 'px-6 py-3.5 text-base sm:text-lg min-h-[48px] gap-2.5',
+  sm: 'px-4 py-2 text-xs sm:text-sm min-h-[44px] gap-2',
+  md: 'px-5 py-2.5 text-sm sm:text-base min-h-[44px] gap-2.5',
+  lg: 'px-6 py-3.5 text-base sm:text-lg min-h-[48px] gap-3',
 };
 
 const variantStyles = {
-  primary: 'bg-brand-navy hover:bg-brand-navy-light text-white shadow-soft focus-visible:outline-brand-navy',
-  secondary: 'bg-brand-blue hover:bg-brand-blue-hover text-white shadow-soft focus-visible:outline-brand-blue',
-  outline: 'border-2 border-brand-navy text-brand-navy hover:bg-brand-navy hover:text-white focus-visible:outline-brand-navy',
-  whatsapp: 'bg-brand-whatsapp hover:bg-brand-whatsapp-hover text-white shadow-soft font-semibold focus-visible:outline-brand-whatsapp',
-  tel: 'bg-brand-blue hover:bg-brand-blue-hover text-white shadow-soft font-semibold focus-visible:outline-brand-blue',
+  primary: 'bg-brand-navy hover:bg-brand-navy-light text-white shadow-card hover:shadow-hover border border-white/10 focus-visible:outline-brand-navy',
+  secondary: 'bg-white hover:bg-brand-surface text-brand-navy border border-brand-border shadow-card hover:shadow-hover hover:border-brand-blue/30 focus-visible:outline-brand-blue',
+  outline: 'border-2 border-brand-navy text-brand-navy bg-transparent hover:bg-brand-navy hover:text-white shadow-soft hover:shadow-card focus-visible:outline-brand-navy',
+  whatsapp: 'bg-brand-whatsapp hover:bg-brand-whatsapp-hover text-white shadow-card hover:shadow-hover font-bold border border-emerald-400/20 focus-visible:outline-brand-whatsapp',
+  tel: 'bg-brand-blue hover:bg-brand-blue-hover text-white shadow-card hover:shadow-hover font-bold focus-visible:outline-brand-blue',
+  ice: 'bg-brand-ice hover:bg-brand-ice-hover text-white shadow-card hover:shadow-hover font-bold border border-sky-300/30 focus-visible:outline-brand-ice',
 };
 
 const combinedClasses = [baseStyles, sizeStyles[size], variantStyles[variant], className].join(' ');

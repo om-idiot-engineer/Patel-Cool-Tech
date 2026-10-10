@@ -1,106 +1,176 @@
 ---
 import { business } from '../data/business';
 import Container from './Container.astro';
-import SectionHeading from './SectionHeading.astro';
-import Button from './Button.astro';
+import type { SiteSettingsDB } from '../types/database';
 
-const technicians = business.technicians.map((tech) => {
-  const initials = tech.name
-    .split(' ')
-    .map((part) => part[0])
-    .join('');
-  return {
-    ...tech,
-    initials,
-  };
-});
+interface Props {
+  settings?: Partial<SiteSettingsDB>;
+}
+
+const { settings } = Astro.props;
+
+const mahendraPhoto = settings?.tech_mahendra_photo_url || '';
+const satyamPhoto = settings?.tech_satyam_photo_url || '';
+
+const technicianProfiles = [
+  {
+    name: 'Mahendra Patel',
+    initials: 'MP',
+    photoUrl: mahendraPhoto,
+    phoneFormatted: business.phones.primaryFormatted,
+    phoneTel: business.phones.primaryTel,
+    whatsappUrl: 'https://wa.me/919575664203?text=' + encodeURIComponent('Hello Mahendra ji, I need AC service in Indore'),
+    gradient: 'from-slate-900 via-brand-navy to-brand-blue',
+    ringColor: 'ring-sky-400/40',
+    specialties: [
+      { label: 'Electrical & PCB Diagnostics', icon: '⚡' },
+      { label: 'Gas Leak & Charging', icon: '💨' },
+      { label: 'Multi-Brand Troubleshooting', icon: '🔧' },
+    ],
+  },
+  {
+    name: 'Satyam Patel',
+    initials: 'SP',
+    photoUrl: satyamPhoto,
+    phoneFormatted: business.phones.secondaryFormatted,
+    phoneTel: business.phones.secondaryTel,
+    whatsappUrl: 'https://wa.me/919425166191?text=' + encodeURIComponent('Hello Satyam ji, I need AC service in Indore'),
+    gradient: 'from-slate-900 via-sky-950 to-brand-ice',
+    ringColor: 'ring-cyan-400/40',
+    specialties: [
+      { label: 'Deep Jet Pump Servicing', icon: '🌊' },
+      { label: 'Split & Window Installation', icon: '❄️' },
+      { label: 'Preventive AMC Care', icon: '🛡️' },
+    ],
+  },
+];
 ---
 
-<section id="about" class="py-14 sm:py-20 lg:py-24 bg-brand-surface border-b border-brand-border scroll-mt-20">
-  <Container>
-    <div class="reveal-init">
-      <SectionHeading
-        badge="About Us"
-        title="Meet the People Behind Patel Cool Tech"
-        subtitle="Patel Cool Tech is locally operated by Mahendra Patel and Satyam Patel. We provide hands-on, on-site air conditioning installation, repair, servicing, gas refilling, and AMC support across Indore and surrounding areas."
-        align="center"
-      />
+<section id="about" class="py-10 sm:py-16 lg:py-20 bg-brand-surface border-b border-brand-border/80 scroll-mt-16 relative overflow-hidden">
+  <!-- Subtle ambient cooling glow -->
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-brand-ice/10 rounded-full blur-3xl pointer-events-none -z-0" aria-hidden="true"></div>
+
+  <Container class="relative z-10">
+    <!-- Streamlined, High-Clarity Header (Mobile Optimized) -->
+    <div class="reveal-init text-center">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold glass-pill shadow-soft mb-3 border border-brand-border/90">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span class="tracking-wider uppercase text-[10px] sm:text-xs font-extrabold text-brand-navy">Direct On-Site Founders</span>
+      </div>
+      <h2 class="text-2xl xs:text-3xl sm:text-4xl font-extrabold text-brand-navy font-display tracking-tight">
+        Meet Your AC Specialists
+      </h2>
+      <p class="mt-2 text-xs sm:text-sm text-brand-text-muted max-w-xl mx-auto leading-relaxed">
+        Direct doorstep visits by Mahendra & Satyam — no call center wait, no middleman commissions.
+      </p>
     </div>
 
-    <!-- Technicians Presentation Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto mt-10">
+    <!-- Technicians Compact Grid (Mobile-First Masterpiece, Executive Presence on Desktop) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto mt-6 sm:mt-10 lg:mt-12">
       {
-        technicians.map((tech, idx) => (
-          <article class={`flex flex-col sm:flex-row items-center sm:items-start gap-5 p-6 sm:p-7 bg-white rounded-2xl border border-brand-border/90 shadow-soft card-hover-effect reveal-init stagger-${idx + 1}`}>
-            <!-- Initials Avatar -->
-            <div class="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-brand-navy to-brand-blue flex items-center justify-center text-white font-extrabold text-2xl sm:text-3xl flex-shrink-0 shadow-soft border-2 border-white">
-              <span class="tracking-wider">{tech.initials}</span>
-              <span class="absolute -bottom-1.5 -right-1.5 w-6 h-6 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-[10px] text-white font-bold" title="Active on-site technician">
-                ✓
-              </span>
+        technicianProfiles.map((tech, idx) => (
+          <article class={`bg-white rounded-2xl sm:rounded-3xl border border-brand-border/90 p-4 sm:p-6 lg:p-7 xl:p-8 shadow-soft hover:shadow-card hover:border-brand-ice/40 transition-all duration-300 relative group overflow-hidden reveal-init stagger-${idx + 1}`}>
+            <!-- Top hover subtle neon line -->
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-ice via-sky-400 to-brand-blue opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+            <!-- Top Row: Avatar / Photo + Name + Dispatch Status -->
+            <div class="flex items-center gap-3.5 sm:gap-4 lg:gap-5">
+              <!-- Modern Squircle Avatar or Real Profile Photo -->
+              <div class="relative flex-shrink-0">
+                {tech.photoUrl ? (
+                  <img
+                    src={tech.photoUrl}
+                    alt={tech.name}
+                    class={`w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl lg:rounded-3xl object-cover shadow-md ring-2 ${tech.ringColor} group-hover:scale-105 transition-transform duration-200`}
+                    loading="lazy"
+                  />
+                ) : (
+                  <div class={`w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl lg:rounded-3xl bg-gradient-to-br ${tech.gradient} flex items-center justify-center text-white font-extrabold text-xl sm:text-2xl lg:text-3xl shadow-md ring-2 ${tech.ringColor} group-hover:scale-105 transition-transform duration-200`}>
+                    <span class="tracking-wider">{tech.initials}</span>
+                  </div>
+                )}
+                <!-- Verified Badge -->
+                <span class="absolute -bottom-1 -right-1 w-5 h-5 lg:w-6 lg:h-6 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-[9px] lg:text-[10px] text-white font-bold shadow-xs" title="Verified Technician">
+                  ✓
+                </span>
+              </div>
+
+              <!-- Name & Quick Dispatch Status (Zero Corporate Fluff) -->
+              <div class="flex-grow min-w-0">
+                <h3 class="text-base sm:text-lg lg:text-xl font-bold text-brand-navy font-display truncate">
+                  {tech.name}
+                </h3>
+
+                <!-- Status Indicator -->
+                <div class="flex items-center gap-1.5 mt-1 text-[11px] lg:text-xs text-slate-500">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span>Direct Dispatch • Indore &amp; Rau</span>
+                </div>
+              </div>
             </div>
 
-            <!-- Details -->
-            <div class="flex-grow text-center sm:text-left">
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-surface-alt text-brand-blue border border-brand-border mb-1.5">
-                {tech.role}
-              </span>
-              <h3 class="text-xl font-bold text-brand-navy">
-                {tech.name}
-              </h3>
-              <p class="mt-2 text-xs sm:text-sm text-brand-text-muted leading-relaxed">
-                Directly handling on-site AC installation, troubleshooting electrical and cooling issues, refrigerant refilling, and seasonal maintenance across Indore, Rau, and Pithampur.
-              </p>
+            <!-- Middle Row: Compact Specialty Chips (Zero Text Wall Bloat) -->
+            <div class="mt-3.5 lg:mt-5 pt-3 lg:pt-4 border-t border-brand-border/60 flex flex-wrap gap-1.5 sm:gap-2">
+              {tech.specialties.map((spec) => (
+                <span class="inline-flex items-center gap-1.5 text-[11px] lg:text-xs font-medium text-slate-700 bg-slate-50 border border-slate-200/80 px-2.5 lg:px-3 py-1 lg:py-1.5 rounded-lg">
+                  <span>{spec.icon}</span>
+                  <span>{spec.label}</span>
+                </span>
+              ))}
+            </div>
 
-              <!-- Technician Action Links -->
-              <div class="mt-4 pt-3 border-t border-brand-border/60 flex items-center justify-center sm:justify-start gap-3">
-                <a
-                  href={business.phones.primaryTel}
-                  class="text-xs font-bold text-brand-blue hover:text-brand-ice transition-colors flex items-center gap-1.5 py-1 min-h-[44px]"
-                  aria-label={`Call ${tech.name} at ${business.phones.primaryFormatted}`}
-                >
-                  <svg class="w-3.5 h-3.5 text-brand-ice" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                  </svg>
-                  <span>{business.phones.primaryFormatted}</span>
-                </a>
-              </div>
+            <!-- Bottom Row: 1-Tap Mobile Conversion Action Buttons -->
+            <div class="mt-4 lg:mt-6 grid grid-cols-2 gap-2 sm:gap-3">
+              <!-- 1-Tap Call -->
+              <a
+                href={tech.phoneTel}
+                class="flex items-center justify-center gap-1.5 py-2.5 sm:py-3 lg:py-3.5 px-3 rounded-xl bg-brand-navy hover:bg-brand-navy-light text-white text-xs sm:text-sm lg:text-[15px] font-bold shadow-xs active:scale-[0.98] transition-all whitespace-nowrap select-none"
+                aria-label={`Call ${tech.name} at ${tech.phoneFormatted}`}
+              >
+                <svg class="w-3.5 h-3.5 lg:w-4 lg:h-4 text-brand-ice flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+                <span>Call {tech.name.split(' ')[0]}</span>
+              </a>
+
+              <!-- 1-Tap WhatsApp -->
+              <a
+                href={tech.whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center justify-center gap-1.5 py-2.5 sm:py-3 lg:py-3.5 px-3 rounded-xl bg-brand-whatsapp hover:bg-brand-whatsapp-hover text-white text-xs sm:text-sm lg:text-[15px] font-bold shadow-xs active:scale-[0.98] transition-all whitespace-nowrap select-none"
+                aria-label={`Message ${tech.name} on WhatsApp`}
+              >
+                <svg class="w-3.5 h-3.5 lg:w-4 lg:h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12.031 2C6.495 2 2 6.495 2 12.031c0 1.97.57 3.811 1.558 5.368L2.094 22l4.743-1.442a9.98 9.98 0 005.194 1.473h.004c5.535 0 10.03-4.495 10.03-10.031 0-2.68-1.043-5.2-2.935-7.093A9.972 9.972 0 0012.031 2zm0 18.257h-.003a8.217 8.217 0 01-4.186-1.144l-.3-.178-3.11.946.963-3.033-.195-.311a8.22 8.22 0 01-1.26-4.506c0-4.544 3.697-8.241 8.243-8.241 2.2 0 4.27.859 5.827 2.417a8.196 8.196 0 012.413 5.826c0 4.546-3.698 8.244-8.242 8.244z"/>
+                </svg>
+                <span>WhatsApp</span>
+              </a>
             </div>
           </article>
         ))
       }
     </div>
 
-    <!-- Direct Accountability Banner -->
-    <div class="mt-10 max-w-4xl mx-auto p-6 bg-white rounded-2xl border border-brand-border flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left shadow-soft reveal-init">
-      <div class="space-y-1">
-        <h4 class="text-base font-bold text-brand-navy">Direct On-Site Accountability</h4>
-        <p class="text-xs sm:text-sm text-brand-text-muted">
-          No third-party brokers or outsourced call centers. The people you consult with are the technicians who perform your AC service.
+    <!-- Sleek Direct Accountability Strip (Replaces Clunky Box) -->
+    <div class="mt-6 sm:mt-8 lg:mt-10 max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto px-4 lg:px-6 py-3 sm:py-3.5 lg:py-4 rounded-2xl bg-white/95 border border-brand-border/90 shadow-2xs flex flex-col xs:flex-row items-center justify-between gap-3 text-center xs:text-left reveal-init">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-xl bg-emerald-50 border border-emerald-200/80 flex items-center justify-center text-emerald-600 flex-shrink-0 shadow-xs">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+        </div>
+        <p class="text-xs sm:text-sm font-semibold text-brand-navy">
+          100% Direct On-Site Accountability • Zero Middlemen • Transparent Rates
         </p>
       </div>
-      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 flex-shrink-0 w-full sm:w-auto">
-        <Button
-          href="/about/"
-          variant="outline"
-          size="sm"
-          class="font-bold px-4 min-h-[44px] justify-center"
-          aria-label="Learn more about the Patel Cool Tech team"
-        >
-          About Our Team &rarr;
-        </Button>
-        <Button
-          href={business.phones.whatsappUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          variant="whatsapp"
-          size="sm"
-          class="font-bold px-4 min-h-[44px] justify-center"
-          aria-label="Message Mahendra and Satyam on WhatsApp"
-        >
-          Message on WhatsApp
-        </Button>
-      </div>
+      <a
+        href="/about/"
+        class="inline-flex items-center gap-1.5 text-xs font-bold text-brand-blue hover:text-brand-ice transition-colors flex-shrink-0"
+      >
+        <span>About Our Team</span>
+        <span>&rarr;</span>
+      </a>
     </div>
   </Container>
 </section>

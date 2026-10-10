@@ -7,6 +7,7 @@ export interface ServiceItem {
   iconName: string;
   imagePlaceholder: string;
   features: string[];
+  tags: string[];
 }
 
 export const services: ServiceItem[] = [
@@ -14,10 +15,11 @@ export const services: ServiceItem[] = [
     id: 'ac-installation',
     slug: 'ac-installation',
     title: 'AC Installation',
-    shortDescription: 'Professional split and window air conditioner installation, uninstallation, and precision relocation for homes and offices.',
+    shortDescription: 'Split & window installation, uninstallation & safe precision shifting.',
     category: 'both',
     iconName: 'wrench',
     imagePlaceholder: '/images/services/ac-installation.jpg',
+    tags: ['Split & Window', 'Relocation', 'Safe Mounting'],
     features: [
       'Split and Window AC installation',
       'Safe outdoor unit mounting and bracket fitting',
@@ -29,10 +31,11 @@ export const services: ServiceItem[] = [
     id: 'ac-repair',
     slug: 'ac-repair',
     title: 'AC Repair',
-    shortDescription: 'Prompt diagnostics and troubleshooting for cooling failure, water leakage, electrical issues, compressor problems, and noise.',
+    shortDescription: 'Fast troubleshooting for cooling issues, gas leaks, noise & PCB faults.',
     category: 'both',
     iconName: 'tool',
     imagePlaceholder: '/images/services/ac-repair.jpg',
+    tags: ['Cooling Fix', 'Water Leakage', 'PCB Repair'],
     features: [
       'Accurate fault diagnosis',
       'Compressor and fan motor troubleshooting',
@@ -44,10 +47,11 @@ export const services: ServiceItem[] = [
     id: 'ac-service',
     slug: 'ac-service',
     title: 'AC Service',
-    shortDescription: 'Comprehensive wet and dry deep servicing to restore cooling efficiency, improve airflow, and clean filters and coils.',
+    shortDescription: 'Deep jet-pump wet wash & coil cleaning to restore ice-cold airflow.',
     category: 'both',
     iconName: 'refresh-cw',
     imagePlaceholder: '/images/services/ac-service.jpg',
+    tags: ['Jet Power Wash', 'Coil Cleaning', 'Filter Sanitizing'],
     features: [
       'Deep filter, cooling coil, and blower cleaning',
       'Outdoor condenser unit power wash',
@@ -59,10 +63,11 @@ export const services: ServiceItem[] = [
     id: 'ac-gas-refilling',
     slug: 'ac-gas-refilling',
     title: 'AC Gas Refilling',
-    shortDescription: 'Leak detection, pressure testing, and refrigerant recharging (R32, R410A, R22) for restored peak cooling.',
+    shortDescription: 'Nitrogen leak testing & 100% genuine refrigerant gas top-up.',
     category: 'both',
     iconName: 'gauge',
     imagePlaceholder: '/images/services/ac-gas-refilling.jpg',
+    tags: ['Leak Detection', 'R32 / R410A / R22', 'Pressure Test'],
     features: [
       'Nitrogen pressure testing for leak detection',
       'Refrigerant gas top-up and complete charging',
@@ -74,10 +79,11 @@ export const services: ServiceItem[] = [
     id: 'ac-amc',
     slug: 'ac-amc',
     title: 'AC AMC & Maintenance',
-    shortDescription: 'Annual Maintenance Contracts for residential apartments, corporate offices, shops, and commercial facilities.',
+    shortDescription: 'Year-round preventive maintenance contracts for homes & corporate offices.',
     category: 'both',
     iconName: 'shield-check',
     imagePlaceholder: '/images/services/ac-amc.jpg',
+    tags: ['Periodic Visits', 'Priority Breakdown', 'Homes & Offices'],
     features: [
       'Scheduled seasonal preventive servicing',
       'Priority breakdown call assistance',

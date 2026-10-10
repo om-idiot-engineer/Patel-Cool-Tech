@@ -1,58 +1,182 @@
 ---
-import { brands, brandSectionHeadline, brandSectionSubtext, brandDisclaimer } from '../data/brands';
+import { brandsRow1, brandsRow2, brandSectionHeadline, brandSectionSubtext } from '../data/brands';
 import Container from './Container.astro';
 import SectionHeading from './SectionHeading.astro';
 ---
 
-<section class="py-14 sm:py-20 bg-brand-surface border-b border-brand-border">
+<section id="brands" class="py-10 sm:py-14 bg-brand-surface border-b border-brand-border/80 relative overflow-hidden">
+  <!-- Subtle Ambient Cool Breeze Glow Background -->
+  <div class="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden -z-0">
+    <div class="w-[500px] h-[300px] bg-gradient-to-r from-sky-400/10 via-brand-ice/10 to-blue-500/10 rounded-full blur-3xl opacity-70"></div>
+  </div>
+
   <Container>
+    <!-- Streamlined, Fluff-Free Header -->
     <div class="reveal-init">
       <SectionHeading
-        badge="Supported Makes"
+        badge="Supported Brands"
         title={brandSectionHeadline}
         subtitle={brandSectionSubtext}
         align="center"
       />
     </div>
 
-    <!-- Clean, Responsive Brand Grid -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-5 max-w-5xl mx-auto mt-10">
-      {
-        brands.map((brand, idx) => {
-          const isLast = idx === brands.length - 1;
-          return (
-            <div
-              class:list={[
-                'flex flex-col items-center justify-center p-5 sm:p-6 rounded-2xl bg-white border border-brand-border/90 hover:border-brand-blue/50 hover:shadow-card transition-all duration-200 text-center card-hover-effect reveal-init',
-                `stagger-${(idx % 4) + 1}`,
-                isLast ? 'col-span-2 sm:col-span-1 lg:col-span-2 xl:col-span-1' : '',
-              ]}
-            >
-              <div class="w-10 h-10 rounded-xl bg-brand-blue-light text-brand-blue flex items-center justify-center mb-3">
-                <svg class="w-5 h-5 text-brand-ice" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
-                </svg>
+    <!-- Cool Dual-Directional Seamless Infinite Ticker -->
+    <div class="mt-8 space-y-4 relative">
+      <!-- Edge Gradient Masks for Seamless Floating Look -->
+      <div class="relative overflow-hidden marquee-mask py-1.5">
+        <!-- Row 1: Flowing Left -->
+        <div class="marquee-track animate-marquee-left gap-4 flex items-center hover:[animation-play-state:paused]">
+          {
+            [...brandsRow1, ...brandsRow1, ...brandsRow1].map((brand) => (
+              <div
+                class="flex-shrink-0 flex items-center gap-3.5 px-5 py-3.5 rounded-2xl bg-white/95 backdrop-blur-sm border border-brand-border/90 hover:border-brand-ice hover:shadow-[0_10px_25px_-5px_rgba(2,132,199,0.22)] hover:-translate-y-1 transition-all duration-300 card-hover-effect group select-none shadow-soft"
+              >
+                <!-- Brand Badge / Icon -->
+                <div class:list={[
+                  'w-10 h-10 rounded-xl bg-gradient-to-br text-white flex items-center justify-center shadow-xs flex-shrink-0 group-hover:scale-105 group-hover:rotate-3 transition-all duration-300',
+                  brand.gradient
+                ]}>
+                  {brand.id === 'daikin' && (
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v20m10-10H2m16.07-7.07l-14.14 14.14m0-14.14l14.14 14.14M12 6l2-2m-2 2L10 4m2 14l2 2m-2-2l-2 2m6-10l2-2m-2 2l2 2m-14 0l-2-2m2 2l-2 2" />
+                    </svg>
+                  )}
+                  {brand.id === 'mitsubishi-heavy' && (
+                    <svg class="w-5 h-5 text-white fill-current" viewBox="0 0 24 24">
+                      <polygon points="12,3 15.5,9 8.5,9" />
+                      <polygon points="15.5,9 22.5,9 19,15" />
+                      <polygon points="8.5,9 1.5,9 5,15" />
+                    </svg>
+                  )}
+                  {brand.id === 'blue-star' && (
+                    <svg class="w-5 h-5 text-white fill-current" viewBox="0 0 24 24">
+                      <path d="M12 2l2.4 7.4h7.6l-6.2 4.5 2.4 7.4-6.2-4.5-6.2 4.5 2.4-7.4-6.2-4.5h7.6z" />
+                    </svg>
+                  )}
+                  {brand.id === 'voltas' && (
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12c2.5-3 6-3 8.5 0s6 3 8.5 0M4 17c2.5-3 6-3 8.5 0s6 3 8.5 0M4 7c2.5-3 6-3 8.5 0s6 3 8.5 0" />
+                    </svg>
+                  )}
+                  {brand.id === 'hitachi' && (
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  )}
+                  {brand.id === 'o-general' && (
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                  )}
+                  {brand.id === 'carrier' && (
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21a9 9 0 100-18 9 9 0 000 18z" />
+                    </svg>
+                  )}
+                </div>
+
+                <!-- Brand Details -->
+                <div class="text-left">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-sm sm:text-base font-bold text-brand-navy tracking-tight group-hover:text-brand-blue transition-colors font-display block">
+                      {brand.name}
+                    </span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" title="Active Support"></span>
+                  </div>
+                  <span class="text-[10px] sm:text-[11px] font-semibold text-brand-ice bg-sky-50 border border-sky-100/80 px-2 py-0.5 rounded-md inline-block mt-0.5">
+                    {brand.tag}
+                  </span>
+                </div>
               </div>
-              <span class="text-base sm:text-lg font-bold text-brand-navy tracking-tight">
-                {brand.name}
-              </span>
-              <span class="mt-1 text-[11px] sm:text-xs text-brand-text-subtle font-medium">
-                Split &amp; Window Units
-              </span>
-            </div>
-          );
-        })
-      }
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- Row 2: Flowing Right (Opposite Direction) -->
+      <div class="relative overflow-hidden marquee-mask py-1.5">
+        <div class="marquee-track animate-marquee-right gap-4 flex items-center hover:[animation-play-state:paused]">
+          {
+            [...brandsRow2, ...brandsRow2, ...brandsRow2].map((brand) => (
+              <div
+                class="flex-shrink-0 flex items-center gap-3.5 px-5 py-3.5 rounded-2xl bg-white/95 backdrop-blur-sm border border-brand-border/90 hover:border-brand-ice hover:shadow-[0_10px_25px_-5px_rgba(2,132,199,0.22)] hover:-translate-y-1 transition-all duration-300 card-hover-effect group select-none shadow-soft"
+              >
+                <!-- Brand Badge / Icon -->
+                <div class:list={[
+                  'w-10 h-10 rounded-xl bg-gradient-to-br text-white flex items-center justify-center shadow-xs flex-shrink-0 group-hover:scale-105 group-hover:-rotate-3 transition-all duration-300',
+                  brand.gradient
+                ]}>
+                  {brand.id === 'lg' && (
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <circle cx="12" cy="12" r="9" stroke-width="2" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 7v5h4" />
+                      <circle cx="9" cy="9" r="1" fill="currentColor" />
+                    </svg>
+                  )}
+                  {brand.id === 'panasonic' && (
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  )}
+                  {brand.id === 'samsung' && (
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 00-9.78 2.096A4.001 4.001 0 003 15z" />
+                    </svg>
+                  )}
+                  {brand.id === 'lloyd' && (
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                  )}
+                  {brand.id === 'godrej' && (
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                    </svg>
+                  )}
+                  {brand.id === 'whirlpool' && (
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                  )}
+                  {brand.id === 'haier' && (
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  )}
+                </div>
+
+                <!-- Brand Details -->
+                <div class="text-left">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-sm sm:text-base font-bold text-brand-navy tracking-tight group-hover:text-brand-blue transition-colors font-display block">
+                      {brand.name}
+                    </span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" title="Active Support"></span>
+                  </div>
+                  <span class="text-[10px] sm:text-[11px] font-semibold text-brand-ice bg-sky-50 border border-sky-100/80 px-2 py-0.5 rounded-md inline-block mt-0.5">
+                    {brand.tag}
+                  </span>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
     </div>
 
-    <!-- Independent Service Clarification & Legal Disclaimer -->
-    <div class="mt-10 max-w-3xl mx-auto p-5 rounded-2xl bg-white border border-brand-border text-center shadow-soft reveal-init">
-      <p class="text-xs sm:text-sm text-brand-text-muted leading-relaxed font-medium">
-        <strong class="text-brand-navy">Independent Service Notice:</strong> We provide independent air conditioning maintenance, diagnosis, and repair support for split and window systems from leading manufacturers.
-      </p>
-      <p class="mt-2 text-[11px] sm:text-xs text-brand-text-subtle leading-normal">
-        {brandDisclaimer}
-      </p>
+    <!-- Clean, Minimal, Non-Cluttered Footnote (Replaces Bulky Paragraph Box) -->
+    <div class="mt-8 text-center reveal-init">
+      <div class="inline-flex items-center flex-wrap justify-center gap-2 px-4 py-2 rounded-full bg-white/80 border border-brand-border/70 text-[11px] sm:text-xs text-brand-text-subtle shadow-soft font-medium">
+        <svg class="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+        </svg>
+        <span>100% Genuine Spare Parts</span>
+        <span class="text-brand-border">&bull;</span>
+        <span>Independent Multi-Brand Specialist</span>
+        <span class="text-brand-border">&bull;</span>
+        <span class="text-brand-text-subtle/80">All brand logos & trademarks belong to respective owners</span>
+      </div>
     </div>
   </Container>
 </section>

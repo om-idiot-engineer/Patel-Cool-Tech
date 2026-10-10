@@ -2,6 +2,7 @@
 import { business } from '../data/business';
 import { siteConfig } from '../data/site';
 import BrandLogo from './BrandLogo.astro';
+import { getSiteSettings } from '../utils/supabase';
 
 const currentPath = Astro.url.pathname;
 const isCurrent = (href: string) => {
@@ -10,19 +11,21 @@ const isCurrent = (href: string) => {
   }
   return currentPath.startsWith(href);
 };
+
+const settings = await getSiteSettings();
 ---
 
 <!-- Background Backdrop Overlay -->
 <div
   id="mobile-menu-backdrop"
-  class="fixed inset-0 z-50 bg-brand-navy-dark/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 md:hidden"
+  class="fixed inset-0 z-50 bg-brand-navy-dark/75 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300 md:hidden"
   aria-hidden="true"
 ></div>
 
 <!-- Slide-out Drawer Panel -->
 <div
   id="mobile-menu-drawer"
-  class="fixed inset-y-0 left-0 z-50 w-[86%] max-w-sm bg-white shadow-2xl flex flex-col justify-between overflow-y-auto p-5 sm:p-6 transform -translate-x-full transition-transform duration-300 ease-out md:hidden"
+  class="fixed inset-y-0 left-0 z-50 w-[86%] max-w-sm bg-white/98 backdrop-blur-2xl shadow-2xl flex flex-col justify-between overflow-y-auto p-5 sm:p-6 transform -translate-x-full transition-transform duration-300 ease-out md:hidden border-r border-brand-border/80"
   aria-hidden="true"
   role="dialog"
   aria-modal="true"
@@ -30,12 +33,12 @@ const isCurrent = (href: string) => {
 >
   <!-- Top Header in Drawer -->
   <div>
-    <div class="flex items-center justify-between pb-4 border-b border-brand-border">
-      <BrandLogo size="sm" />
+    <div class="flex items-center justify-between pb-4 border-b border-brand-border/80">
+      <BrandLogo size="sm" customLogoUrl={settings?.logo_url} />
       <button
         type="button"
         id="mobile-menu-close-btn"
-        class="p-2.5 rounded-xl text-brand-text-muted hover:text-brand-navy hover:bg-brand-surface-alt active:bg-brand-border focus-visible:outline-brand-ice min-h-[48px] min-w-[48px] flex items-center justify-center border border-transparent hover:border-brand-border transition-colors"
+        class="p-2.5 rounded-xl text-brand-text-muted hover:text-brand-navy hover:bg-brand-surface-alt active:bg-brand-border focus-visible:outline-brand-ice min-h-[48px] min-w-[48px] flex items-center justify-center border border-transparent hover:border-brand-border transition-colors cursor-pointer"
         aria-label="Close navigation menu"
       >
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -53,15 +56,15 @@ const isCurrent = (href: string) => {
             <a
               href={item.href}
               class:list={[
-                'mobile-nav-link px-4 py-3.5 rounded-xl text-base font-semibold transition-all flex items-center justify-between min-h-[48px]',
+                'mobile-nav-link px-4 py-3.5 rounded-xl text-base font-semibold transition-all flex items-center justify-between min-h-[48px] active:scale-[0.99]',
                 active
-                  ? 'bg-brand-blue-light text-brand-blue font-bold border-l-4 border-brand-ice pl-3.5 shadow-sm'
+                  ? 'bg-brand-blue-light/90 text-brand-blue font-bold border-l-4 border-brand-ice pl-3.5 shadow-sm'
                   : 'text-brand-navy hover:bg-brand-surface hover:text-brand-blue active:bg-brand-surface-alt',
               ]}
               aria-current={active ? 'page' : undefined}
             >
               <span>{item.label}</span>
-              <svg class="w-4 h-4 text-brand-ice" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <svg class="w-4 h-4 text-brand-ice transition-transform duration-200 group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
               </svg>
             </a>
@@ -72,18 +75,30 @@ const isCurrent = (href: string) => {
   </div>
 
   <!-- Quick Contact & Local Trust Footer in Drawer -->
-  <div class="pt-5 border-t border-brand-border mt-6 space-y-4">
+  <div class="pt-5 border-t border-brand-border/80 mt-6 space-y-4">
     <div class="space-y-2.5">
-      <!-- Call Now Action -->
+      <!-- Call Primary Action -->
       <a
         href={business.phones.primaryTel}
-        class="w-full flex items-center justify-center gap-2.5 px-4 py-3.5 bg-brand-navy text-white rounded-xl font-bold text-sm min-h-[48px] hover:bg-brand-navy-light shadow-card transition-all active:scale-[0.98]"
-        aria-label="Call Patel Cool Tech now"
+        class="w-full flex items-center justify-center gap-2.5 px-4 py-3 bg-brand-navy text-white rounded-xl font-bold text-sm min-h-[46px] hover:bg-brand-navy-light shadow-card transition-all active:scale-[0.98] btn-shimmer-wrapper"
+        aria-label="Call Patel Cool Tech primary number"
+      >
+        <svg class="w-4 h-4 text-brand-ice flex-shrink-0 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+        </svg>
+        <span>Call: {business.phones.primaryFormatted}</span>
+      </a>
+
+      <!-- Call Secondary Action -->
+      <a
+        href={business.phones.secondaryTel}
+        class="w-full flex items-center justify-center gap-2.5 px-4 py-3 bg-brand-navy/90 text-white rounded-xl font-bold text-sm min-h-[46px] hover:bg-brand-navy shadow-card transition-all active:scale-[0.98]"
+        aria-label="Call Patel Cool Tech secondary number"
       >
         <svg class="w-4 h-4 text-brand-ice flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
         </svg>
-        <span>Call: {business.phones.primaryFormatted}</span>
+        <span>Call: {business.phones.secondaryFormatted}</span>
       </a>
 
       <!-- WhatsApp Action -->
@@ -91,7 +106,7 @@ const isCurrent = (href: string) => {
         href={business.phones.whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"
-        class="w-full flex items-center justify-center gap-2.5 px-4 py-3.5 bg-brand-whatsapp text-white rounded-xl font-bold text-sm min-h-[48px] hover:bg-brand-whatsapp-hover shadow-card transition-all active:scale-[0.98]"
+        class="w-full flex items-center justify-center gap-2.5 px-4 py-3 bg-brand-whatsapp text-white rounded-xl font-bold text-sm min-h-[46px] hover:bg-brand-whatsapp-hover shadow-card transition-all active:scale-[0.98] btn-shimmer-wrapper"
         aria-label="Chat with Patel Cool Tech on WhatsApp"
       >
         <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -135,6 +150,19 @@ const isCurrent = (href: string) => {
       toggleBtn?.setAttribute('aria-expanded', 'true');
       toggleBtn?.setAttribute('aria-label', 'Close navigation menu');
       document.body.style.overflow = 'hidden';
+
+      // Stagger animate nav links into view
+      navLinks.forEach((link, index) => {
+        const el = link as HTMLElement;
+        el.style.opacity = '0';
+        el.style.transform = 'translateX(-12px)';
+        el.style.transition = 'opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)';
+        setTimeout(() => {
+          el.style.opacity = '1';
+          el.style.transform = 'translateX(0)';
+        }, 50 + index * 40);
+      });
+
       closeBtn?.focus();
     }
 

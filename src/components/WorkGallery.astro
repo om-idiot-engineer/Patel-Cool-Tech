@@ -38,10 +38,10 @@ const gridColsClass = {
         <button
           type="button"
           class:list={[
-            'gallery-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold tracking-wide transition-all duration-200 min-h-[44px] cursor-pointer focus-visible:outline-2 focus-visible:outline-brand-ice border',
+            'gallery-filter-btn px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold tracking-wide transition-all duration-200 min-h-[44px] cursor-pointer focus-visible:outline-2 focus-visible:outline-brand-ice border active:scale-95',
             idx === 0
-              ? 'bg-brand-navy text-white border-brand-navy shadow-sm'
-              : 'bg-white text-brand-navy border-brand-border hover:bg-brand-surface hover:border-brand-blue/30',
+              ? 'bg-brand-navy text-white border-brand-navy shadow-card'
+              : 'bg-white text-brand-navy border-brand-border hover:bg-brand-surface hover:border-brand-ice/40 shadow-soft',
           ]}
           data-filter={cat}
           role="tab"
@@ -60,7 +60,7 @@ const gridColsClass = {
         const isVideo = item.media_type === 'video' || Boolean(item.video_url);
         return (
           <article
-            class="gallery-item flex flex-col bg-white rounded-2xl overflow-hidden border border-brand-border/90 hover:border-brand-blue/50 transition-all duration-300 hover:shadow-hover card-hover-effect group cursor-pointer reveal-init"
+            class="card-spotlight gallery-item flex flex-col bg-white rounded-2xl sm:rounded-3xl overflow-hidden border border-brand-border/90 hover:border-brand-ice/60 transition-all duration-300 hover:shadow-card-elevated card-hover-effect group cursor-pointer reveal-init relative active:scale-[0.99] sm:active:scale-100"
             data-category={item.category}
             data-index={index}
             data-title={item.title}
@@ -70,6 +70,9 @@ const gridColsClass = {
             data-mediatype={isVideo ? 'video' : 'image'}
             data-serviceurl={item.service_url || '/services/'}
           >
+            <!-- Top hover accent line -->
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-ice via-sky-400 to-brand-blue opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
+
             <!-- Media Visual Container -->
             <div class="relative w-full aspect-[4/3] bg-brand-surface-alt overflow-hidden">
               <img
@@ -79,31 +82,31 @@ const gridColsClass = {
                 height="600"
                 loading="lazy"
                 decoding="async"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                class="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
               />
 
               <!-- Dark Vignette on Hover -->
-              <div class="absolute inset-0 bg-brand-navy/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div class="absolute inset-0 bg-gradient-to-t from-brand-navy-dark/70 via-brand-navy/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
 
-              <!-- Top Left: Category Badge -->
-              <span class="absolute top-3 left-3 px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider bg-brand-navy/90 text-white backdrop-blur-md shadow-sm border border-white/10">
+              <!-- Top Left: Category Badge in Glass Pill -->
+              <span class="absolute top-3 left-3 px-3 py-1 rounded-xl text-xs font-bold uppercase tracking-wider glass-pill-dark text-white shadow-sm border border-white/20">
                 {item.category}
               </span>
 
               <!-- Video Play Badge / Image Zoom Cue -->
               {isVideo ? (
                 <div class="absolute inset-0 flex items-center justify-center">
-                  <div class="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-brand-navy/85 text-white border border-brand-ice/40 flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform duration-200">
+                  <div class="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-brand-navy/90 text-white border border-brand-ice/50 flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform duration-200">
                     <svg class="w-6 h-6 text-brand-ice ml-0.5" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M8 5v14l11-7z" />
                     </svg>
                   </div>
                 </div>
               ) : (
-                <div class="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-white/90 text-brand-navy backdrop-blur-sm shadow-sm border border-brand-border">
+                <div class="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+                  <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold glass-pill text-brand-navy shadow-sm border border-brand-border/90">
                     <svg class="w-3.5 h-3.5 text-brand-ice" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
                     </svg>
                     <span>Inspect</span>
                   </span>
@@ -114,7 +117,7 @@ const gridColsClass = {
             <!-- Content Details -->
             <div class="p-6 flex flex-col flex-grow justify-between">
               <div>
-                <h3 class="text-lg sm:text-xl font-bold text-brand-navy mb-2 leading-snug group-hover:text-brand-blue transition-colors">
+                <h3 class="text-lg sm:text-xl font-bold text-brand-navy mb-2 leading-snug group-hover:text-brand-blue transition-colors font-display">
                   {item.title}
                 </h3>
                 <p class="text-xs sm:text-sm text-brand-text-muted leading-relaxed line-clamp-3">
@@ -130,7 +133,10 @@ const gridColsClass = {
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                   </svg>
                 </span>
-                <span class="text-brand-text-subtle font-medium">Field Verified</span>
+                <span class="text-brand-text-subtle font-medium flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                  <span>Field Verified</span>
+                </span>
               </div>
             </div>
           </article>
@@ -142,23 +148,23 @@ const gridColsClass = {
   <!-- LIGHTBOX / MEDIA VIEWER MODAL -->
   <div
     id="gallery-lightbox"
-    class="fixed inset-0 z-50 bg-brand-navy-dark/90 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-3 sm:p-6"
+    class="fixed inset-0 z-50 bg-brand-navy-dark/95 backdrop-blur-xl opacity-0 pointer-events-none transition-all duration-300 flex items-center justify-center p-3 sm:p-6"
     role="dialog"
     aria-modal="true"
     aria-label="Work Media Viewer"
     aria-hidden="true"
   >
-    <div class="relative w-full max-w-4xl max-h-[92vh] bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col transform scale-95 transition-transform duration-300" id="lightbox-container">
+    <div class="relative w-full max-w-4xl max-h-[92vh] bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col transform scale-95 transition-all duration-300 ease-out border border-white/20" id="lightbox-container">
       <!-- Top Bar: Category & Close -->
-      <div class="p-4 sm:p-5 bg-brand-navy text-white flex items-center justify-between border-b border-white/10">
+      <div class="p-4 sm:p-5 bg-gradient-to-r from-brand-navy-dark via-brand-navy to-brand-navy-dark text-white flex items-center justify-between border-b border-white/10">
         <div class="flex items-center gap-2.5">
-          <span id="lb-category" class="px-2.5 py-0.5 rounded-md text-xs font-bold uppercase tracking-wider bg-brand-ice text-white"></span>
+          <span id="lb-category" class="px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider bg-brand-ice text-white shadow-xs"></span>
           <span id="lb-counter" class="text-xs text-slate-300 font-medium"></span>
         </div>
         <button
           type="button"
           id="lb-close-btn"
-          class="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-colors focus-visible:outline-2 focus-visible:outline-brand-ice min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
+          class="p-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-white/15 transition-all duration-200 focus-visible:outline-2 focus-visible:outline-brand-ice min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer active:scale-95"
           aria-label="Close media viewer"
         >
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -174,7 +180,7 @@ const gridColsClass = {
           id="lb-image"
           src=""
           alt=""
-          class="max-w-full max-h-[58vh] object-contain transition-opacity duration-200"
+          class="max-w-full max-h-[58vh] object-contain transition-opacity duration-300"
         />
 
         <!-- Video Viewer -->
@@ -191,7 +197,7 @@ const gridColsClass = {
         <button
           type="button"
           id="lb-prev-btn"
-          class="absolute left-3 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-brand-navy/70 hover:bg-brand-navy text-white backdrop-blur-sm transition-all focus-visible:outline-2 focus-visible:outline-brand-ice min-h-[44px] min-w-[44px] flex items-center justify-center shadow-lg cursor-pointer"
+          class="absolute left-3 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-brand-navy/80 hover:bg-brand-navy text-white backdrop-blur-md transition-all focus-visible:outline-2 focus-visible:outline-brand-ice min-h-[44px] min-w-[44px] flex items-center justify-center shadow-lg cursor-pointer border border-white/15 active:scale-90"
           aria-label="Previous work project"
         >
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -202,7 +208,7 @@ const gridColsClass = {
         <button
           type="button"
           id="lb-next-btn"
-          class="absolute right-3 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-brand-navy/70 hover:bg-brand-navy text-white backdrop-blur-sm transition-all focus-visible:outline-2 focus-visible:outline-brand-ice min-h-[44px] min-w-[44px] flex items-center justify-center shadow-lg cursor-pointer"
+          class="absolute right-3 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-brand-navy/80 hover:bg-brand-navy text-white backdrop-blur-md transition-all focus-visible:outline-2 focus-visible:outline-brand-ice min-h-[44px] min-w-[44px] flex items-center justify-center shadow-lg cursor-pointer border border-white/15 active:scale-90"
           aria-label="Next work project"
         >
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -214,14 +220,14 @@ const gridColsClass = {
       <!-- Bottom Details & Direct CTAs -->
       <div class="p-5 sm:p-6 bg-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-t border-brand-border">
         <div class="max-w-lg">
-          <h4 id="lb-title" class="text-lg sm:text-xl font-bold text-brand-navy leading-snug"></h4>
+          <h4 id="lb-title" class="text-lg sm:text-xl font-bold text-brand-navy leading-snug font-display"></h4>
           <p id="lb-desc" class="text-xs sm:text-sm text-brand-text-muted mt-1 leading-relaxed"></p>
         </div>
         <div class="flex items-center gap-2.5 w-full sm:w-auto flex-shrink-0">
           <a
             id="lb-service-link"
             href="/services/"
-            class="flex-1 sm:flex-initial inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-brand-navy hover:bg-brand-navy-light text-white font-bold text-xs sm:text-sm transition-colors min-h-[44px]"
+            class="flex-1 sm:flex-initial inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-brand-navy hover:bg-brand-navy-light text-white font-bold text-xs sm:text-sm transition-all duration-200 min-h-[44px] active:scale-[0.98] shadow-card"
           >
             <span>Service Details &rarr;</span>
           </a>
@@ -229,7 +235,7 @@ const gridColsClass = {
             href="https://wa.me/919575664203?text=Hello%20Patel%20Cool%20Tech%2C%20I%20saw%20your%20work%20portfolio%20and%20need%20AC%20service"
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-brand-whatsapp hover:bg-brand-whatsapp-hover text-white font-bold text-xs sm:text-sm transition-colors min-h-[44px]"
+            class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-brand-whatsapp hover:bg-brand-whatsapp-hover text-white font-bold text-xs sm:text-sm transition-all duration-200 min-h-[44px] active:scale-[0.98] shadow-card"
           >
             WhatsApp
           </a>

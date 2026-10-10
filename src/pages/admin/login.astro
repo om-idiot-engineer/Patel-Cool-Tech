@@ -1,7 +1,9 @@
 ---
 import '../../styles/global.css';
 import BrandLogo from '../../components/BrandLogo.astro';
-import { isSupabaseConfigured } from '../../utils/supabase';
+import { getSiteSettings, OWNER_EMAIL } from '../../utils/supabase';
+
+const settings = await getSiteSettings();
 ---
 
 <!doctype html>
@@ -9,7 +11,7 @@ import { isSupabaseConfigured } from '../../utils/supabase';
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Owner Login | Patel Cool Tech</title>
+    <title>Owner Portal Login | Patel Cool Tech</title>
     <meta name="robots" content="noindex, nofollow" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -21,35 +23,47 @@ import { isSupabaseConfigured } from '../../utils/supabase';
 
     <div class="relative z-10 w-full max-w-md bg-slate-900/90 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl">
       <!-- Header -->
-      <div class="text-center mb-8">
+      <div class="text-center mb-6">
         <div class="flex justify-center mb-4">
-          <BrandLogo variant="light" size="md" />
+          <BrandLogo variant="light" size="md" customLogoUrl={settings?.logo_url} />
         </div>
-        <h1 class="text-2xl font-extrabold text-white tracking-tight">Owner Portal Login</h1>
-        <p class="text-xs sm:text-sm text-slate-400 mt-1.5">
-          Manage latest work photos, videos, services, and website settings
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-ice/15 border border-brand-ice/30 text-[11px] font-bold text-brand-ice uppercase tracking-wider mb-2">
+          <svg class="w-3.5 h-3.5 text-brand-ice" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+          Restricted Owner Access
+        </div>
+        <h1 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight">Owner Portal Login</h1>
+        <p class="text-xs sm:text-sm text-slate-400 mt-1">
+          Authorized access only for managing work portfolio, media, and site settings.
         </p>
       </div>
 
-      <!-- Error / Alert Banner -->
-      <div id="login-error" class="hidden mb-5 p-3.5 rounded-xl bg-rose-950/60 border border-rose-800/80 text-rose-200 text-xs flex items-center gap-2">
-        <svg class="w-4 h-4 text-rose-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      <!-- Security Notice Banner (when redirecting from protected route) -->
+      <div id="login-notice" class="hidden mb-4 p-3.5 rounded-xl bg-amber-950/60 border border-amber-800/80 text-amber-200 text-xs flex items-start gap-2.5">
+        <svg class="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
         </svg>
-        <span id="login-error-msg">Authentication failed. Please check your credentials.</span>
+        <span id="login-notice-msg">Please enter your owner credentials to open the dashboard.</span>
       </div>
 
-      <!-- Demo Info if Supabase not configured -->
-      {!isSupabaseConfigured && (
-        <div class="mb-5 p-3.5 rounded-xl bg-amber-950/50 border border-amber-800/60 text-amber-200 text-xs">
-          <p class="font-bold">Supabase Not Connected Yet</p>
-          <p class="mt-0.5 text-[11px] text-amber-300">
-            You can enter any demo credentials or click <strong>Continue to Demo Admin</strong> below to test the full owner interface.
-          </p>
-        </div>
-      )}
+      <!-- Success / Logout Banner -->
+      <div id="login-success" class="hidden mb-4 p-3.5 rounded-xl bg-emerald-950/60 border border-emerald-800/80 text-emerald-200 text-xs flex items-center gap-2">
+        <svg class="w-4 h-4 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+        <span id="login-success-msg">You have been logged out safely.</span>
+      </div>
 
-      <!-- Login Form -->
+      <!-- Error / Alert Banner -->
+      <div id="login-error" class="hidden mb-4 p-3.5 rounded-xl bg-rose-950/60 border border-rose-800/80 text-rose-200 text-xs flex items-start gap-2.5">
+        <svg class="w-4 h-4 text-rose-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span id="login-error-msg">Invalid email or password. Please check your credentials.</span>
+      </div>
+
+      <!-- Secure Login Form -->
       <form id="admin-login-form" class="space-y-4">
         <div>
           <label for="admin-email" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
@@ -59,24 +73,50 @@ import { isSupabaseConfigured } from '../../utils/supabase';
             type="email"
             id="admin-email"
             required
-            autocomplete="email"
-            placeholder="patelcooltech@gmail.com"
-            class="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-brand-ice focus:ring-1 focus:ring-brand-ice transition-colors text-sm min-h-[48px]"
+            autocomplete="username"
+            value={OWNER_EMAIL}
+            placeholder={OWNER_EMAIL}
+            class="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-brand-ice focus:ring-1 focus:ring-brand-ice transition-colors text-base sm:text-sm min-h-[48px]"
           />
         </div>
 
         <div>
-          <label for="admin-password" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
-            Password
-          </label>
-          <input
-            type="password"
-            id="admin-password"
-            required
-            autocomplete="current-password"
-            placeholder="••••••••••••"
-            class="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-brand-ice focus:ring-1 focus:ring-brand-ice transition-colors text-sm min-h-[48px]"
-          />
+          <div class="flex items-center justify-between mb-1.5">
+            <label for="admin-password" class="block text-xs font-bold uppercase tracking-wider text-slate-300">
+              Password
+            </label>
+            <button
+              type="button"
+              id="toggle-password-btn"
+              class="text-[11px] text-brand-ice hover:text-brand-ice-light font-medium transition-colors"
+            >
+              Show Password
+            </button>
+          </div>
+          <div class="relative">
+            <input
+              type="password"
+              id="admin-password"
+              required
+              autocomplete="current-password"
+              placeholder="••••••••••••"
+              class="w-full px-4 py-3 pr-11 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-brand-ice focus:ring-1 focus:ring-brand-ice transition-colors text-base sm:text-sm min-h-[48px]"
+            />
+            <button
+              type="button"
+              id="toggle-password-icon-btn"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1"
+              aria-label="Toggle password visibility"
+            >
+              <svg id="eye-icon-show" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              <svg id="eye-icon-hide" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         <button
@@ -92,47 +132,71 @@ import { isSupabaseConfigured } from '../../utils/supabase';
         </button>
       </form>
 
-      <!-- Demo bypass button if unconfigured -->
-      {!isSupabaseConfigured && (
-        <div class="mt-4 pt-4 border-t border-slate-800 text-center">
-          <a
-            href="/admin/"
-            class="inline-block text-xs font-semibold text-slate-400 hover:text-brand-ice transition-colors py-2"
-          >
-            Continue to Demo Admin &rarr;
-          </a>
-        </div>
-      )}
-
       <!-- Bottom return link -->
       <div class="mt-6 text-center">
-        <a href="/" class="text-xs text-slate-500 hover:text-slate-300 transition-colors">
-          &larr; Return to public website
+        <a href="/" class="text-xs text-slate-500 hover:text-slate-300 transition-colors inline-flex items-center gap-1">
+          <span>&larr;</span>
+          <span>Return to public website</span>
         </a>
       </div>
     </div>
 
-    <!-- Client-side Login Handler -->
+    <!-- Client-side Secure Login Handler -->
     <script>
-      import { supabase, isSupabaseConfigured } from '../../utils/supabase';
+      import { supabase, isSupabaseConfigured, isAuthorizedOwner } from '../../utils/supabase';
 
       const form = document.getElementById('admin-login-form') as HTMLFormElement | null;
       const emailInput = document.getElementById('admin-email') as HTMLInputElement | null;
       const passInput = document.getElementById('admin-password') as HTMLInputElement | null;
       const errorBox = document.getElementById('login-error');
       const errorMsg = document.getElementById('login-error-msg');
+      const noticeBox = document.getElementById('login-notice');
+      const noticeMsg = document.getElementById('login-notice-msg');
+      const successBox = document.getElementById('login-success');
       const btnText = document.getElementById('btn-text');
       const btnSpinner = document.getElementById('btn-spinner');
       const submitBtn = document.getElementById('login-submit-btn') as HTMLButtonElement | null;
 
-      // Auto redirect if already logged in
-      async function checkExistingSession() {
-        if (isSupabaseConfigured && supabase) {
-          const { data: { session } } = await supabase.auth.getSession();
-          if (session) {
-            window.location.href = '/admin/';
-          }
+      // Password toggle buttons
+      const toggleTextBtn = document.getElementById('toggle-password-btn');
+      const toggleIconBtn = document.getElementById('toggle-password-icon-btn');
+      const eyeShow = document.getElementById('eye-icon-show');
+      const eyeHide = document.getElementById('eye-icon-hide');
+
+      function togglePassword() {
+        if (!passInput) return;
+        const isPassword = passInput.type === 'password';
+        passInput.type = isPassword ? 'text' : 'password';
+        if (toggleTextBtn) {
+          toggleTextBtn.textContent = isPassword ? 'Hide Password' : 'Show Password';
         }
+        if (eyeShow && eyeHide) {
+          eyeShow.classList.toggle('hidden', isPassword);
+          eyeHide.classList.toggle('hidden', !isPassword);
+        }
+      }
+
+      if (toggleTextBtn) toggleTextBtn.addEventListener('click', togglePassword);
+      if (toggleIconBtn) toggleIconBtn.addEventListener('click', togglePassword);
+
+      // Inspect URL parameters for unauthorized / logout flags
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('unauthorized') === '1' && noticeBox) {
+        noticeBox.classList.remove('hidden');
+      } else if (urlParams.get('logout') === '1' && successBox) {
+        successBox.classList.remove('hidden');
+      }
+
+      // Auto redirect if already verified and logged in
+      async function checkExistingSession() {
+        if (!isSupabaseConfigured || !supabase) return;
+
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session && session.user && isAuthorizedOwner(session.user.email)) {
+            window.location.replace('/admin/');
+          }
+        } catch (_) {}
       }
       checkExistingSession();
 
@@ -140,27 +204,38 @@ import { isSupabaseConfigured } from '../../utils/supabase';
         form.addEventListener('submit', async (e) => {
           e.preventDefault();
           errorBox?.classList.add('hidden');
+          noticeBox?.classList.add('hidden');
+          successBox?.classList.add('hidden');
 
           const email = emailInput?.value.trim() || '';
-          const password = passInput?.value.trim() || '';
+          const password = passInput?.value || '';
 
-          if (!email || !password) return;
+          if (!email || !password) {
+            if (errorBox && errorMsg) {
+              errorMsg.textContent = 'Please provide both email and password.';
+              errorBox.classList.remove('hidden');
+            }
+            return;
+          }
 
           // UI loading state
           if (btnText) btnText.textContent = 'Verifying credentials...';
           btnSpinner?.classList.remove('hidden');
           if (submitBtn) submitBtn.disabled = true;
 
-          // If Supabase is unconfigured, allow demo access
           if (!isSupabaseConfigured || !supabase) {
-            setTimeout(() => {
-              window.location.href = '/admin/';
-            }, 600);
+            if (errorBox && errorMsg) {
+              errorMsg.textContent = 'Supabase authentication service is currently unavailable.';
+              errorBox.classList.remove('hidden');
+            }
+            if (btnText) btnText.textContent = 'Sign In to Dashboard';
+            btnSpinner?.classList.add('hidden');
+            if (submitBtn) submitBtn.disabled = false;
             return;
           }
 
           try {
-            const { error } = await supabase.auth.signInWithPassword({
+            const { data, error } = await supabase.auth.signInWithPassword({
               email,
               password,
             });
@@ -173,12 +248,28 @@ import { isSupabaseConfigured } from '../../utils/supabase';
               if (btnText) btnText.textContent = 'Sign In to Dashboard';
               btnSpinner?.classList.add('hidden');
               if (submitBtn) submitBtn.disabled = false;
-            } else {
-              window.location.href = '/admin/';
+              return;
             }
+
+            // Verify owner authorization
+            if (!isAuthorizedOwner(data.user?.email)) {
+              await supabase.auth.signOut();
+              if (errorBox && errorMsg) {
+                errorMsg.textContent = 'Access restricted: Only authorized Patel Cool Tech owner account is permitted.';
+                errorBox.classList.remove('hidden');
+              }
+              if (btnText) btnText.textContent = 'Sign In to Dashboard';
+              btnSpinner?.classList.add('hidden');
+              if (submitBtn) submitBtn.disabled = false;
+              return;
+            }
+
+            // Successfully authenticated owner!
+            if (btnText) btnText.textContent = 'Access granted. Opening dashboard...';
+            window.location.replace('/admin/');
           } catch (err: any) {
             if (errorBox && errorMsg) {
-              errorMsg.textContent = err.message || 'Network connection failed.';
+              errorMsg.textContent = err.message || 'Network error occurred. Please try again.';
               errorBox.classList.remove('hidden');
             }
             if (btnText) btnText.textContent = 'Sign In to Dashboard';

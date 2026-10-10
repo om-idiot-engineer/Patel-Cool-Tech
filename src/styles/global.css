@@ -20,6 +20,7 @@
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    overflow-x: hidden;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -36,7 +37,9 @@
       scroll-behavior: auto !important;
     }
 
-    .reveal-init {
+    .reveal-init,
+    .reveal-scale,
+    .reveal-fade {
       opacity: 1 !important;
       transform: none !important;
     }
@@ -93,35 +96,251 @@
     padding-top: env(safe-area-inset-top, 0px);
   }
 
-  /* Smooth scroll reveal */
+  /* Smooth scroll reveal system (GPU-accelerated transforms) */
   .reveal-init {
     opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateY(24px);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
     will-change: opacity, transform;
   }
 
-  .reveal-visible {
-    opacity: 1;
-    transform: translateY(0);
+  .reveal-scale {
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
   }
 
-  /* Stagger delays */
-  .stagger-1 { transition-delay: 100ms; }
-  .stagger-2 { transition-delay: 200ms; }
-  .stagger-3 { transition-delay: 300ms; }
-  .stagger-4 { transition-delay: 400ms; }
+  .reveal-fade {
+    opacity: 0;
+    transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity;
+  }
 
-  /* Premium Card Hover Lift */
+  .reveal-visible {
+    opacity: 1 !important;
+    transform: translateY(0) scale(1) !important;
+  }
+
+  /* Stagger delays for coordinated choreography */
+  .stagger-1 { transition-delay: 60ms; }
+  .stagger-2 { transition-delay: 130ms; }
+  .stagger-3 { transition-delay: 200ms; }
+  .stagger-4 { transition-delay: 270ms; }
+  .stagger-5 { transition-delay: 340ms; }
+  .stagger-6 { transition-delay: 410ms; }
+  .stagger-7 { transition-delay: 480ms; }
+  .stagger-8 { transition-delay: 550ms; }
+
+  /* Premium Card Hover Lift & Glow */
   .card-hover-effect {
-    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
   }
   .card-hover-effect:hover {
-    transform: translateY(-4px);
+    transform: translateY(-5px);
   }
 
-  /* Subtle background radial glows */
-  .glow-radial-blue {
-    background: radial-gradient(circle at 50% 50%, rgba(2, 132, 199, 0.12) 0%, transparent 70%);
+  /* Pointer Spotlight Effect for Service Cards (Desktop only, passive tracking) */
+  .card-spotlight {
+    position: relative;
+    isolation: isolate;
+  }
+  .card-spotlight::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(2, 132, 199, 0.12), transparent 45%);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .card-spotlight:hover::before {
+    opacity: 1;
+  }
+
+  .card-spotlight-dark {
+    position: relative;
+    isolation: isolate;
+  }
+  .card-spotlight-dark::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: radial-gradient(380px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(56, 189, 248, 0.2), transparent 45%);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .card-spotlight-dark:hover::before {
+    opacity: 1;
+  }
+
+  /* Subtle Gradient Border Glow */
+  .gradient-border-top {
+    position: relative;
+  }
+  .gradient-border-top::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #0284c7 40%, #38bdf8 60%, transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  .gradient-border-top:hover::after {
+    opacity: 1;
+  }
+
+  /* Interactive Button Shimmer */
+  .btn-shimmer-wrapper {
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-shimmer-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.24),
+      transparent
+    );
+    transform: skewX(-20deg);
+    transition: left 0.75s ease;
+    pointer-events: none;
+  }
+  .btn-shimmer-wrapper:hover::after {
+    left: 160%;
+  }
+
+  /* Subtle cooling atmospheric glows */
+  .glow-radial-ice {
+    background: radial-gradient(circle at 50% 40%, rgba(2, 132, 199, 0.16) 0%, rgba(56, 189, 248, 0.05) 50%, transparent 75%);
+  }
+  .glow-radial-navy {
+    background: radial-gradient(circle at 50% 50%, rgba(15, 39, 72, 0.85) 0%, rgba(7, 21, 39, 0.98) 70%);
+  }
+  .glow-orb-cyan {
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.22) 0%, rgba(2, 132, 199, 0.08) 50%, transparent 70%);
+  }
+  .glow-orb-blue {
+    background: radial-gradient(circle, rgba(30, 83, 136, 0.25) 0%, rgba(11, 31, 58, 0.08) 60%, transparent 75%);
+  }
+
+  /* Glassmorphism styling */
+  .glass-pill {
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(226, 232, 240, 0.85);
+  }
+
+  .glass-pill-dark {
+    background-color: rgba(11, 31, 58, 0.85);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(30, 83, 136, 0.45);
+  }
+
+  .glass-card {
+    background-color: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+  }
+
+  .glass-card-dark {
+    background-color: rgba(11, 31, 58, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(30, 83, 136, 0.35);
+  }
+
+  .glass-dock {
+    background-color: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+  }
+
+  /* Subtle mesh dot pattern for technical cooling feel without clashing with gradients */
+  .bg-tech-dots {
+    position: relative;
+  }
+  .bg-tech-dots::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(11, 31, 58, 0.065) 1px, transparent 1px);
+    background-size: 24px 24px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .bg-tech-dots-dark {
+    position: relative;
+    background-color: #071527;
+  }
+  .bg-tech-dots-dark::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.085) 1px, transparent 1px);
+    background-size: 24px 24px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Marquee mask for seamless infinite brand loop */
+  .marquee-mask {
+    mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+  }
+  .marquee-track {
+    display: flex;
+    width: max-content;
+  }
+  .marquee-track:hover,
+  .marquee-track:focus-within,
+  .marquee-track:active {
+    animation-play-state: paused !important;
+  }
+
+  @keyframes marqueeLeft {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+  }
+  @keyframes marqueeRight {
+    0% { transform: translateX(-50%); }
+    100% { transform: translateX(0%); }
+  }
+  .animate-marquee-left {
+    animation: marqueeLeft 34s linear infinite;
+  }
+  .animate-marquee-right {
+    animation: marqueeRight 34s linear infinite;
+  }
+
+  /* Airflow vector line dash animation */
+  @keyframes airflowDash {
+    to {
+      stroke-dashoffset: -100;
+    }
+  }
+  .animate-airflow {
+    stroke-dasharray: 8 12;
+    animation: airflowDash 10s linear infinite;
   }
 }

@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Container from '../components/Container.astro';
 import AboutTeam from '../components/AboutTeam.astro';
 import ServiceAreas from '../components/ServiceAreas.astro';
+import ContactCTA from '../components/ContactCTA.astro';
 import Button from '../components/Button.astro';
 import { business } from '../data/business';
 import { services } from '../data/services';
@@ -65,8 +66,8 @@ const whyDirectPoints = [
     icon: 'check',
   },
   {
-    title: 'Indore Local Knowledge',
-    description: 'We understand local water hardness, seasonal dust conditions, and summer temperature demands across Indore, Rau, and Pithampur.',
+    title: 'Regional MP Knowledge',
+    description: 'We understand local water hardness, seasonal dust conditions, and summer temperature demands across Indore, Rau, Pithampur, and Khandwa.',
     icon: 'location',
   },
   {
@@ -79,7 +80,7 @@ const whyDirectPoints = [
 
 <BaseLayout
   title="About Patel Cool Tech | AC Service Team in Indore"
-  description="Meet Mahendra Patel and Satyam Patel, the technicians behind Patel Cool Tech. Providing hands-on AC installation, repair, servicing, and AMC support in Indore."
+  description="Meet Mahendra Patel and Satyam Patel, the technicians behind Patel Cool Tech. Providing hands-on AC installation, repair, servicing, and AMC support in Indore, Rau, Pithampur, and Khandwa."
   canonicalUrl={`${siteConfig.siteUrl}/about/`}
   additionalSchema={[breadcrumbSchema, aboutPageSchema]}
 >
@@ -108,49 +109,101 @@ const whyDirectPoints = [
         </ol>
       </nav>
 
-      <div class="max-w-3xl">
-        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-brand-surface-alt text-brand-navy border border-brand-border mb-4">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true"></span>
-          <span class="tracking-wide uppercase text-[11px] font-bold">LOCAL BUSINESS &bull; INDORE</span>
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+        <!-- Left Column: Copy & Actions -->
+        <div class="lg:col-span-7">
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-brand-surface-alt text-brand-navy border border-brand-border mb-4">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true"></span>
+            <span class="tracking-wide uppercase text-[11px] font-bold">LOCAL BUSINESS &bull; INDORE</span>
+          </div>
+
+          <h1 class="text-2xl xs:text-3xl sm:text-4xl lg:text-[2.75rem] font-extrabold tracking-tight text-brand-navy leading-[1.18] sm:leading-[1.15]">
+            About Patel Cool Tech
+          </h1>
+
+          <p class="mt-4 sm:mt-5 text-base sm:text-lg text-brand-text-muted leading-relaxed">
+            Patel Cool Tech provides reliable air conditioning installation, repair, servicing, gas-related inspection and recharging, and AMC maintenance support across Indore, Rau, Pithampur, Khandwa, and nearby areas.
+          </p>
+
+          <!-- Direct Actions -->
+          <div class="mt-6 sm:mt-8 flex flex-col xs:flex-row items-stretch xs:items-center gap-3 sm:gap-3.5 max-w-md sm:max-w-none w-full sm:w-auto">
+            <Button
+              href={business.phones.primaryTel}
+              variant="primary"
+              size="lg"
+              class="flex-1 xs:flex-1 sm:flex-initial w-full xs:w-auto justify-center font-bold px-3.5 xs:px-4 sm:px-6 py-3 sm:py-3.5 min-h-[48px] text-xs xs:text-sm sm:text-base shadow-card hover:shadow-hover whitespace-nowrap"
+              aria-label={`Call Patel Cool Tech at ${business.phones.primaryFormatted}`}
+            >
+              <svg class="w-5 h-5 text-brand-ice flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+              <span class="hidden sm:inline whitespace-nowrap">Call: {business.phones.primaryFormatted}</span>
+              <span class="sm:hidden whitespace-nowrap">Call Now</span>
+            </Button>
+
+            <Button
+              href={business.phones.whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="whatsapp"
+              size="lg"
+              class="flex-1 xs:flex-1 sm:flex-initial w-full xs:w-auto justify-center font-bold px-3.5 xs:px-4 sm:px-6 py-3 sm:py-3.5 min-h-[48px] text-xs xs:text-sm sm:text-base shadow-card hover:shadow-hover whitespace-nowrap"
+              aria-label="Chat with Patel Cool Tech on WhatsApp"
+            >
+              <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12.031 2C6.495 2 2 6.495 2 12.031c0 1.97.57 3.811 1.558 5.368L2.094 22l4.743-1.442a9.98 9.98 0 005.194 1.473h.004c5.535 0 10.03-4.495 10.03-10.031 0-2.68-1.043-5.2-2.935-7.093A9.972 9.972 0 0012.031 2zm0 18.257h-.003a8.217 8.217 0 01-4.186-1.144l-.3-.178-3.11.946.963-3.033-.195-.311a8.22 8.22 0 01-1.26-4.506c0-4.544 3.697-8.241 8.243-8.241 2.2 0 4.27.859 5.827 2.417a8.196 8.196 0 012.413 5.826c0 4.546-3.698 8.244-8.242 8.244z"/>
+              </svg>
+              <span class="whitespace-nowrap">WhatsApp Us</span>
+            </Button>
+          </div>
         </div>
 
-        <h1 class="text-2xl xs:text-3xl sm:text-4xl lg:text-[2.75rem] font-extrabold tracking-tight text-brand-navy leading-[1.18] sm:leading-[1.15]">
-          About Patel Cool Tech
-        </h1>
+        <!-- Right Column: Desktop Quick Workshop Credibility Card -->
+        <div class="hidden lg:flex lg:col-span-5 flex-col">
+          <div class="p-6 xl:p-8 rounded-3xl bg-white/95 border border-brand-border/90 shadow-elevated relative overflow-hidden group">
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-ice via-sky-400 to-brand-blue"></div>
+            
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-bold uppercase tracking-wider text-brand-ice font-display">Direct Workshop Base</span>
+              <span class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200/80 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                Indore HQ
+              </span>
+            </div>
 
-        <p class="mt-4 sm:mt-5 text-base sm:text-lg text-brand-text-muted leading-relaxed">
-          Patel Cool Tech provides reliable air conditioning installation, repair, servicing, gas-related inspection and recharging, and AMC maintenance support across Indore, Rau, Pithampur, and nearby areas.
-        </p>
+            <div class="space-y-3.5 text-sm text-brand-text">
+              <div class="flex items-start gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-200/70">
+                <span class="text-xl">🛠️</span>
+                <div>
+                  <h4 class="font-bold text-brand-navy">Founder Technicians</h4>
+                  <p class="text-xs text-brand-text-muted mt-0.5">Mahendra Patel &amp; Satyam Patel handle your AC on-site.</p>
+                </div>
+              </div>
 
-        <!-- Direct Actions -->
-        <div class="mt-6 sm:mt-8 flex flex-col xs:flex-row items-stretch xs:items-center gap-3">
-          <Button
-            href={business.phones.primaryTel}
-            variant="primary"
-            size="lg"
-            class="w-full xs:w-auto justify-center font-bold px-6 py-3.5 min-h-[48px] text-sm sm:text-base shadow-card hover:shadow-hover"
-            aria-label={`Call Patel Cool Tech at ${business.phones.primaryFormatted}`}
-          >
-            <svg class="w-5 h-5 text-brand-ice flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-            </svg>
-            <span>Call: {business.phones.primaryFormatted}</span>
-          </Button>
+              <div class="flex items-start gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-200/70">
+                <span class="text-xl">📍</span>
+                <div>
+                  <h4 class="font-bold text-brand-navy">Coverage Corridor</h4>
+                  <p class="text-xs text-brand-text-muted mt-0.5">Indore &bull; Silicon City (Rau) &bull; Pithampur &bull; Khandwa</p>
+                </div>
+              </div>
 
-          <Button
-            href={business.phones.whatsappUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            variant="whatsapp"
-            size="lg"
-            class="w-full xs:w-auto justify-center font-bold px-6 py-3.5 min-h-[48px] text-sm sm:text-base shadow-card hover:shadow-hover"
-            aria-label="Chat with Patel Cool Tech on WhatsApp"
-          >
-            <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12.031 2C6.495 2 2 6.495 2 12.031c0 1.97.57 3.811 1.558 5.368L2.094 22l4.743-1.442a9.98 9.98 0 005.194 1.473h.004c5.535 0 10.03-4.495 10.03-10.031 0-2.68-1.043-5.2-2.935-7.093A9.972 9.972 0 0012.031 2zm0 18.257h-.003a8.217 8.217 0 01-4.186-1.144l-.3-.178-3.11.946.963-3.033-.195-.311a8.22 8.22 0 01-1.26-4.506c0-4.544 3.697-8.241 8.243-8.241 2.2 0 4.27.859 5.827 2.417a8.196 8.196 0 012.413 5.826c0 4.546-3.698 8.244-8.242 8.244z"/>
-            </svg>
-            <span>WhatsApp Us</span>
-          </Button>
+              <div class="flex items-start gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-200/70">
+                <span class="text-xl">⚡</span>
+                <div>
+                  <h4 class="font-bold text-brand-navy">Transparent Pricing</h4>
+                  <p class="text-xs text-brand-text-muted mt-0.5">Pre-inspection estimate. 100% genuine leak-tested spares.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
+              <span class="text-slate-500 font-medium">Verified Local Shop</span>
+              <a href={business.googleBusinessProfile.mapsUrl} target="_blank" rel="noopener noreferrer" class="font-bold text-brand-blue hover:text-brand-navy flex items-center gap-1">
+                <span>View Map Location &rarr;</span>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </Container>
@@ -343,46 +396,5 @@ const whyDirectPoints = [
   </section>
 
   <!-- Final Call / WhatsApp CTA -->
-  <section class="py-14 sm:py-18 bg-brand-navy text-white text-center">
-    <Container>
-      <div class="max-w-2xl mx-auto">
-        <h2 class="text-2xl xs:text-3xl sm:text-4xl font-extrabold text-white mb-4">
-          Need AC Service in Indore, Rau, or Pithampur?
-        </h2>
-        <p class="text-sm sm:text-base text-slate-300 mb-8 leading-relaxed">
-          Get in touch with Mahendra Patel and Satyam Patel directly. We will discuss your air conditioner's symptom and arrange an on-site visit.
-        </p>
-
-        <div class="flex flex-col xs:flex-row items-stretch xs:items-center justify-center gap-3.5 max-w-md mx-auto">
-          <Button
-            href={business.phones.primaryTel}
-            variant="secondary"
-            size="lg"
-            class="w-full xs:w-auto font-bold justify-center min-h-[48px] px-6 text-base"
-            aria-label={`Call Patel Cool Tech at ${business.phones.primaryFormatted}`}
-          >
-            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-            </svg>
-            <span>Call: {business.phones.primaryFormatted}</span>
-          </Button>
-
-          <Button
-            href={business.phones.whatsappUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            variant="whatsapp"
-            size="lg"
-            class="w-full xs:w-auto font-bold justify-center min-h-[48px] px-6 text-base"
-            aria-label="Chat with Patel Cool Tech on WhatsApp"
-          >
-            <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12.031 2C6.495 2 2 6.495 2 12.031c0 1.97.57 3.811 1.558 5.368L2.094 22l4.743-1.442a9.98 9.98 0 005.194 1.473h.004c5.535 0 10.03-4.495 10.03-10.031 0-2.68-1.043-5.2-2.935-7.093A9.972 9.972 0 0012.031 2zm0 18.257h-.003a8.217 8.217 0 01-4.186-1.144l-.3-.178-3.11.946.963-3.033-.195-.311a8.22 8.22 0 01-1.26-4.506c0-4.544 3.697-8.241 8.243-8.241 2.2 0 4.27.859 5.827 2.417a8.196 8.196 0 012.413 5.826c0 4.546-3.698 8.244-8.242 8.244z"/>
-            </svg>
-            <span>WhatsApp Us</span>
-          </Button>
-        </div>
-      </div>
-    </Container>
-  </section>
+  <ContactCTA />
 </BaseLayout>

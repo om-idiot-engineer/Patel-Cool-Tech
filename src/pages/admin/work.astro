@@ -4,65 +4,174 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
 <AdminLayout title="Work Portfolio Manager" activeTab="work">
   <!-- Top bar -->
-  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 sm:pb-6 border-b border-slate-800">
     <div>
-      <span class="text-xs font-bold uppercase tracking-wider text-brand-ice">Content Management</span>
-      <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-0.5">Work Portfolio Items</h1>
+      <span class="text-xs font-bold uppercase tracking-wider text-brand-ice">Homepage Showcase &amp; Portfolio</span>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-0.5">Work Projects &amp; Videos</h1>
       <p class="text-xs sm:text-sm text-slate-400 mt-1">
-        Add photos, videos, descriptions, and category tags for jobs completed across Indore.
+        Manage photos &amp; video reels for <strong class="text-white">Top Line (Row 1)</strong> and <strong class="text-white">Bottom Line (Row 2)</strong> showcases on the website.
       </p>
     </div>
 
+    <div class="flex items-center gap-2.5 flex-wrap sm:flex-nowrap">
+      <button
+        type="button"
+        id="add-top-line-btn"
+        class="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-brand-navy hover:bg-brand-navy-light text-brand-ice border border-brand-ice/40 hover:border-brand-ice font-bold text-xs sm:text-sm shadow-sm transition-all active:scale-[0.98] min-h-[44px] cursor-pointer"
+      >
+        <span>⬆️ + Add to Top Line</span>
+      </button>
+
+      <button
+        type="button"
+        id="add-bottom-line-btn"
+        class="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-brand-navy hover:bg-brand-navy-light text-indigo-300 border border-indigo-400/40 hover:border-indigo-400 font-bold text-xs sm:text-sm shadow-sm transition-all active:scale-[0.98] min-h-[44px] cursor-pointer"
+      >
+        <span>⬇️ + Add to Bottom Line</span>
+      </button>
+
+      <button
+        type="button"
+        id="open-add-modal-btn"
+        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-brand-ice hover:bg-brand-ice-hover text-white font-bold text-xs sm:text-sm shadow-md transition-all active:scale-[0.98] min-h-[44px] cursor-pointer flex-shrink-0"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+        </svg>
+        <span>+ Add Project</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Row Filter Tabs / Section Switcher -->
+  <div class="mt-6 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
     <button
       type="button"
-      id="open-add-modal-btn"
-      class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-brand-ice hover:bg-brand-ice-hover text-white font-bold text-sm shadow-md transition-all active:scale-[0.98] min-h-[48px] cursor-pointer"
+      id="tab-filter-all"
+      class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer bg-brand-ice text-white shadow-sm"
+      data-filter="all"
     >
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
-      </svg>
-      <span>+ Add New Work</span>
+      All Projects (<span id="count-all">0</span>)
+    </button>
+    <button
+      type="button"
+      id="tab-filter-top"
+      class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700"
+      data-filter="top"
+    >
+      ⬆️ Top Line (Row 1) &bull; Left (<span id="count-top">0</span>)
+    </button>
+    <button
+      type="button"
+      id="tab-filter-bottom"
+      class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700"
+      data-filter="bottom"
+    >
+      ⬇️ Bottom Line (Row 2) &bull; Right (<span id="count-bottom">0</span>)
     </button>
   </div>
 
+  <!-- Mobile Floating Action Button (FAB) for quick add on the move -->
+  <button
+    type="button"
+    id="mobile-fab-add-btn"
+    class="fixed bottom-20 right-4 z-30 md:hidden w-14 h-14 rounded-full bg-brand-ice hover:bg-brand-ice-hover text-white shadow-2xl shadow-brand-ice/40 flex items-center justify-center active:scale-90 transition-all cursor-pointer border border-white/20"
+    aria-label="Add New Work Project"
+  >
+    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+    </svg>
+  </button>
+
   <!-- Notification Toast -->
-  <div id="toast" class="hidden fixed bottom-6 right-6 z-50 px-5 py-3.5 rounded-xl bg-emerald-900 border border-emerald-700 text-white text-sm font-semibold shadow-2xl flex items-center gap-3 transition-opacity duration-300">
+  <div id="toast" class="hidden fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-50 px-5 py-3.5 rounded-xl bg-emerald-900 border border-emerald-700 text-white text-sm font-semibold shadow-2xl flex items-center gap-3 transition-opacity duration-300">
     <svg class="w-5 h-5 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
     </svg>
     <span id="toast-message">Action completed successfully.</span>
   </div>
 
-  <!-- Work Items Grid / List -->
-  <div class="mt-8">
-    <div id="work-items-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <!-- Items populated via client-side script -->
-      <div class="col-span-full py-12 text-center text-slate-500">
-        <div class="inline-block animate-spin w-6 h-6 border-2 border-brand-ice border-t-transparent rounded-full mb-3"></div>
-        <p class="text-sm">Loading portfolio items...</p>
+  <!-- Work Items Container -->
+  <div class="mt-6 sm:mt-8 space-y-10" id="work-sections-root">
+    <!-- Top Line Section -->
+    <div id="section-top-line" class="space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800/80">
+        <div class="flex items-center gap-2.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-sky-400 animate-pulse"></span>
+          <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+            <span>⬆️ Top Line Showcase</span>
+            <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-sky-950 text-sky-300 border border-sky-800/60">
+              Flows Left &bull; <span id="section-top-count">0</span> items
+            </span>
+          </h2>
+        </div>
+        <button
+          type="button"
+          class="add-row-shortcut-btn text-xs font-bold text-brand-ice hover:text-white px-3 py-1.5 rounded-lg hover:bg-slate-800 transition-colors cursor-pointer"
+          data-row="top"
+        >
+          + Add to Top Line
+        </button>
+      </div>
+      <div id="top-items-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <!-- Populated via script -->
+      </div>
+    </div>
+
+    <!-- Bottom Line Section -->
+    <div id="section-bottom-line" class="space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800/80">
+        <div class="flex items-center gap-2.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-indigo-400 animate-pulse"></span>
+          <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+            <span>⬇️ Bottom Line Showcase</span>
+            <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-950 text-indigo-300 border border-indigo-800/60">
+              Flows Right &bull; <span id="section-bottom-count">0</span> items
+            </span>
+          </h2>
+        </div>
+        <button
+          type="button"
+          class="add-row-shortcut-btn text-xs font-bold text-indigo-400 hover:text-white px-3 py-1.5 rounded-lg hover:bg-slate-800 transition-colors cursor-pointer"
+          data-row="bottom"
+        >
+          + Add to Bottom Line
+        </button>
+      </div>
+      <div id="bottom-items-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <!-- Populated via script -->
       </div>
     </div>
   </div>
 
-  <!-- ADD / EDIT WORK MODAL -->
+  <!-- ADD / EDIT WORK MODAL (Mobile Bottom-Sheet on Phones, Centered Dialog on Desktop) -->
   <div
     id="work-modal"
-    class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-3 sm:p-6"
+    class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300 flex items-end sm:items-center justify-center p-0 sm:p-4"
     role="dialog"
     aria-modal="true"
     aria-hidden="true"
   >
-    <div class="relative w-full max-w-2xl max-h-[90vh] bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col transform scale-95 transition-transform duration-300" id="work-modal-card">
+    <div
+      class="relative w-full max-w-2xl max-h-[92vh] sm:max-h-[90vh] bg-slate-900 border-t sm:border border-slate-800 rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col transform translate-y-full sm:translate-y-0 sm:scale-95 transition-transform duration-300"
+      id="work-modal-card"
+    >
+      <!-- Mobile Pull Indicator Handle -->
+      <div class="pt-2.5 pb-1 sm:hidden flex justify-center bg-slate-950">
+        <div class="w-12 h-1.5 rounded-full bg-slate-700"></div>
+      </div>
+
       <!-- Header -->
-      <div class="p-5 sm:p-6 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
+      <div class="px-5 py-4 sm:p-6 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
         <div>
-          <h2 id="modal-title" class="text-xl font-bold text-white">Add New Work Project</h2>
+          <h2 id="modal-title" class="text-lg sm:text-xl font-bold text-white">Add New Work Project</h2>
           <p class="text-xs text-slate-400 mt-0.5">Upload photo or video of work completed</p>
         </div>
         <button
           type="button"
           id="close-modal-btn"
           class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+          aria-label="Close dialog"
         >
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -70,9 +179,37 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         </button>
       </div>
 
-      <!-- Form Body (Scrollable) -->
-      <form id="work-form" class="p-5 sm:p-6 space-y-4 overflow-y-auto flex-grow text-sm">
+      <!-- Form Body (Scrollable with mobile-safe padding) -->
+      <form id="work-form" class="p-4 sm:p-6 space-y-4 overflow-y-auto flex-grow text-sm">
         <input type="hidden" id="form-work-id" value="" />
+
+        <!-- Line Placement Selector (Top Line vs Bottom Line) -->
+        <div class="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800">
+          <label class="block text-xs font-bold uppercase tracking-wider text-brand-ice mb-2">
+            Showcase Line Placement * <span class="text-slate-400 normal-case font-normal">(website par kahan chalegi)</span>
+          </label>
+          <div class="grid grid-cols-2 gap-3">
+            <label class="cursor-pointer">
+              <input type="radio" name="work-row-position" value="top" id="radio-row-top" class="hidden peer" checked />
+              <div class="p-3 rounded-xl border border-slate-700 bg-slate-900/60 peer-checked:border-brand-ice peer-checked:bg-brand-ice/15 peer-checked:text-brand-ice text-slate-300 transition-all text-center">
+                <div class="text-xs font-bold flex items-center justify-center gap-1.5">
+                  <span>⬆️ Top Line (Row 1)</span>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-0.5">Left flow &bull; Upar chalegi</p>
+              </div>
+            </label>
+
+            <label class="cursor-pointer">
+              <input type="radio" name="work-row-position" value="bottom" id="radio-row-bottom" class="hidden peer" />
+              <div class="p-3 rounded-xl border border-slate-700 bg-slate-900/60 peer-checked:border-indigo-400 peer-checked:bg-indigo-500/15 peer-checked:text-indigo-300 text-slate-300 transition-all text-center">
+                <div class="text-xs font-bold flex items-center justify-center gap-1.5">
+                  <span>⬇️ Bottom Line (Row 2)</span>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-0.5">Right flow &bull; Niche chalegi</p>
+              </div>
+            </label>
+          </div>
+        </div>
 
         <div>
           <label for="work-title" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
@@ -83,11 +220,11 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             id="work-title"
             required
             placeholder="e.g. Split AC Installation with Copper Trunking"
-            class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-brand-ice min-h-[44px]"
+            class="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-brand-ice text-base sm:text-sm min-h-[48px]"
           />
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
             <label for="work-category" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
               Category *
@@ -95,7 +232,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             <select
               id="work-category"
               required
-              class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice min-h-[44px]"
+              class="w-full px-3 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-base sm:text-sm min-h-[48px]"
             >
               <option value="Installation">Installation</option>
               <option value="Repair">Repair</option>
@@ -113,27 +250,30 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             <select
               id="work-media-type"
               required
-              class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice min-h-[44px]"
+              class="w-full px-3 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-base sm:text-sm min-h-[48px]"
             >
               <option value="image">Photograph (Image)</option>
-              <option value="video">Work Video Clip</option>
+              <option value="video">Work Video Reel</option>
             </select>
           </div>
         </div>
 
-        <!-- Media Upload Drag & Drop -->
+        <!-- Media Upload Drag & Drop with Mobile Phone Camera trigger -->
         <div>
           <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
-            Upload Photo / Video File
+            Upload Photo / Video from Phone
           </label>
-          <div class="border-2 border-dashed border-slate-700 hover:border-brand-ice/60 rounded-2xl p-4 sm:p-6 text-center bg-slate-950/60 transition-colors">
+          <div class="border-2 border-dashed border-slate-700 hover:border-brand-ice/60 active:border-brand-ice rounded-2xl p-4 sm:p-6 text-center bg-slate-950/60 transition-colors">
             <input type="file" id="media-file-input" accept="image/*,video/mp4,video/webm" class="hidden" />
-            <div id="upload-idle-state" class="cursor-pointer" onclick="document.getElementById('media-file-input').click()">
-              <svg class="w-8 h-8 text-brand-ice mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-              </svg>
-              <p class="text-xs sm:text-sm font-semibold text-white">Tap to upload photo or video</p>
-              <p class="text-[11px] text-slate-400 mt-0.5">Supports JPG, PNG, WebP, MP4, WebM (under 25MB)</p>
+            <div id="upload-idle-state" class="cursor-pointer py-1" onclick="document.getElementById('media-file-input').click()">
+              <div class="w-12 h-12 rounded-full bg-brand-ice/15 text-brand-ice mx-auto flex items-center justify-center mb-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              <p class="text-sm font-bold text-white">Tap to Take Photo or Pick from Gallery</p>
+              <p class="text-[11px] text-slate-400 mt-0.5">Supports Camera capture, JPG, PNG, MP4 videos</p>
             </div>
             <div id="upload-progress-state" class="hidden text-center py-2">
               <div class="inline-block animate-spin w-5 h-5 border-2 border-brand-ice border-t-transparent rounded-full mb-2"></div>
@@ -152,7 +292,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             id="work-image-url"
             required
             placeholder="/images/work/ac-installation.jpg or storage URL"
-            class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-brand-ice min-h-[44px]"
+            class="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-brand-ice text-base sm:text-sm min-h-[48px]"
           />
         </div>
 
@@ -164,7 +304,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             type="text"
             id="work-video-url"
             placeholder="https://.../video.mp4"
-            class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-brand-ice min-h-[44px]"
+            class="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-brand-ice text-base sm:text-sm min-h-[48px]"
           />
         </div>
 
@@ -176,11 +316,11 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             id="work-description"
             rows="3"
             placeholder="Describe the job, installation methods, tools used, or client issue resolved."
-            class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-brand-ice"
+            class="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-brand-ice text-base sm:text-sm"
           ></textarea>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 pt-1">
           <div>
             <label for="work-sort" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
               Display Order
@@ -190,28 +330,28 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
               id="work-sort"
               value="1"
               min="0"
-              class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice min-h-[44px]"
+              class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-base sm:text-sm min-h-[44px]"
             />
           </div>
 
-          <div class="flex items-center gap-2 pt-6">
+          <div class="flex items-center gap-2 pt-2 sm:pt-6">
             <input
               type="checkbox"
               id="work-published"
               checked
-              class="w-4 h-4 rounded text-brand-ice bg-slate-950 border-slate-700 focus:ring-brand-ice"
+              class="w-5 h-5 rounded text-brand-ice bg-slate-950 border-slate-700 focus:ring-brand-ice"
             />
             <label for="work-published" class="text-xs font-bold text-slate-200">
               Published Live
             </label>
           </div>
 
-          <div class="flex items-center gap-2 pt-6">
+          <div class="flex items-center gap-2 pt-2 sm:pt-6">
             <input
               type="checkbox"
               id="work-featured"
               checked
-              class="w-4 h-4 rounded text-brand-ice bg-slate-950 border-slate-700 focus:ring-brand-ice"
+              class="w-5 h-5 rounded text-brand-ice bg-slate-950 border-slate-700 focus:ring-brand-ice"
             />
             <label for="work-featured" class="text-xs font-bold text-slate-200">
               Featured on Home
@@ -219,19 +359,19 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           </div>
         </div>
 
-        <!-- Form Actions -->
-        <div class="pt-4 border-t border-slate-800 flex items-center justify-end gap-3">
+        <!-- Sticky Form Footer for easy phone tapping -->
+        <div class="pt-4 pb-2 border-t border-slate-800 flex items-center justify-end gap-3 sticky bottom-0 bg-slate-900">
           <button
             type="button"
             id="cancel-modal-btn"
-            class="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 transition-colors min-h-[44px]"
+            class="px-4 py-3 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 active:bg-slate-800 transition-colors min-h-[48px]"
           >
             Cancel
           </button>
           <button
             type="submit"
             id="save-work-btn"
-            class="px-6 py-2.5 rounded-xl bg-brand-ice hover:bg-brand-ice-hover text-white text-xs font-bold shadow-md transition-all active:scale-[0.98] min-h-[44px] cursor-pointer"
+            class="px-6 py-3 rounded-xl bg-brand-ice hover:bg-brand-ice-hover text-white text-xs sm:text-sm font-bold shadow-md transition-all active:scale-[0.98] min-h-[48px] cursor-pointer flex-grow sm:flex-grow-0"
           >
             Save Project
           </button>
@@ -283,11 +423,18 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
     let localWorkItems: WorkItemDB[] = [...defaultFallbackWork];
     let deleteTargetId: string | null = null;
+    let activeFilter: 'all' | 'top' | 'bottom' = 'all';
 
-    const container = document.getElementById('work-items-container');
+    const topGrid = document.getElementById('top-items-grid');
+    const bottomGrid = document.getElementById('bottom-items-grid');
+    const sectionTop = document.getElementById('section-top-line');
+    const sectionBottom = document.getElementById('section-bottom-line');
+
     const modal = document.getElementById('work-modal');
     const modalCard = document.getElementById('work-modal-card');
     const openAddBtn = document.getElementById('open-add-modal-btn');
+    const addTopBtn = document.getElementById('add-top-line-btn');
+    const addBottomBtn = document.getElementById('add-bottom-line-btn');
     const closeModalBtn = document.getElementById('close-modal-btn');
     const cancelModalBtn = document.getElementById('cancel-modal-btn');
     const form = document.getElementById('work-form') as HTMLFormElement | null;
@@ -329,51 +476,70 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       renderCards();
     }
 
-    function renderCards() {
-      if (!container) return;
-      if (localWorkItems.length === 0) {
-        container.innerHTML = `
-          <div class="col-span-full py-12 text-center text-slate-400">
-            <p class="text-base font-bold">No portfolio items found</p>
-            <p class="text-xs mt-1">Click "+ Add New Work" above to upload your first project.</p>
-          </div>
-        `;
-        return;
-      }
+    function createCardHTML(item: WorkItemDB) {
+      const isTop = item.row_position !== 'bottom';
+      const isVideo = item.media_type === 'video' || Boolean(item.video_url);
 
-      container.innerHTML = localWorkItems.map((item) => `
-        <article class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden flex flex-col justify-between group">
+      return `
+        <article class="bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-2xl overflow-hidden flex flex-col justify-between group shadow-sm transition-all">
           <div class="relative w-full aspect-[4/3] bg-slate-950 overflow-hidden">
             <img
               src="${item.thumbnail_url || item.image_url}"
               alt="${item.title}"
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
-            <span class="absolute top-3 left-3 px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-slate-950/80 text-white backdrop-blur-sm border border-white/10">
-              ${item.category}
+            <!-- Top Badges -->
+            <div class="absolute top-2.5 left-2.5 flex items-center gap-1.5">
+              <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-slate-950/90 text-white backdrop-blur-sm border border-white/10">
+                ${item.category}
+              </span>
+              ${isVideo ? `
+                <span class="px-1.5 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider bg-red-600/95 text-white flex items-center gap-1 shadow-xs">
+                  Reel
+                </span>
+              ` : ''}
+            </div>
+
+            <!-- Row Badge -->
+            <span class="absolute bottom-2.5 left-2.5 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider ${isTop ? 'bg-sky-950/90 text-sky-300 border border-sky-700/70' : 'bg-indigo-950/90 text-indigo-300 border border-indigo-700/70'} backdrop-blur-md shadow-xs flex items-center gap-1">
+              ${isTop ? '⬆️ Row 1 (Top Line)' : '⬇️ Row 2 (Bottom Line)'}
             </span>
-            <span class="absolute top-3 right-3 px-2 py-0.5 rounded text-[10px] font-semibold ${item.published ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-700/50' : 'bg-amber-950/80 text-amber-300 border border-amber-700/50'}">
-              ${item.published ? 'Published' : 'Draft'}
+
+            <!-- Status Badge -->
+            <span class="absolute top-2.5 right-2.5 px-2 py-0.5 rounded text-[10px] font-semibold ${item.published ? 'bg-emerald-950/90 text-emerald-300 border border-emerald-700/60' : 'bg-amber-950/90 text-amber-300 border border-amber-700/60'}">
+              ${item.published ? 'Live' : 'Draft'}
             </span>
           </div>
-          <div class="p-5 flex flex-col flex-grow justify-between">
+
+          <div class="p-4 flex flex-col flex-grow justify-between">
             <div>
-              <h3 class="text-base font-bold text-white mb-1">${item.title}</h3>
+              <h3 class="text-sm sm:text-base font-bold text-white mb-1 line-clamp-1">${item.title}</h3>
               <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed">${item.description || ''}</p>
             </div>
-            <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between">
-              <span class="text-[11px] text-slate-500 font-medium">Order: #${item.sort_order}</span>
-              <div class="flex items-center gap-2">
+
+            <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
+              <!-- Quick Switch Row Button -->
+              <button
+                type="button"
+                class="switch-row-btn px-2.5 py-1.5 rounded-lg text-[11px] font-bold ${isTop ? 'text-indigo-300 bg-indigo-950/60 hover:bg-indigo-900/60 border border-indigo-800/60' : 'text-sky-300 bg-sky-950/60 hover:bg-sky-900/60 border border-sky-800/60'} transition-all cursor-pointer min-h-[32px] flex items-center gap-1"
+                data-id="${item.id}"
+                data-target-row="${isTop ? 'bottom' : 'top'}"
+                title="Switch to ${isTop ? 'Bottom Line' : 'Top Line'}"
+              >
+                ${isTop ? '⬇️ Move to Bottom' : '⬆️ Move to Top'}
+              </button>
+
+              <div class="flex items-center gap-1.5">
                 <button
                   type="button"
-                  class="edit-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 transition-colors cursor-pointer"
+                  class="edit-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 hover:bg-slate-700 active:bg-slate-700 text-slate-200 transition-colors cursor-pointer min-h-[34px] flex items-center justify-center"
                   data-id="${item.id}"
                 >
                   Edit
                 </button>
                 <button
                   type="button"
-                  class="delete-btn px-2.5 py-1.5 rounded-lg text-xs font-bold text-rose-400 hover:bg-rose-950/50 transition-colors cursor-pointer"
+                  class="delete-btn px-2.5 py-1.5 rounded-lg text-xs font-bold text-rose-400 hover:bg-rose-950/50 active:bg-rose-950/60 transition-colors cursor-pointer min-h-[34px] flex items-center justify-center"
                   data-id="${item.id}"
                 >
                   Delete
@@ -382,9 +548,76 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             </div>
           </div>
         </article>
-      `).join('');
+      `;
+    }
 
-      // Attach edit and delete handlers
+    function renderCards() {
+      if (!topGrid || !bottomGrid) return;
+
+      const topItems = localWorkItems.filter((i) => i.row_position !== 'bottom');
+      const bottomItems = localWorkItems.filter((i) => i.row_position === 'bottom');
+
+      // Update counters
+      const countAll = document.getElementById('count-all');
+      const countTop = document.getElementById('count-top');
+      const countBottom = document.getElementById('count-bottom');
+      const secTopCount = document.getElementById('section-top-count');
+      const secBottomCount = document.getElementById('section-bottom-count');
+
+      if (countAll) countAll.textContent = String(localWorkItems.length);
+      if (countTop) countTop.textContent = String(topItems.length);
+      if (countBottom) countBottom.textContent = String(bottomItems.length);
+      if (secTopCount) secTopCount.textContent = String(topItems.length);
+      if (secBottomCount) secBottomCount.textContent = String(bottomItems.length);
+
+      // Section visibility based on filter tab
+      if (sectionTop && sectionBottom) {
+        if (activeFilter === 'top') {
+          sectionTop.classList.remove('hidden');
+          sectionBottom.classList.add('hidden');
+        } else if (activeFilter === 'bottom') {
+          sectionTop.classList.add('hidden');
+          sectionBottom.classList.remove('hidden');
+        } else {
+          sectionTop.classList.remove('hidden');
+          sectionBottom.classList.remove('hidden');
+        }
+      }
+
+      // Render Top Items
+      if (topItems.length === 0) {
+        topGrid.innerHTML = `
+          <div class="col-span-full py-8 text-center text-slate-500 bg-slate-900/40 rounded-2xl border border-dashed border-slate-800">
+            <p class="text-sm font-bold text-slate-400">No items in Top Line yet</p>
+            <button type="button" class="add-row-shortcut-btn mt-2 inline-flex items-center gap-1 text-xs text-brand-ice font-bold px-3 py-1.5 rounded-lg bg-brand-navy border border-brand-ice/40" data-row="top">
+              + Add First Project to Top Line
+            </button>
+          </div>
+        `;
+      } else {
+        topGrid.innerHTML = topItems.map(createCardHTML).join('');
+      }
+
+      // Render Bottom Items
+      if (bottomItems.length === 0) {
+        bottomGrid.innerHTML = `
+          <div class="col-span-full py-8 text-center text-slate-500 bg-slate-900/40 rounded-2xl border border-dashed border-slate-800">
+            <p class="text-sm font-bold text-slate-400">No items in Bottom Line yet</p>
+            <button type="button" class="add-row-shortcut-btn mt-2 inline-flex items-center gap-1 text-xs text-indigo-300 font-bold px-3 py-1.5 rounded-lg bg-brand-navy border border-indigo-400/40" data-row="bottom">
+              + Add First Project to Bottom Line
+            </button>
+          </div>
+        `;
+      } else {
+        bottomGrid.innerHTML = bottomItems.map(createCardHTML).join('');
+      }
+
+      // Attach handlers
+      attachCardListeners();
+    }
+
+    function attachCardListeners() {
+      // Edit button handler
       document.querySelectorAll('.edit-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
           const id = btn.getAttribute('data-id');
@@ -393,15 +626,42 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         });
       });
 
+      // Delete button handler
       document.querySelectorAll('.delete-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
           const id = btn.getAttribute('data-id');
           if (id) openDeleteDialog(id);
         });
       });
+
+      // Quick Move between Top Line & Bottom Line
+      document.querySelectorAll('.switch-row-btn').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          const id = btn.getAttribute('data-id');
+          const targetRow = btn.getAttribute('data-target-row') as 'top' | 'bottom';
+          if (!id || !targetRow) return;
+
+          if (isSupabaseConfigured && supabase) {
+            await supabase.from('work_items').update({ row_position: targetRow }).eq('id', id);
+          }
+          const item = localWorkItems.find((i) => i.id === id);
+          if (item) item.row_position = targetRow;
+
+          showToast(`Moved project to ${targetRow === 'top' ? 'Top Line' : 'Bottom Line'}.`);
+          renderCards();
+        });
+      });
+
+      // Shortcut add buttons
+      document.querySelectorAll('.add-row-shortcut-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const row = (btn.getAttribute('data-row') as 'top' | 'bottom') || 'top';
+          openModal(undefined, row);
+        });
+      });
     }
 
-    function openModal(item?: WorkItemDB) {
+    function openModal(item?: WorkItemDB, defaultRow: 'top' | 'bottom' = 'top') {
       if (!modal || !modalCard) return;
       const modalTitle = document.getElementById('modal-title');
       const formId = document.getElementById('form-work-id') as HTMLInputElement | null;
@@ -413,6 +673,9 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       const pubCheckbox = document.getElementById('work-published') as HTMLInputElement | null;
       const featCheckbox = document.getElementById('work-featured') as HTMLInputElement | null;
       const videoInput = document.getElementById('work-video-url') as HTMLInputElement | null;
+
+      const radioTop = document.getElementById('radio-row-top') as HTMLInputElement | null;
+      const radioBottom = document.getElementById('radio-row-bottom') as HTMLInputElement | null;
 
       if (item) {
         if (modalTitle) modalTitle.textContent = 'Edit Work Project';
@@ -426,10 +689,21 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         if (sortInput) sortInput.value = String(item.sort_order || 1);
         if (pubCheckbox) pubCheckbox.checked = item.published;
         if (featCheckbox) featCheckbox.checked = item.featured;
+
+        if (item.row_position === 'bottom') {
+          if (radioBottom) radioBottom.checked = true;
+        } else {
+          if (radioTop) radioTop.checked = true;
+        }
       } else {
-        if (modalTitle) modalTitle.textContent = 'Add New Work Project';
+        if (modalTitle) modalTitle.textContent = defaultRow === 'top' ? 'Add Project to Top Line' : 'Add Project to Bottom Line';
         form?.reset();
         if (formId) formId.value = '';
+        if (defaultRow === 'bottom') {
+          if (radioBottom) radioBottom.checked = true;
+        } else {
+          if (radioTop) radioTop.checked = true;
+        }
       }
 
       // Toggle video container
@@ -442,8 +716,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       modal.classList.remove('opacity-0', 'pointer-events-none');
       modal.classList.add('opacity-100', 'pointer-events-auto');
       modal.setAttribute('aria-hidden', 'false');
-      modalCard.classList.remove('scale-95');
-      modalCard.classList.add('scale-100');
+      modalCard.classList.remove('translate-y-full', 'sm:scale-95');
+      modalCard.classList.add('translate-y-0', 'sm:scale-100');
     }
 
     function closeModal() {
@@ -451,8 +725,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       modal.classList.add('opacity-0', 'pointer-events-none');
       modal.classList.remove('opacity-100', 'pointer-events-auto');
       modal.setAttribute('aria-hidden', 'true');
-      modalCard.classList.add('scale-95');
-      modalCard.classList.remove('scale-100');
+      modalCard.classList.add('translate-y-full', 'sm:scale-95');
+      modalCard.classList.remove('translate-y-0', 'sm:scale-100');
     }
 
     function openDeleteDialog(id: string) {
@@ -512,7 +786,6 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           alert('Storage upload failed: ' + err.message);
         }
       } else {
-        // Fallback demo local object URL
         const objectUrl = URL.createObjectURL(file);
         if (imageUrlInput) imageUrlInput.value = objectUrl;
         showToast('Demo preview image attached.');
@@ -536,6 +809,9 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       const published = (document.getElementById('work-published') as HTMLInputElement | null)?.checked ?? true;
       const featured = (document.getElementById('work-featured') as HTMLInputElement | null)?.checked ?? true;
 
+      // Check selected row position
+      const rowPosition = (document.querySelector('input[name="work-row-position"]:checked') as HTMLInputElement | null)?.value || 'top';
+
       const itemPayload: Partial<WorkItemDB> = {
         title,
         category,
@@ -547,6 +823,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         sort_order,
         published,
         featured,
+        row_position: rowPosition as 'top' | 'bottom',
         updated_at: new Date().toISOString(),
       };
 
@@ -557,7 +834,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           await supabase.from('work_items').insert([{ ...itemPayload, created_at: new Date().toISOString() }]);
         }
       } else {
-        // Demo update
+        // Demo local state
         if (formId) {
           const idx = localWorkItems.findIndex((i) => i.id === formId);
           if (idx >= 0) localWorkItems[idx] = { ...localWorkItems[idx], ...itemPayload } as WorkItemDB;
@@ -588,9 +865,33 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     });
 
     cancelDeleteBtn?.addEventListener('click', closeDeleteDialog);
-    openAddBtn?.addEventListener('click', () => openModal());
+    openAddBtn?.addEventListener('click', () => openModal(undefined, 'top'));
+    addTopBtn?.addEventListener('click', () => openModal(undefined, 'top'));
+    addBottomBtn?.addEventListener('click', () => openModal(undefined, 'bottom'));
+
+    const mobileFabBtn = document.getElementById('mobile-fab-add-btn');
+    mobileFabBtn?.addEventListener('click', () => openModal(undefined, 'top'));
     closeModalBtn?.addEventListener('click', closeModal);
     cancelModalBtn?.addEventListener('click', closeModal);
+
+    // Tab filter buttons
+    const tabBtns = document.querySelectorAll<HTMLButtonElement>('.tab-btn');
+    tabBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const filter = (btn.getAttribute('data-filter') as 'all' | 'top' | 'bottom') || 'all';
+        activeFilter = filter;
+
+        tabBtns.forEach((b) => {
+          b.classList.remove('bg-brand-ice', 'text-white', 'shadow-sm');
+          b.classList.add('bg-slate-900', 'border', 'border-slate-800', 'text-slate-300');
+        });
+
+        btn.classList.add('bg-brand-ice', 'text-white', 'shadow-sm');
+        btn.classList.remove('bg-slate-900', 'border', 'border-slate-800', 'text-slate-300');
+
+        renderCards();
+      });
+    });
 
     loadItems();
   </script>

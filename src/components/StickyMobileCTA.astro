@@ -3,21 +3,26 @@ import { business } from '../data/business';
 ---
 
 <aside
-  class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-brand-border px-3.5 py-2.5 shadow-sticky md:hidden pb-[max(0.75rem,env(safe-area-inset-bottom))] transition-transform duration-300"
+  class="fixed bottom-3 left-3 right-3 z-40 bg-white/95 backdrop-blur-2xl border border-brand-border/90 rounded-2xl p-2.5 shadow-dock md:hidden mb-[env(safe-area-inset-bottom,0px)] max-w-md mx-auto transition-all duration-300 relative"
   role="complementary"
-  aria-label="Direct Quick Contact Bar"
+  aria-label="Direct Quick Contact Floating Bar"
 >
-  <div class="grid grid-cols-2 gap-2.5 max-w-md mx-auto">
+  <!-- Top specular highlight line -->
+  <div class="absolute top-0 inset-x-6 h-[1px] bg-gradient-to-r from-transparent via-brand-cyan/30 to-transparent pointer-events-none" aria-hidden="true"></div>
+
+  <div class="grid grid-cols-2 gap-2.5">
     <!-- Call Now CTA -->
     <a
       href={business.phones.primaryTel}
-      class="flex items-center justify-center gap-2 px-3 py-3 rounded-xl bg-brand-navy hover:bg-brand-navy-light text-white font-extrabold text-xs xs:text-sm tracking-wide shadow-soft active:scale-[0.98] transition-all min-h-[48px] focus-visible:outline-brand-navy"
+      class="flex items-center justify-center gap-2 px-3 py-3 rounded-xl bg-brand-navy hover:bg-brand-navy-light text-white font-extrabold text-xs xs:text-sm tracking-wide shadow-card active:scale-[0.96] transition-all min-h-[48px] focus-visible:outline-brand-navy btn-shimmer-wrapper relative overflow-hidden group"
       aria-label={`Call Patel Cool Tech now at ${business.phones.primaryFormatted}`}
     >
-      <svg class="w-4 h-4 text-brand-ice flex-shrink-0 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-      </svg>
-      <span>CALL NOW</span>
+      <div class="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+        <svg class="w-3.5 h-3.5 text-brand-ice flex-shrink-0 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+        </svg>
+      </div>
+      <span class="truncate font-bold tracking-wide">CALL NOW</span>
     </a>
 
     <!-- WhatsApp CTA -->
@@ -25,13 +30,15 @@ import { business } from '../data/business';
       href={business.phones.whatsappUrl}
       target="_blank"
       rel="noopener noreferrer"
-      class="flex items-center justify-center gap-2 px-3 py-3 rounded-xl bg-brand-whatsapp hover:bg-brand-whatsapp-hover text-white font-extrabold text-xs xs:text-sm tracking-wide shadow-soft active:scale-[0.98] transition-all min-h-[48px] focus-visible:outline-brand-whatsapp"
+      class="flex items-center justify-center gap-2 px-3 py-3 rounded-xl bg-brand-whatsapp hover:bg-brand-whatsapp-hover text-white font-extrabold text-xs xs:text-sm tracking-wide shadow-card active:scale-[0.96] transition-all min-h-[48px] focus-visible:outline-brand-whatsapp btn-shimmer-wrapper relative overflow-hidden group"
       aria-label="Chat with Patel Cool Tech on WhatsApp"
     >
-      <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M12.031 2C6.495 2 2 6.495 2 12.031c0 1.97.57 3.811 1.558 5.368L2.094 22l4.743-1.442a9.98 9.98 0 005.194 1.473h.004c5.535 0 10.03-4.495 10.03-10.031 0-2.68-1.043-5.2-2.935-7.093A9.972 9.972 0 0012.031 2zm0 18.257h-.003a8.217 8.217 0 01-4.186-1.144l-.3-.178-3.11.946.963-3.033-.195-.311a8.22 8.22 0 01-1.26-4.506c0-4.544 3.697-8.241 8.243-8.241 2.2 0 4.27.859 5.827 2.417a8.196 8.196 0 012.413 5.826c0 4.546-3.698 8.244-8.242 8.244z"/>
-      </svg>
-      <span>WHATSAPP</span>
+      <div class="w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+        <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12.031 2C6.495 2 2 6.495 2 12.031c0 1.97.57 3.811 1.558 5.368L2.094 22l4.743-1.442a9.98 9.98 0 005.194 1.473h.004c5.535 0 10.03-4.495 10.03-10.031 0-2.68-1.043-5.2-2.935-7.093A9.972 9.972 0 0012.031 2zm0 18.257h-.003a8.217 8.217 0 01-4.186-1.144l-.3-.178-3.11.946.963-3.033-.195-.311a8.22 8.22 0 01-1.26-4.506c0-4.544 3.697-8.241 8.243-8.241 2.2 0 4.27.859 5.827 2.417a8.196 8.196 0 012.413 5.826c0 4.546-3.698 8.244-8.242 8.244z"/>
+        </svg>
+      </div>
+      <span class="truncate font-bold tracking-wide">WHATSAPP</span>
     </a>
   </div>
 </aside>

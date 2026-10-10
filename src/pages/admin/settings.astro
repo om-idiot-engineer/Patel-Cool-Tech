@@ -1,31 +1,46 @@
 ---
 import AdminLayout from '../../layouts/AdminLayout.astro';
-import { defaultSiteSettings } from '../../utils/supabase';
+import { getSiteSettings } from '../../utils/supabase';
 
-const settings = defaultSiteSettings;
+const settings = await getSiteSettings();
 ---
 
 <AdminLayout title="Website Settings" activeTab="settings">
   <!-- Top bar -->
-  <div class="pb-6 border-b border-slate-800">
-    <span class="text-xs font-bold uppercase tracking-wider text-brand-ice">Owner Configuration</span>
-    <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-0.5">Website &amp; Brand Settings</h1>
-    <p class="text-xs sm:text-sm text-slate-400 mt-1">
-      Update contact phone numbers, WhatsApp, hero media, and business identity.
-    </p>
+  <!-- Top bar with Mobile Quick Save Action -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 sm:pb-6 border-b border-slate-800">
+    <div>
+      <span class="text-xs font-bold uppercase tracking-wider text-brand-ice">Owner Configuration</span>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-0.5">Website &amp; Brand Settings</h1>
+      <p class="text-xs sm:text-sm text-slate-400 mt-1">
+        Update contact phone numbers, WhatsApp, hero media, visiting card logo, and business identity.
+      </p>
+    </div>
+
+    <!-- Quick Save Button for Fast Mobile Action -->
+    <button
+      type="button"
+      id="top-save-settings-btn"
+      class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-brand-ice hover:bg-brand-ice-hover text-white font-bold text-sm shadow-md transition-all active:scale-[0.98] min-h-[48px] w-full sm:w-auto cursor-pointer flex-shrink-0"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+      </svg>
+      <span>Save Changes</span>
+    </button>
   </div>
 
-  <!-- Notification Toast -->
-  <div id="settings-toast" class="hidden fixed bottom-6 right-6 z-50 px-5 py-3.5 rounded-xl bg-emerald-900 border border-emerald-700 text-white text-sm font-semibold shadow-2xl flex items-center gap-3 transition-opacity duration-300">
+  <!-- Notification Toast (Positioned above mobile dock) -->
+  <div id="settings-toast" class="hidden fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-50 px-5 py-3.5 rounded-xl bg-emerald-900 border border-emerald-700 text-white text-sm font-semibold shadow-2xl flex items-center gap-3 transition-opacity duration-300">
     <svg class="w-5 h-5 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
     </svg>
-    <span>Settings updated successfully.</span>
+    <span id="toast-message">Settings updated successfully.</span>
   </div>
 
-  <form id="settings-form" class="mt-8 space-y-8 max-w-4xl">
+  <form id="settings-form" class="mt-6 sm:mt-8 space-y-6 sm:space-y-8 max-w-4xl">
     <!-- Section 1: Business Identity & Contact Details -->
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-5">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-8 space-y-5">
       <div>
         <h2 class="text-lg font-bold text-white flex items-center gap-2">
           <svg class="w-5 h-5 text-brand-ice" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -36,7 +51,7 @@ const settings = defaultSiteSettings;
         <p class="text-xs text-slate-400 mt-0.5">Primary business name and customer contact lines</p>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <div>
           <label for="set-biz-name" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
             Business Name
@@ -45,7 +60,7 @@ const settings = defaultSiteSettings;
             type="text"
             id="set-biz-name"
             value={settings.business_name}
-            class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-sm min-h-[44px]"
+            class="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-base sm:text-sm min-h-[48px]"
           />
         </div>
 
@@ -57,7 +72,7 @@ const settings = defaultSiteSettings;
             type="text"
             id="set-tagline"
             value={settings.tagline}
-            class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-sm min-h-[44px]"
+            class="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-base sm:text-sm min-h-[48px]"
           />
         </div>
 
@@ -69,7 +84,7 @@ const settings = defaultSiteSettings;
             type="text"
             id="set-phone-primary"
             value={settings.phone_primary}
-            class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-sm min-h-[44px]"
+            class="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-base sm:text-sm min-h-[48px]"
           />
         </div>
 
@@ -81,7 +96,7 @@ const settings = defaultSiteSettings;
             type="text"
             id="set-phone-secondary"
             value={settings.phone_secondary}
-            class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-sm min-h-[44px]"
+            class="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-base sm:text-sm min-h-[48px]"
           />
         </div>
 
@@ -93,7 +108,7 @@ const settings = defaultSiteSettings;
             type="text"
             id="set-whatsapp"
             value={settings.whatsapp_number}
-            class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-sm min-h-[44px]"
+            class="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-base sm:text-sm min-h-[48px]"
           />
         </div>
 
@@ -105,7 +120,7 @@ const settings = defaultSiteSettings;
             type="email"
             id="set-email"
             value={settings.email}
-            class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-sm min-h-[44px]"
+            class="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-base sm:text-sm min-h-[48px]"
           />
         </div>
       </div>
@@ -118,13 +133,13 @@ const settings = defaultSiteSettings;
           type="text"
           id="set-service-areas"
           value={settings.service_areas}
-          class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-sm min-h-[44px]"
+          class="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-base sm:text-sm min-h-[48px]"
         />
       </div>
     </div>
 
-    <!-- Section 2: Hero Visual & Copy Customization -->
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-5">
+    <!-- Section 2: Hero Visual & Copy Customization (Mobile-friendly Upload enabled) -->
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-8 space-y-5">
       <div>
         <h2 class="text-lg font-bold text-white flex items-center gap-2">
           <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -135,30 +150,48 @@ const settings = defaultSiteSettings;
         <p class="text-xs text-slate-400 mt-0.5">Customize the main showcase on the customer home page</p>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <div>
           <label for="set-hero-type" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
             Hero Media Type
           </label>
           <select
             id="set-hero-type"
-            class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-sm min-h-[44px]"
+            class="w-full px-3 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-base sm:text-sm min-h-[48px]"
           >
-            <option value="image">High-Quality Image</option>
-            <option value="video">Autoplay Work Video (Muted)</option>
+            <option value="image" selected={settings.hero_media_type === 'image'}>High-Quality Image</option>
+            <option value="video" selected={settings.hero_media_type === 'video'}>Autoplay Work Video (Muted)</option>
           </select>
         </div>
 
         <div>
-          <label for="set-hero-url" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
-            Hero Media URL
-          </label>
+          <div class="flex items-center justify-between mb-1.5">
+            <label for="set-hero-url" class="text-xs font-bold uppercase tracking-wider text-slate-300">
+              Hero Media URL / File
+            </label>
+            <input type="file" id="hero-file-picker" accept="image/*,video/mp4,video/webm" class="hidden" />
+            <button
+              type="button"
+              id="hero-upload-btn"
+              class="text-xs font-bold text-purple-400 hover:text-purple-300 hover:underline flex items-center gap-1.5 cursor-pointer py-1"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+              </svg>
+              <span>📱 Upload from Phone</span>
+            </button>
+          </div>
           <input
             type="text"
             id="set-hero-url"
             value={settings.hero_media_url}
-            class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-sm min-h-[44px]"
+            placeholder="/images/hero/hero-technician.jpg or cloud URL"
+            class="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-base sm:text-sm min-h-[48px]"
           />
+          <div id="hero-upload-spinner" class="hidden mt-2 p-2.5 rounded-xl bg-slate-950 border border-purple-500/40 text-xs text-purple-300 flex items-center gap-2">
+            <div class="animate-spin w-3.5 h-3.5 border-2 border-purple-400 border-t-transparent rounded-full"></div>
+            <span id="hero-upload-msg">Uploading hero media to cloud storage...</span>
+          </div>
         </div>
       </div>
 
@@ -170,7 +203,7 @@ const settings = defaultSiteSettings;
           type="text"
           id="set-hero-heading"
           value={settings.hero_heading}
-          class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-sm min-h-[44px]"
+          class="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-base sm:text-sm min-h-[48px]"
         />
       </div>
 
@@ -181,37 +214,314 @@ const settings = defaultSiteSettings;
         <textarea
           id="set-hero-desc"
           rows="3"
-          class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-sm"
+          class="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-base sm:text-sm"
         >{settings.hero_description}</textarea>
       </div>
     </div>
 
-    <!-- Section 3: Official Brand Logo & Card Assets -->
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-5">
-      <div>
-        <h2 class="text-lg font-bold text-white flex items-center gap-2">
-          <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-          </svg>
-          <span>Official Brand Logo</span>
-        </h2>
-        <p class="text-xs text-slate-400 mt-0.5">Upload official visiting card logo asset to replace default vector badge</p>
+    <!-- Section 3: Official Brand Logo & Card Assets (Phone-Friendly Direct Upload) -->
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h2 class="text-lg font-bold text-white flex items-center gap-2">
+            <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+            </svg>
+            <span>Official Brand Logo</span>
+          </h2>
+          <p class="text-xs text-slate-400 mt-0.5">
+            Upload your visiting card logo photo or brand image to replace the default vector badge across the website.
+          </p>
+        </div>
       </div>
 
-      <div>
-        <label for="set-logo-url" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
-          Official Logo Image URL (PNG / SVG / WebP)
-        </label>
-        <input
-          type="text"
-          id="set-logo-url"
-          value={settings.logo_url}
-          placeholder="Leave blank to use the handcrafted technical BrandLogo vector mark"
-          class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-brand-ice text-sm min-h-[44px]"
-        />
-        <p class="text-[11px] text-slate-400 mt-1">
-          When empty, the website displays the built-in aerodynamic cooling logo mark.
+      <!-- Hidden File Input for Phone & Computer Picker -->
+      <input
+        type="file"
+        id="logo-file-picker"
+        accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml,image/*"
+        class="hidden"
+      />
+
+      <!-- Quick Action Upload Zone for Mobile & Desktop -->
+      <div class="space-y-4">
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <button
+            type="button"
+            id="logo-upload-btn"
+            class="inline-flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-sm shadow-lg shadow-emerald-950/40 transition-all active:scale-[0.98] min-h-[52px] cursor-pointer"
+          >
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span>📱 Choose Logo from Phone / Gallery</span>
+          </button>
+
+          <span class="text-xs text-slate-500 text-center sm:text-left">or tap below to select file</span>
+        </div>
+
+        <!-- Drag & Drop / Tap Dropzone -->
+        <div
+          id="logo-dropzone"
+          class="border-2 border-dashed border-slate-700 hover:border-emerald-500/60 rounded-2xl p-5 sm:p-6 text-center bg-slate-950/60 transition-all cursor-pointer group"
+        >
+          <div class="flex flex-col items-center justify-center gap-2">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 group-hover:scale-110 flex items-center justify-center text-emerald-400 transition-transform">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <p class="text-xs sm:text-sm font-semibold text-white">Tap here to select visiting card or logo image</p>
+            <p class="text-[11px] text-slate-400">Supports PNG, JPG, WebP, SVG (Transparent PNG recommended for best look)</p>
+          </div>
+        </div>
+
+        <!-- Uploading Progress Indicator -->
+        <div id="logo-upload-spinner" class="hidden p-3.5 rounded-xl bg-slate-950 border border-emerald-500/40 flex items-center justify-between text-xs text-emerald-300">
+          <div class="flex items-center gap-2.5">
+            <div class="animate-spin w-4 h-4 border-2 border-emerald-400 border-t-transparent rounded-full"></div>
+            <span id="logo-upload-msg">Uploading logo from phone to cloud storage...</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Interactive Logo Preview Banner -->
+      <div id="logo-preview-card" class="p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-200">Live Website Preview</span>
+          </div>
+          <span id="logo-badge-status" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-slate-800 text-slate-300">
+            {settings.logo_url ? 'Custom Logo Active' : 'Default Vector Icon'}
+          </span>
+        </div>
+
+        <p class="text-xs text-slate-400">
+          Here is how your brand identity will appear on light and dark sections across the website:
         </p>
+
+        <!-- Previews in Dark & Light modes -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Dark Theme Container (Footer & Admin CMS) -->
+          <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-3.5">
+            <div id="preview-logo-dark" class="w-12 h-12 rounded-xl bg-slate-950 border border-slate-700/80 flex items-center justify-center p-1 overflow-hidden flex-shrink-0">
+              {settings.logo_url ? (
+                <img src={settings.logo_url} alt="Logo preview" class="max-h-10 max-w-full object-contain" />
+              ) : (
+                <div class="w-9 h-9 rounded-lg bg-white/10 text-brand-ice flex items-center justify-center">
+                  <svg class="w-5 h-5 text-brand-ice" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 3L4 14h7l-1 7 9-11h-7l1-7z" />
+                  </svg>
+                </div>
+              )}
+            </div>
+            <div class="min-w-0">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Footer &amp; Admin Header</span>
+              <p class="text-xs sm:text-sm font-extrabold text-white truncate">PATEL COOL TECH</p>
+              <span class="text-[10px] text-slate-400 flex items-center gap-1 mt-0.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Indore &bull; MP
+              </span>
+            </div>
+          </div>
+
+          <!-- Light Theme Container (Customer Header & Mobile Menu) -->
+          <div class="p-4 rounded-xl bg-white border border-slate-200 flex items-center gap-3.5 shadow-sm">
+            <div id="preview-logo-light" class="w-12 h-12 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center p-1 overflow-hidden flex-shrink-0">
+              {settings.logo_url ? (
+                <img src={settings.logo_url} alt="Logo preview" class="max-h-10 max-w-full object-contain" />
+              ) : (
+                <div class="w-9 h-9 rounded-lg bg-brand-navy text-brand-ice flex items-center justify-center">
+                  <svg class="w-5 h-5 text-brand-ice" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 3L4 14h7l-1 7 9-11h-7l1-7z" />
+                  </svg>
+                </div>
+              )}
+            </div>
+            <div class="min-w-0">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">Public Header &amp; Mobile Drawer</span>
+              <p class="text-xs sm:text-sm font-extrabold text-brand-navy truncate">PATEL COOL TECH</p>
+              <span class="text-[10px] text-brand-text-muted flex items-center gap-1 mt-0.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Indore &bull; MP
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons for Logo -->
+        <div class="pt-2 flex flex-wrap items-center gap-3 border-t border-slate-800/80">
+          <button
+            type="button"
+            id="replace-logo-btn"
+            class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 cursor-pointer transition-colors inline-flex items-center gap-1.5"
+          >
+            <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span>Change / Upload New Logo</span>
+          </button>
+
+          <button
+            type="button"
+            id="remove-logo-btn"
+            class="px-4 py-2 rounded-xl text-xs font-bold text-rose-400 hover:text-rose-300 hover:bg-rose-950/40 border border-rose-900/60 cursor-pointer transition-colors inline-flex items-center gap-1.5"
+          >
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            <span>Reset to Default Vector Icon</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Advanced / Direct URL Override -->
+      <details class="text-xs text-slate-400 pt-1">
+        <summary class="cursor-pointer hover:text-slate-300 py-1 font-semibold select-none flex items-center gap-2">
+          <span>⚙️ Advanced: View or paste image URL directly</span>
+        </summary>
+        <div class="mt-3 space-y-1.5 pl-3 border-l-2 border-slate-800">
+          <label for="set-logo-url" class="block text-[11px] font-bold uppercase tracking-wider text-slate-400">
+            Logo URL Path
+          </label>
+          <input
+            type="text"
+            id="set-logo-url"
+            value={settings.logo_url}
+            placeholder="Auto-filled when uploading via button above, or paste URL"
+            class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-brand-ice text-sm min-h-[44px]"
+          />
+          <p class="text-[11px] text-slate-500">
+            Leave blank to use the built-in technical vector mark.
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <!-- Section 4: Verified Technician Profile Photos (Owner Account) -->
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h2 class="text-lg font-bold text-white flex items-center gap-2">
+            <svg class="w-5 h-5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            <span>Technician Profile Photos</span>
+          </h2>
+          <p class="text-xs text-slate-400 mt-0.5">
+            Upload personal photos of Mahendra Patel &amp; Satyam Patel from your phone or gallery to replace initials monograms across the website.
+          </p>
+        </div>
+      </div>
+
+      <!-- Hidden File Inputs -->
+      <input type="file" id="tech-mahendra-file-picker" accept="image/png,image/jpeg,image/jpg,image/webp,image/*" class="hidden" />
+      <input type="file" id="tech-satyam-file-picker" accept="image/png,image/jpeg,image/jpg,image/webp,image/*" class="hidden" />
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Mahendra Patel Photo Card -->
+        <div class="p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-sky-400 animate-pulse"></span>
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-200">Mahendra Patel</span>
+            </div>
+            <span id="tech-mahendra-status" class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-slate-800 text-slate-300">
+              {settings.tech_mahendra_photo_url ? 'Custom Photo' : 'Monogram (MP)'}
+            </span>
+          </div>
+
+          <div class="flex items-center gap-4">
+            <!-- Preview Box -->
+            <div id="tech-mahendra-preview" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-slate-900 to-brand-blue flex items-center justify-center text-white font-extrabold text-2xl shadow-md ring-2 ring-sky-400/30 overflow-hidden flex-shrink-0">
+              {settings.tech_mahendra_photo_url ? (
+                <img src={settings.tech_mahendra_photo_url} alt="Mahendra Patel" class="w-full h-full object-cover" />
+              ) : (
+                <span>MP</span>
+              )}
+            </div>
+            <div class="space-y-2 flex-grow">
+              <button
+                type="button"
+                id="tech-mahendra-upload-btn"
+                class="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white font-bold text-xs shadow-md transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                </svg>
+                <span>📱 Upload Mahendra's Photo</span>
+              </button>
+
+              <button
+                type="button"
+                id="tech-mahendra-remove-btn"
+                class="w-full py-1.5 px-3 rounded-xl text-[11px] font-bold text-rose-400 hover:text-rose-300 hover:bg-rose-950/40 border border-rose-900/40 transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                <span>Reset to Monogram (MP)</span>
+              </button>
+            </div>
+          </div>
+
+          <div id="tech-mahendra-spinner" class="hidden p-2 rounded-xl bg-slate-900 border border-sky-500/40 text-xs text-sky-300 flex items-center gap-2">
+            <div class="animate-spin w-3.5 h-3.5 border-2 border-sky-400 border-t-transparent rounded-full"></div>
+            <span>Uploading photo to cloud storage...</span>
+          </div>
+
+          <!-- Hidden input storing URL -->
+          <input type="hidden" id="set-tech-mahendra-url" value={settings.tech_mahendra_photo_url || ''} />
+        </div>
+
+        <!-- Satyam Patel Photo Card -->
+        <div class="p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-200">Satyam Patel</span>
+            </div>
+            <span id="tech-satyam-status" class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-slate-800 text-slate-300">
+              {settings.tech_satyam_photo_url ? 'Custom Photo' : 'Monogram (SP)'}
+            </span>
+          </div>
+
+          <div class="flex items-center gap-4">
+            <!-- Preview Box -->
+            <div id="tech-satyam-preview" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-slate-900 to-sky-700 flex items-center justify-center text-white font-extrabold text-2xl shadow-md ring-2 ring-cyan-400/30 overflow-hidden flex-shrink-0">
+              {settings.tech_satyam_photo_url ? (
+                <img src={settings.tech_satyam_photo_url} alt="Satyam Patel" class="w-full h-full object-cover" />
+              ) : (
+                <span>SP</span>
+              )}
+            </div>
+            <div class="space-y-2 flex-grow">
+              <button
+                type="button"
+                id="tech-satyam-upload-btn"
+                class="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-white font-bold text-xs shadow-md transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                </svg>
+                <span>📱 Upload Satyam's Photo</span>
+              </button>
+
+              <button
+                type="button"
+                id="tech-satyam-remove-btn"
+                class="w-full py-1.5 px-3 rounded-xl text-[11px] font-bold text-rose-400 hover:text-rose-300 hover:bg-rose-950/40 border border-rose-900/40 transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                <span>Reset to Monogram (SP)</span>
+              </button>
+            </div>
+          </div>
+
+          <div id="tech-satyam-spinner" class="hidden p-2 rounded-xl bg-slate-900 border border-cyan-500/40 text-xs text-cyan-300 flex items-center gap-2">
+            <div class="animate-spin w-3.5 h-3.5 border-2 border-cyan-400 border-t-transparent rounded-full"></div>
+            <span>Uploading photo to cloud storage...</span>
+          </div>
+
+          <!-- Hidden input storing URL -->
+          <input type="hidden" id="set-tech-satyam-url" value={settings.tech_satyam_photo_url || ''} />
+        </div>
       </div>
     </div>
 
@@ -220,8 +530,11 @@ const settings = defaultSiteSettings;
       <button
         type="submit"
         id="save-settings-btn"
-        class="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-brand-ice hover:bg-brand-ice-hover text-white font-bold text-sm shadow-lg transition-all active:scale-[0.98] min-h-[48px] cursor-pointer"
+        class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-brand-ice hover:bg-brand-ice-hover text-white font-bold text-sm shadow-lg transition-all active:scale-[0.98] min-h-[50px] cursor-pointer"
       >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
         <span>Save All Settings</span>
       </button>
     </div>
@@ -232,9 +545,87 @@ const settings = defaultSiteSettings;
 
     const form = document.getElementById('settings-form');
     const toast = document.getElementById('settings-toast');
+    const toastMsg = document.getElementById('toast-message');
 
-    function showToast() {
+    // Logo elements
+    const logoFilePicker = document.getElementById('logo-file-picker') as HTMLInputElement | null;
+    const logoUploadBtn = document.getElementById('logo-upload-btn');
+    const logoDropzone = document.getElementById('logo-dropzone');
+    const replaceLogoBtn = document.getElementById('replace-logo-btn');
+    const removeLogoBtn = document.getElementById('remove-logo-btn');
+    const logoUrlInput = document.getElementById('set-logo-url') as HTMLInputElement | null;
+    const logoUploadSpinner = document.getElementById('logo-upload-spinner');
+    const logoUploadMsg = document.getElementById('logo-upload-msg');
+    const previewLogoDark = document.getElementById('preview-logo-dark');
+    const previewLogoLight = document.getElementById('preview-logo-light');
+    const logoBadgeStatus = document.getElementById('logo-badge-status');
+
+    // Hero elements
+    const heroFilePicker = document.getElementById('hero-file-picker') as HTMLInputElement | null;
+    const heroUploadBtn = document.getElementById('hero-upload-btn');
+    const heroUrlInput = document.getElementById('set-hero-url') as HTMLInputElement | null;
+    const heroUploadSpinner = document.getElementById('hero-upload-spinner');
+
+    // Technician elements
+    const techMahendraFilePicker = document.getElementById('tech-mahendra-file-picker') as HTMLInputElement | null;
+    const techMahendraUploadBtn = document.getElementById('tech-mahendra-upload-btn');
+    const techMahendraRemoveBtn = document.getElementById('tech-mahendra-remove-btn');
+    const techMahendraUrlInput = document.getElementById('set-tech-mahendra-url') as HTMLInputElement | null;
+    const techMahendraPreview = document.getElementById('tech-mahendra-preview');
+    const techMahendraStatus = document.getElementById('tech-mahendra-status');
+    const techMahendraSpinner = document.getElementById('tech-mahendra-spinner');
+
+    const techSatyamFilePicker = document.getElementById('tech-satyam-file-picker') as HTMLInputElement | null;
+    const techSatyamUploadBtn = document.getElementById('tech-satyam-upload-btn');
+    const techSatyamRemoveBtn = document.getElementById('tech-satyam-remove-btn');
+    const techSatyamUrlInput = document.getElementById('set-tech-satyam-url') as HTMLInputElement | null;
+    const techSatyamPreview = document.getElementById('tech-satyam-preview');
+    const techSatyamStatus = document.getElementById('tech-satyam-status');
+    const techSatyamSpinner = document.getElementById('tech-satyam-spinner');
+
+    function updateMahendraPreview(url: string | null) {
+      if (url && url.trim().length > 0) {
+        if (techMahendraPreview) {
+          techMahendraPreview.innerHTML = `<img src="${url}" alt="Mahendra Patel" class="w-full h-full object-cover" />`;
+        }
+        if (techMahendraStatus) {
+          techMahendraStatus.textContent = 'Custom Photo Active';
+          techMahendraStatus.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-sky-950 text-sky-400 border border-sky-800';
+        }
+      } else {
+        if (techMahendraPreview) {
+          techMahendraPreview.innerHTML = '<span>MP</span>';
+        }
+        if (techMahendraStatus) {
+          techMahendraStatus.textContent = 'Monogram (MP)';
+          techMahendraStatus.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-slate-800 text-slate-300';
+        }
+      }
+    }
+
+    function updateSatyamPreview(url: string | null) {
+      if (url && url.trim().length > 0) {
+        if (techSatyamPreview) {
+          techSatyamPreview.innerHTML = `<img src="${url}" alt="Satyam Patel" class="w-full h-full object-cover" />`;
+        }
+        if (techSatyamStatus) {
+          techSatyamStatus.textContent = 'Custom Photo Active';
+          techSatyamStatus.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-cyan-950 text-cyan-400 border border-cyan-800';
+        }
+      } else {
+        if (techSatyamPreview) {
+          techSatyamPreview.innerHTML = '<span>SP</span>';
+        }
+        if (techSatyamStatus) {
+          techSatyamStatus.textContent = 'Monogram (SP)';
+          techSatyamStatus.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-slate-800 text-slate-300';
+        }
+      }
+    }
+
+    function showToast(message: string = 'Settings updated successfully.') {
       if (toast) {
+        if (toastMsg) toastMsg.textContent = message;
         toast.classList.remove('hidden');
         toast.classList.add('opacity-100');
         setTimeout(() => {
@@ -243,6 +634,401 @@ const settings = defaultSiteSettings;
       }
     }
 
+    // Default vector mark SVG
+    const defaultVectorDark = `
+      <div class="w-9 h-9 rounded-lg bg-white/10 text-brand-ice flex items-center justify-center">
+        <svg class="w-5 h-5 text-brand-ice" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 3L4 14h7l-1 7 9-11h-7l1-7z" />
+        </svg>
+      </div>
+    `;
+
+    const defaultVectorLight = `
+      <div class="w-9 h-9 rounded-lg bg-brand-navy text-brand-ice flex items-center justify-center">
+        <svg class="w-5 h-5 text-brand-ice" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 3L4 14h7l-1 7 9-11h-7l1-7z" />
+        </svg>
+      </div>
+    `;
+
+    function updateLogoPreview(url: string | null) {
+      if (url && url.trim().length > 0) {
+        if (previewLogoDark) {
+          previewLogoDark.innerHTML = `<img src="${url}" alt="Logo preview dark" class="max-h-10 max-w-full object-contain" />`;
+        }
+        if (previewLogoLight) {
+          previewLogoLight.innerHTML = `<img src="${url}" alt="Logo preview light" class="max-h-10 max-w-full object-contain" />`;
+        }
+        if (logoBadgeStatus) {
+          logoBadgeStatus.textContent = 'Custom Logo Active';
+          logoBadgeStatus.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-900/60 text-emerald-300 border border-emerald-700/60';
+        }
+      } else {
+        if (previewLogoDark) previewLogoDark.innerHTML = defaultVectorDark;
+        if (previewLogoLight) previewLogoLight.innerHTML = defaultVectorLight;
+        if (logoBadgeStatus) {
+          logoBadgeStatus.textContent = 'Default Vector Icon';
+          logoBadgeStatus.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-slate-800 text-slate-300';
+        }
+      }
+    }
+
+    // Connect Logo Picker triggers
+    logoUploadBtn?.addEventListener('click', () => logoFilePicker?.click());
+    logoDropzone?.addEventListener('click', () => logoFilePicker?.click());
+    replaceLogoBtn?.addEventListener('click', () => logoFilePicker?.click());
+
+    // Drag & Drop on dropzone
+    logoDropzone?.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      logoDropzone.classList.add('border-emerald-400', 'bg-emerald-950/20');
+    });
+    logoDropzone?.addEventListener('dragleave', () => {
+      logoDropzone.classList.remove('border-emerald-400', 'bg-emerald-950/20');
+    });
+    logoDropzone?.addEventListener('drop', (e) => {
+      e.preventDefault();
+      logoDropzone.classList.remove('border-emerald-400', 'bg-emerald-950/20');
+      if (e.dataTransfer && e.dataTransfer.files.length > 0) {
+        handleLogoFileUpload(e.dataTransfer.files[0]);
+      }
+    });
+
+    // Handle File Pick
+    logoFilePicker?.addEventListener('change', () => {
+      const file = logoFilePicker.files?.[0];
+      if (file) {
+        handleLogoFileUpload(file);
+      }
+    });
+
+    async function handleLogoFileUpload(file: File) {
+      logoUploadSpinner?.classList.remove('hidden');
+      if (logoUploadMsg) logoUploadMsg.textContent = `Uploading "${file.name}" to cloud storage...`;
+
+      // Show immediate local object preview
+      const localPreviewUrl = URL.createObjectURL(file);
+      updateLogoPreview(localPreviewUrl);
+
+      if (isSupabaseConfigured && supabase) {
+        try {
+          const fileExt = file.name.split('.').pop() || 'png';
+          const cleanName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
+          const filePath = `logos/${cleanName}`;
+
+          const { error: uploadError } = await supabase.storage
+            .from('work-media')
+            .upload(filePath, file, { upsert: true });
+
+          if (uploadError) throw uploadError;
+
+          const { data: { publicUrl } } = supabase.storage
+            .from('work-media')
+            .getPublicUrl(filePath);
+
+          if (logoUrlInput) logoUrlInput.value = publicUrl;
+          try {
+            localStorage.setItem('pct_custom_logo', publicUrl);
+            window.dispatchEvent(new CustomEvent('pct:logo-updated', { detail: { logoUrl: publicUrl } }));
+          } catch (ignore) {}
+          updateLogoPreview(publicUrl);
+
+          // Auto-save setting to Supabase site_settings
+          await supabase.from('site_settings').upsert({
+            id: 'default',
+            logo_url: publicUrl,
+            updated_at: new Date().toISOString(),
+          });
+
+          showToast('Official Logo uploaded & saved successfully!');
+        } catch (err: any) {
+          console.error('Logo upload error:', err);
+          // If storage bucket isn't created or fails, fall back to Base64 data URL
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const dataUrl = e.target?.result as string;
+            if (logoUrlInput) logoUrlInput.value = dataUrl;
+            try {
+              localStorage.setItem('pct_custom_logo', dataUrl);
+            } catch (ignore) {}
+            updateLogoPreview(dataUrl);
+            showToast('Logo attached locally. Click "Save All Settings" to confirm.');
+          };
+          reader.readAsDataURL(file);
+        }
+      } else {
+        // Local/Demo Mode: read as data URL
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const dataUrl = e.target?.result as string;
+          if (logoUrlInput) logoUrlInput.value = dataUrl;
+          try {
+            localStorage.setItem('pct_custom_logo', dataUrl);
+          } catch (ignore) {}
+          updateLogoPreview(dataUrl);
+          showToast('Logo selected! Tap "Save All Settings" to apply.');
+        };
+        reader.readAsDataURL(file);
+      }
+
+      logoUploadSpinner?.classList.add('hidden');
+    }
+
+    // Remove Logo Button
+    removeLogoBtn?.addEventListener('click', async () => {
+      if (confirm('Reset logo to default technical vector badge?')) {
+        if (logoUrlInput) logoUrlInput.value = '';
+        try {
+          localStorage.removeItem('pct_custom_logo');
+          window.dispatchEvent(new CustomEvent('pct:logo-updated', { detail: { logoUrl: '' } }));
+        } catch (ignore) {}
+        updateLogoPreview('');
+
+        if (isSupabaseConfigured && supabase) {
+          await supabase.from('site_settings').upsert({
+            id: 'default',
+            logo_url: '',
+            updated_at: new Date().toISOString(),
+          });
+        }
+        showToast('Logo reset to default vector icon.');
+      }
+    });
+
+    // Update preview when URL input changes manually
+    logoUrlInput?.addEventListener('input', () => {
+      updateLogoPreview(logoUrlInput.value);
+    });
+
+    // Hero Media File Picker
+    heroUploadBtn?.addEventListener('click', () => heroFilePicker?.click());
+    heroFilePicker?.addEventListener('change', async () => {
+      const file = heroFilePicker.files?.[0];
+      if (!file) return;
+
+      heroUploadSpinner?.classList.remove('hidden');
+
+      if (isSupabaseConfigured && supabase) {
+        try {
+          const cleanName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
+          const filePath = `hero/${cleanName}`;
+
+          const { error: uploadError } = await supabase.storage
+            .from('work-media')
+            .upload(filePath, file, { upsert: true });
+
+          if (uploadError) throw uploadError;
+
+          const { data: { publicUrl } } = supabase.storage
+            .from('work-media')
+            .getPublicUrl(filePath);
+
+          if (heroUrlInput) heroUrlInput.value = publicUrl;
+          showToast('Hero media uploaded successfully.');
+        } catch (err: any) {
+          alert('Hero upload failed: ' + err.message);
+        }
+      } else {
+        const objectUrl = URL.createObjectURL(file);
+        if (heroUrlInput) heroUrlInput.value = objectUrl;
+        showToast('Hero media attached for preview.');
+      }
+
+      heroUploadSpinner?.classList.add('hidden');
+    });
+
+    // Technician Photo File Pickers
+    techMahendraUploadBtn?.addEventListener('click', () => techMahendraFilePicker?.click());
+    techMahendraFilePicker?.addEventListener('change', async () => {
+      const file = techMahendraFilePicker.files?.[0];
+      if (!file) return;
+
+      techMahendraSpinner?.classList.remove('hidden');
+
+      if (isSupabaseConfigured && supabase) {
+        try {
+          const fileExt = file.name.split('.').pop() || 'jpg';
+          const cleanName = `mahendra-${Date.now()}.${fileExt}`;
+          const filePath = `team/${cleanName}`;
+
+          const { error: uploadError } = await supabase.storage
+            .from('work-media')
+            .upload(filePath, file, { upsert: true });
+
+          if (uploadError) throw uploadError;
+
+          const { data: { publicUrl } } = supabase.storage
+            .from('work-media')
+            .getPublicUrl(filePath);
+
+          if (techMahendraUrlInput) techMahendraUrlInput.value = publicUrl;
+          updateMahendraPreview(publicUrl);
+
+          await supabase.from('site_settings').upsert({
+            id: 'default',
+            tech_mahendra_photo_url: publicUrl,
+            updated_at: new Date().toISOString(),
+          });
+
+          showToast("Mahendra Patel's photo uploaded & saved successfully!");
+        } catch (err: any) {
+          console.error('Mahendra photo upload error:', err);
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const dataUrl = e.target?.result as string;
+            if (techMahendraUrlInput) techMahendraUrlInput.value = dataUrl;
+            updateMahendraPreview(dataUrl);
+            showToast('Photo attached locally. Click "Save Changes" to confirm.');
+          };
+          reader.readAsDataURL(file);
+        }
+      } else {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const dataUrl = e.target?.result as string;
+          if (techMahendraUrlInput) techMahendraUrlInput.value = dataUrl;
+          updateMahendraPreview(dataUrl);
+          showToast('Photo attached locally. Click "Save Changes" to confirm.');
+        };
+        reader.readAsDataURL(file);
+      }
+
+      techMahendraSpinner?.classList.add('hidden');
+    });
+
+    techMahendraRemoveBtn?.addEventListener('click', async () => {
+      if (confirm("Reset Mahendra Patel's photo to default monogram (MP)?")) {
+        if (techMahendraUrlInput) techMahendraUrlInput.value = '';
+        updateMahendraPreview('');
+
+        if (isSupabaseConfigured && supabase) {
+          await supabase.from('site_settings').upsert({
+            id: 'default',
+            tech_mahendra_photo_url: '',
+            updated_at: new Date().toISOString(),
+          });
+        }
+        showToast("Mahendra Patel photo reset to default monogram.");
+      }
+    });
+
+    // Satyam Photo Picker
+    techSatyamUploadBtn?.addEventListener('click', () => techSatyamFilePicker?.click());
+    techSatyamFilePicker?.addEventListener('change', async () => {
+      const file = techSatyamFilePicker.files?.[0];
+      if (!file) return;
+
+      techSatyamSpinner?.classList.remove('hidden');
+
+      if (isSupabaseConfigured && supabase) {
+        try {
+          const fileExt = file.name.split('.').pop() || 'jpg';
+          const cleanName = `satyam-${Date.now()}.${fileExt}`;
+          const filePath = `team/${cleanName}`;
+
+          const { error: uploadError } = await supabase.storage
+            .from('work-media')
+            .upload(filePath, file, { upsert: true });
+
+          if (uploadError) throw uploadError;
+
+          const { data: { publicUrl } } = supabase.storage
+            .from('work-media')
+            .getPublicUrl(filePath);
+
+          if (techSatyamUrlInput) techSatyamUrlInput.value = publicUrl;
+          updateSatyamPreview(publicUrl);
+
+          await supabase.from('site_settings').upsert({
+            id: 'default',
+            tech_satyam_photo_url: publicUrl,
+            updated_at: new Date().toISOString(),
+          });
+
+          showToast("Satyam Patel's photo uploaded & saved successfully!");
+        } catch (err: any) {
+          console.error('Satyam photo upload error:', err);
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const dataUrl = e.target?.result as string;
+            if (techSatyamUrlInput) techSatyamUrlInput.value = dataUrl;
+            updateSatyamPreview(dataUrl);
+            showToast('Photo attached locally. Click "Save Changes" to confirm.');
+          };
+          reader.readAsDataURL(file);
+        }
+      } else {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const dataUrl = e.target?.result as string;
+          if (techSatyamUrlInput) techSatyamUrlInput.value = dataUrl;
+          updateSatyamPreview(dataUrl);
+          showToast('Photo attached locally. Click "Save Changes" to confirm.');
+        };
+        reader.readAsDataURL(file);
+      }
+
+      techSatyamSpinner?.classList.add('hidden');
+    });
+
+    techSatyamRemoveBtn?.addEventListener('click', async () => {
+      if (confirm("Reset Satyam Patel's photo to default monogram (SP)?")) {
+        if (techSatyamUrlInput) techSatyamUrlInput.value = '';
+        updateSatyamPreview('');
+
+        if (isSupabaseConfigured && supabase) {
+          await supabase.from('site_settings').upsert({
+            id: 'default',
+            tech_satyam_photo_url: '',
+            updated_at: new Date().toISOString(),
+          });
+        }
+        showToast("Satyam Patel photo reset to default monogram.");
+      }
+    });
+
+    // Load initial settings on client mount (from Supabase or localStorage)
+    window.addEventListener('DOMContentLoaded', async () => {
+      // Check localStorage for logo fallback if input is empty
+      const cachedLogo = localStorage.getItem('pct_custom_logo');
+      if (logoUrlInput && !logoUrlInput.value && cachedLogo) {
+        logoUrlInput.value = cachedLogo;
+        updateLogoPreview(cachedLogo);
+      }
+
+      // If Supabase is configured, fetch latest settings to sync form
+      if (isSupabaseConfigured && supabase) {
+        try {
+          const { data } = await supabase
+            .from('site_settings')
+            .select('*')
+            .eq('id', 'default')
+            .single();
+
+          if (data) {
+            if (data.logo_url) {
+              if (logoUrlInput) logoUrlInput.value = data.logo_url;
+              updateLogoPreview(data.logo_url);
+            }
+            if (data.hero_media_url && heroUrlInput) {
+              heroUrlInput.value = data.hero_media_url;
+            }
+            if (data.tech_mahendra_photo_url && techMahendraUrlInput) {
+              techMahendraUrlInput.value = data.tech_mahendra_photo_url;
+              updateMahendraPreview(data.tech_mahendra_photo_url);
+            }
+            if (data.tech_satyam_photo_url && techSatyamUrlInput) {
+              techSatyamUrlInput.value = data.tech_satyam_photo_url;
+              updateSatyamPreview(data.tech_satyam_photo_url);
+            }
+          }
+        } catch (err) {
+          console.warn('Could not sync latest settings from Supabase:', err);
+        }
+      }
+    });
+
+    // Form submission
     form?.addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -258,6 +1044,8 @@ const settings = defaultSiteSettings;
       const heroHeading = (document.getElementById('set-hero-heading') as HTMLInputElement | null)?.value || '';
       const heroDesc = (document.getElementById('set-hero-desc') as HTMLTextAreaElement | null)?.value || '';
       const logoUrl = (document.getElementById('set-logo-url') as HTMLInputElement | null)?.value || '';
+      const techMahendraPhoto = (document.getElementById('set-tech-mahendra-url') as HTMLInputElement | null)?.value || '';
+      const techSatyamPhoto = (document.getElementById('set-tech-satyam-url') as HTMLInputElement | null)?.value || '';
 
       const updatedPayload = {
         id: 'default',
@@ -273,6 +1061,8 @@ const settings = defaultSiteSettings;
         hero_heading: heroHeading,
         hero_description: heroDesc,
         logo_url: logoUrl,
+        tech_mahendra_photo_url: techMahendraPhoto,
+        tech_satyam_photo_url: techSatyamPhoto,
         updated_at: new Date().toISOString(),
       };
 
@@ -280,7 +1070,21 @@ const settings = defaultSiteSettings;
         await supabase.from('site_settings').upsert(updatedPayload);
       }
 
-      showToast();
+      try {
+        if (logoUrl) {
+          localStorage.setItem('pct_custom_logo', logoUrl);
+        } else {
+          localStorage.removeItem('pct_custom_logo');
+        }
+        window.dispatchEvent(new CustomEvent('pct:logo-updated', { detail: { logoUrl } }));
+      } catch (ignore) {}
+
+      showToast('All website, logo and technician settings saved successfully!');
+    });
+
+    const topSaveBtn = document.getElementById('top-save-settings-btn');
+    topSaveBtn?.addEventListener('click', () => {
+      form?.requestSubmit();
     });
   </script>
 </AdminLayout>

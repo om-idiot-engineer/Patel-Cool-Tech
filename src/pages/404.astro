@@ -10,21 +10,26 @@ import { business } from '../data/business';
   description="The requested page could not be found. Contact Patel Cool Tech for AC services in Indore."
   noindex={true}
 >
-  <section class="py-20 sm:py-28 bg-white">
-    <Container class="text-center max-w-xl mx-auto">
-      <span class="text-brand-ice font-mono font-bold text-sm tracking-wider uppercase">Error 404</span>
-      <h1 class="text-3xl sm:text-4xl font-extrabold text-brand-navy mt-2 mb-4">
+  <section class="py-24 sm:py-32 bg-white relative overflow-hidden">
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-brand-ice/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true"></div>
+
+    <Container class="text-center max-w-xl mx-auto relative z-10 reveal-init">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-brand-surface-alt text-brand-blue border border-brand-border mb-6">
+        <span>ERROR 404</span>
+      </div>
+
+      <h1 class="text-3xl sm:text-5xl font-extrabold text-brand-navy tracking-tight mb-4 font-display">
         Page Not Found
       </h1>
-      <p class="text-brand-text-muted text-base mb-8 leading-relaxed">
+      <p class="text-brand-text-muted text-base sm:text-lg mb-8 leading-relaxed">
         The page you are looking for might have been moved or does not exist. You can return to the homepage or reach out to our technicians directly.
       </p>
 
       <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
-        <Button href="/" variant="primary">
+        <Button href="/" variant="primary" size="lg" class="w-full sm:w-auto font-bold min-h-[48px] px-6">
           Back to Homepage
         </Button>
-        <Button href={business.phones.whatsappUrl} target="_blank" rel="noopener noreferrer" variant="whatsapp">
+        <Button href={business.phones.whatsappUrl} target="_blank" rel="noopener noreferrer" variant="whatsapp" size="lg" class="w-full sm:w-auto font-bold min-h-[48px] px-6">
           Chat on WhatsApp
         </Button>
       </div>

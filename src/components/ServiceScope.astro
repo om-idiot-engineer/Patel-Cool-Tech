@@ -43,16 +43,19 @@ const {
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
         {
-          coversItems.map((item) => (
-            <div class="bg-brand-surface rounded-2xl p-6 sm:p-7 border border-brand-border hover:border-brand-ice/40 hover:shadow-card transition-all duration-200">
+          coversItems.map((item, idx) => (
+            <div class={`card-spotlight bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-7 border border-brand-border/90 hover:border-brand-ice/50 shadow-card hover:shadow-card-elevated card-hover-effect transition-all duration-300 reveal-init stagger-${(idx % 2) + 1} relative overflow-hidden group active:scale-[0.99] sm:active:scale-100`}>
+              <!-- Top hover accent line -->
+              <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-ice via-sky-400 to-brand-blue opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
+
               <div class="flex items-start gap-4">
-                <div class="w-10 h-10 rounded-xl bg-brand-blue-light text-brand-blue flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-brand-blue-light to-sky-100/60 text-brand-blue border border-brand-blue/15 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm group-hover:scale-105 transition-transform duration-300">
+                  <svg class="w-5 h-5 text-brand-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
                 <div>
-                  <h3 class="text-base sm:text-lg font-bold text-brand-navy mb-2">
+                  <h3 class="text-base sm:text-lg font-bold text-brand-navy font-display group-hover:text-brand-blue transition-colors mb-2">
                     {item.title}
                   </h3>
                   <p class="text-xs sm:text-sm text-brand-text-muted leading-relaxed">

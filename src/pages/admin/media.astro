@@ -47,9 +47,9 @@ const initialMedia = [
 
 <AdminLayout title="Media Library" activeTab="media">
   <!-- Top bar -->
-  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 sm:pb-6 border-b border-slate-800">
     <div>
-      <span class="text-xs font-bold uppercase tracking-wider text-brand-ice">Asset Storage</span>
+      <span class="text-xs font-bold uppercase tracking-wider text-purple-400">Asset Storage</span>
       <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-0.5">Media Library</h1>
       <p class="text-xs sm:text-sm text-slate-400 mt-1">
         Upload and manage photos, job videos, logos, and hero media for the website.
@@ -57,57 +57,69 @@ const initialMedia = [
     </div>
 
     <!-- Upload Media Button -->
-    <div>
+    <div class="w-full sm:w-auto">
       <input type="file" id="media-library-upload-input" accept="image/*,video/mp4,video/webm" multiple class="hidden" />
       <button
         type="button"
         id="upload-media-trigger-btn"
-        class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-sm shadow-md transition-all active:scale-[0.98] min-h-[48px] cursor-pointer"
+        class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-sm shadow-md transition-all active:scale-[0.98] min-h-[48px] w-full sm:w-auto cursor-pointer"
       >
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
         </svg>
-        <span>Upload Media Files</span>
+        <span>Upload from Phone / PC</span>
       </button>
     </div>
   </div>
 
-  <!-- Filter chips -->
-  <div class="flex flex-wrap items-center gap-2 my-6">
+  <!-- Mobile Floating Upload Button (FAB) -->
+  <button
+    type="button"
+    id="mobile-fab-upload-btn"
+    class="fixed bottom-20 right-4 z-30 md:hidden w-14 h-14 rounded-full bg-purple-600 hover:bg-purple-500 text-white shadow-2xl shadow-purple-600/40 flex items-center justify-center active:scale-90 transition-all cursor-pointer border border-white/20"
+    aria-label="Upload New Media"
+  >
+    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+    </svg>
+  </button>
+
+  <!-- Filter chips (Horizontally scrollable on phones without ugly line breaks) -->
+  <div class="flex items-center gap-2 my-5 sm:my-6 overflow-x-auto pb-1 -mx-3 px-3 sm:mx-0 sm:px-0">
     <button
       type="button"
-      class="media-filter-btn px-3.5 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-white border border-slate-700 cursor-pointer"
+      class="media-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 text-white border border-slate-700 cursor-pointer whitespace-nowrap min-h-[38px]"
       data-filter="all"
     >
       All Media
     </button>
     <button
       type="button"
-      class="media-filter-btn px-3.5 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-slate-400 hover:text-white border border-slate-800 cursor-pointer"
+      class="media-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-400 hover:text-white border border-slate-800 cursor-pointer whitespace-nowrap min-h-[38px]"
       data-filter="image"
     >
       Images
     </button>
     <button
       type="button"
-      class="media-filter-btn px-3.5 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-slate-400 hover:text-white border border-slate-800 cursor-pointer"
+      class="media-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-400 hover:text-white border border-slate-800 cursor-pointer whitespace-nowrap min-h-[38px]"
       data-filter="video"
     >
       Videos
     </button>
     <button
       type="button"
-      class="media-filter-btn px-3.5 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-slate-400 hover:text-white border border-slate-800 cursor-pointer"
+      class="media-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-400 hover:text-white border border-slate-800 cursor-pointer whitespace-nowrap min-h-[38px]"
       data-filter="hero"
     >
-      Hero
+      Hero Media
     </button>
     <button
       type="button"
-      class="media-filter-btn px-3.5 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-slate-400 hover:text-white border border-slate-800 cursor-pointer"
+      class="media-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-400 hover:text-white border border-slate-800 cursor-pointer whitespace-nowrap min-h-[38px]"
       data-filter="work"
     >
-      Work
+      Work Captures
     </button>
   </div>
 
@@ -120,11 +132,11 @@ const initialMedia = [
   </div>
 
   <!-- Media Grid -->
-  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4" id="media-grid">
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4" id="media-grid">
     {
       initialMedia.map((m) => (
         <div
-          class="media-item bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden flex flex-col justify-between group"
+          class="media-item bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden flex flex-col justify-between group shadow-sm"
           data-type={m.file_type}
           data-category={m.category}
         >
@@ -134,7 +146,7 @@ const initialMedia = [
               alt={m.file_name}
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
             />
-            <span class="absolute top-2 left-2 px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-950/80 text-slate-300">
+            <span class="absolute top-2 left-2 px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-950/80 text-slate-300 backdrop-blur-sm">
               {m.category}
             </span>
           </div>
@@ -142,20 +154,23 @@ const initialMedia = [
             <p class="text-xs font-bold text-white truncate" title={m.file_name}>
               {m.file_name}
             </p>
-            <div class="mt-2.5 pt-2 border-t border-slate-800 flex items-center justify-between text-[11px]">
+            <div class="mt-2.5 pt-2 border-t border-slate-800 flex items-center justify-between gap-1 text-[11px]">
               <button
                 type="button"
-                class="copy-url-btn text-brand-ice hover:underline font-semibold cursor-pointer"
+                class="copy-url-btn px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 active:bg-slate-700 text-brand-ice font-semibold cursor-pointer min-h-[32px] flex items-center justify-center flex-grow text-center"
                 data-url={m.file_url}
               >
                 Copy Link
               </button>
               <button
                 type="button"
-                class="delete-media-btn text-rose-400 hover:text-rose-300 font-semibold cursor-pointer"
+                class="delete-media-btn px-2 py-1 rounded-lg text-rose-400 hover:bg-rose-950/50 active:bg-rose-950/60 font-semibold cursor-pointer min-h-[32px] flex items-center justify-center"
                 data-id={m.id}
+                title="Delete Media"
               >
-                Delete
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
               </button>
             </div>
           </div>
@@ -168,6 +183,7 @@ const initialMedia = [
     import { supabase, isSupabaseConfigured } from '../../utils/supabase';
 
     const uploadTrigger = document.getElementById('upload-media-trigger-btn');
+    const mobileUploadFab = document.getElementById('mobile-fab-upload-btn');
     const fileInput = document.getElementById('media-library-upload-input') as HTMLInputElement | null;
     const uploadStatus = document.getElementById('upload-status');
     const uploadStatusText = document.getElementById('upload-status-text');
@@ -175,6 +191,10 @@ const initialMedia = [
     const filterButtons = document.querySelectorAll('.media-filter-btn');
 
     uploadTrigger?.addEventListener('click', () => {
+      fileInput?.click();
+    });
+
+    mobileUploadFab?.addEventListener('click', () => {
       fileInput?.click();
     });
 

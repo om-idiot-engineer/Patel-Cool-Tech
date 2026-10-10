@@ -47,7 +47,7 @@ export interface BusinessData {
 export const business: BusinessData = {
   name: 'Patel Cool Tech',
   tagline: 'AC Installation, Repair & Service',
-  shortDescription: 'Professional air conditioning installation, repair, servicing, gas refilling, and maintenance across Indore, Rau, Pithampur, and nearby areas.',
+  shortDescription: 'Professional air conditioning installation, repair, servicing, gas refilling, and maintenance across Indore, Rau, Pithampur, Khandwa, and nearby areas.',
   city: 'Indore',
   state: 'Madhya Pradesh',
   country: 'India',
@@ -73,13 +73,14 @@ export const business: BusinessData = {
   },
   email: 'patelcooltech@gmail.com',
   serviceAreas: {
-    core: ['Indore', 'Rau', 'Pithampur'],
+    core: ['Indore', 'Rau', 'Pithampur', 'Khandwa'],
     featuredAreas: [
-      { name: 'Indore', type: 'city', note: 'All major residential & commercial zones' },
-      { name: 'Rau', type: 'suburb', note: 'Fast on-site AC repair & service' },
-      { name: 'Pithampur', type: 'industrial-hub', note: 'Commercial and residential units' },
+      { name: 'Indore', type: 'city', note: 'Central base & all city residential/commercial zones' },
+      { name: 'Rau', type: 'suburb', note: 'Rapid doorstep dispatch & bypass corridor' },
+      { name: 'Pithampur', type: 'industrial-hub', note: 'Industrial plants, commercial units & AMC contracts' },
+      { name: 'Khandwa', type: 'extended', note: 'Regional coverage & multi-unit installation/repair' },
     ],
-    extendedCoverageNote: 'Service available across Indore and surrounding regions. Larger or out-of-district projects can be arranged based on requirement.',
+    extendedCoverageNote: 'Service available across Indore, Rau, Pithampur, Khandwa, and surrounding corridors. Bulk commercial and residential projects arranged across the region.',
   },
   googleBusinessProfile: {
     name: 'Patel Cool Tech',

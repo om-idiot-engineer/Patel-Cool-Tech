@@ -14,27 +14,20 @@ const {
 } = Astro.props;
 ---
 
-<section class="py-14 sm:py-18 bg-brand-navy text-white relative overflow-hidden">
-  <!-- Subtle technical grid ambient background -->
-  <div class="absolute inset-0 pointer-events-none opacity-5" aria-hidden="true">
-    <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <pattern id="work-cta-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
-          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#FFFFFF" stroke-width="1" />
-        </pattern>
-      </defs>
-      <rect width="100%" height="100%" fill="url(#work-cta-pattern)" />
-    </svg>
-  </div>
+<section class="py-18 sm:py-22 lg:py-26 bg-brand-navy-dark bg-gradient-to-b from-brand-navy-dark via-[#061224] to-brand-navy-dark text-white relative overflow-hidden bg-tech-dots-dark">
+  <!-- Dynamic Atmospheric Cooling Aurora Glow -->
+  <div class="absolute -top-28 left-1/2 -translate-x-1/2 w-[650px] h-80 bg-brand-ice/15 rounded-full blur-[100px] pointer-events-none animate-aurora" aria-hidden="true"></div>
+  <div class="absolute -bottom-20 right-1/4 w-80 h-72 bg-brand-blue/20 rounded-full blur-[80px] pointer-events-none" aria-hidden="true"></div>
+  <div class="absolute inset-0 bg-radial-vignette pointer-events-none" aria-hidden="true"></div>
 
   <Container class="relative z-10">
-    <div class="max-w-4xl mx-auto text-center">
-      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/10 text-brand-ice border border-white/15 mb-6">
+    <div class="max-w-4xl mx-auto text-center reveal-init">
+      <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full text-xs font-semibold bg-white/10 text-brand-ice-light border border-white/15 mb-6 backdrop-blur-md shadow-sm">
         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span class="tracking-wide uppercase text-[11px] font-bold">Direct Technician Support</span>
+        <span class="tracking-wider uppercase font-extrabold text-[11px]">DIRECT TECHNICIAN SUPPORT</span>
       </div>
 
-      <h2 class="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
+      <h2 class="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight font-display">
         {heading}
       </h2>
 
@@ -42,39 +35,77 @@ const {
         {subheading}
       </p>
 
-      <!-- Primary Action Buttons -->
-      <div class="mt-8 sm:mt-10 flex flex-col xs:flex-row items-stretch xs:items-center justify-center gap-3.5 max-w-md mx-auto">
-        <Button
-          href={business.phones.primaryTel}
-          variant="secondary"
-          size="lg"
-          class="w-full xs:w-auto font-bold justify-center min-h-[48px] px-7 shadow-lg hover:shadow-xl text-base"
-          aria-label={`Call Patel Cool Tech at ${business.phones.primaryFormatted}`}
-        >
-          <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-          </svg>
-          <span>Call: {business.phones.primaryFormatted}</span>
-        </Button>
+      <!-- Direct Technician Contacts: 2x2 Clean Action Grid (Mobile Aligned) -->
+      <div class="mt-6 sm:mt-8 max-w-lg mx-auto w-full space-y-2.5">
+        <!-- Row 1: Direct Calling -->
+        <div class="grid grid-cols-2 gap-2.5 sm:gap-3 w-full">
+          <!-- Call Mahendra -->
+          <a
+            href={business.phones.primaryTel}
+            class="flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-white hover:bg-slate-100 text-brand-navy font-bold text-xs sm:text-sm shadow-card hover:shadow-hover border border-white/20 active:scale-[0.98] transition-all whitespace-nowrap select-none group min-h-[46px]"
+            aria-label={`Call Mahendra Patel at ${business.phones.primaryFormatted}`}
+          >
+            <div class="w-5 h-5 rounded-lg bg-brand-navy/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+              <svg class="w-3.5 h-3.5 text-brand-navy flex-shrink-0 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+            </div>
+            <span class="whitespace-nowrap font-bold tracking-tight">Call Mahendra</span>
+          </a>
 
-        <Button
-          href={business.phones.whatsappUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          variant="whatsapp"
-          size="lg"
-          class="w-full xs:w-auto font-bold justify-center min-h-[48px] px-7 shadow-lg hover:shadow-xl text-base"
-          aria-label="Chat with Patel Cool Tech on WhatsApp"
-        >
-          <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12.031 2C6.495 2 2 6.495 2 12.031c0 1.97.57 3.811 1.558 5.368L2.094 22l4.743-1.442a9.98 9.98 0 005.194 1.473h.004c5.535 0 10.03-4.495 10.03-10.031 0-2.68-1.043-5.2-2.935-7.093A9.972 9.972 0 0012.031 2zm0 18.257h-.003a8.217 8.217 0 01-4.186-1.144l-.3-.178-3.11.946.963-3.033-.195-.311a8.22 8.22 0 01-1.26-4.506c0-4.544 3.697-8.241 8.243-8.241 2.2 0 4.27.859 5.827 2.417a8.196 8.196 0 012.413 5.826c0 4.546-3.698 8.244-8.242 8.244z"/>
-          </svg>
-          <span>WhatsApp Us</span>
-        </Button>
+          <!-- Call Satyam -->
+          <a
+            href={business.phones.secondaryTel}
+            class="flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-white hover:bg-slate-100 text-brand-navy font-bold text-xs sm:text-sm shadow-card hover:shadow-hover border border-white/20 active:scale-[0.98] transition-all whitespace-nowrap select-none group min-h-[46px]"
+            aria-label={`Call Satyam Patel at ${business.phones.secondaryFormatted}`}
+          >
+            <div class="w-5 h-5 rounded-lg bg-brand-navy/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+              <svg class="w-3.5 h-3.5 text-brand-navy flex-shrink-0 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+            </div>
+            <span class="whitespace-nowrap font-bold tracking-tight">Call Satyam</span>
+          </a>
+        </div>
+
+        <!-- Row 2: Direct WhatsApp Messaging -->
+        <div class="grid grid-cols-2 gap-2.5 sm:gap-3 w-full">
+          <!-- WhatsApp Mahendra -->
+          <a
+            href="https://wa.me/919575664203?text=Hello%20Mahendra%20ji%2C%20I%20need%20AC%20service%20in%20Indore"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-brand-whatsapp hover:bg-brand-whatsapp-hover text-white font-bold text-xs sm:text-sm shadow-card hover:shadow-hover border border-emerald-400/20 active:scale-[0.98] transition-all whitespace-nowrap select-none group min-h-[46px]"
+            aria-label="Chat with Mahendra Patel on WhatsApp"
+          >
+            <div class="w-5 h-5 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+              <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12.031 2C6.495 2 2 6.495 2 12.031c0 1.97.57 3.811 1.558 5.368L2.094 22l4.743-1.442a9.98 9.98 0 005.194 1.473h.004c5.535 0 10.03-4.495 10.03-10.031 0-2.68-1.043-5.2-2.935-7.093A9.972 9.972 0 0012.031 2zm0 18.257h-.003a8.217 8.217 0 01-4.186-1.144l-.3-.178-3.11.946.963-3.033-.195-.311a8.22 8.22 0 01-1.26-4.506c0-4.544 3.697-8.241 8.243-8.241 2.2 0 4.27.859 5.827 2.417a8.196 8.196 0 012.413 5.826c0 4.546-3.698 8.244-8.242 8.244z"/>
+              </svg>
+            </div>
+            <span class="whitespace-nowrap font-bold tracking-tight">WhatsApp Mahendra</span>
+          </a>
+
+          <!-- WhatsApp Satyam -->
+          <a
+            href="https://wa.me/919425166191?text=Hello%20Satyam%20ji%2C%20I%20need%20AC%20service%20in%20Indore"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-3 sm:py-3.5 rounded-xl bg-brand-whatsapp hover:bg-brand-whatsapp-hover text-white font-bold text-xs sm:text-sm shadow-card hover:shadow-hover border border-emerald-400/20 active:scale-[0.98] transition-all whitespace-nowrap select-none group min-h-[46px]"
+            aria-label="Chat with Satyam Patel on WhatsApp"
+          >
+            <div class="w-5 h-5 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+              <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12.031 2C6.495 2 2 6.495 2 12.031c0 1.97.57 3.811 1.558 5.368L2.094 22l4.743-1.442a9.98 9.98 0 005.194 1.473h.004c5.535 0 10.03-4.495 10.03-10.031 0-2.68-1.043-5.2-2.935-7.093A9.972 9.972 0 0012.031 2zm0 18.257h-.003a8.217 8.217 0 01-4.186-1.144l-.3-.178-3.11.946.963-3.033-.195-.311a8.22 8.22 0 01-1.26-4.506c0-4.544 3.697-8.241 8.243-8.241 2.2 0 4.27.859 5.827 2.417a8.196 8.196 0 012.413 5.826c0 4.546-3.698 8.244-8.242 8.244z"/>
+              </svg>
+            </div>
+            <span class="whitespace-nowrap font-bold tracking-tight">WhatsApp Satyam</span>
+          </a>
+        </div>
       </div>
 
-      <!-- Secondary Info Strip -->
-      <div class="mt-8 pt-6 border-t border-white/10 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-300">
+      <!-- Secondary Info Strip in Glass Card -->
+      <div class="mt-10 p-4 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-md max-w-xl mx-auto flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs text-slate-300">
         <span>Alt Phone: <a href={business.phones.secondaryTel} class="text-white hover:text-brand-ice font-semibold underline">{business.phones.secondaryFormatted}</a></span>
         <span class="hidden sm:inline text-slate-500">&bull;</span>
         <span>Service Coverage: <strong class="text-white font-semibold">Indore, Rau, Pithampur</strong></span>

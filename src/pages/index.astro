@@ -2,7 +2,6 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
 import ServicesOverview from '../components/ServicesOverview.astro';
-import WhyChooseUs from '../components/WhyChooseUs.astro';
 import WorkPreview from '../components/WorkPreview.astro';
 import BrandsSection from '../components/BrandsSection.astro';
 import ServiceAreas from '../components/ServiceAreas.astro';
@@ -21,24 +20,21 @@ const settings = await getSiteSettings();
   <!-- 1. Hero Section with Real Photography & Floating Badges -->
   <Hero settings={settings} />
 
-  <!-- 2. Services Overview Section (#services) -->
-  <ServicesOverview />
+  <!-- 2. Major Brands Section (Supported Makes - Directly Below Hero) -->
+  <BrandsSection />
 
-  <!-- 3. Why Patel Cool Tech Section (High-Contrast Navy Feature Section) -->
-  <WhyChooseUs />
+  <!-- 3. Services Overview Section (#services) -->
+  <ServicesOverview />
 
   <!-- 4. Our Work Preview Section (#work) with Interactive Lightbox -->
   <WorkPreview />
 
-  <!-- 5. Major Brands Section (Independent Service Support) -->
-  <BrandsSection />
-
-  <!-- 6. Service Areas Section (Indore, Rau, Pithampur) -->
+  <!-- 5. Service Areas Section (Indore, Rau, Pithampur) -->
   <ServiceAreas />
 
-  <!-- 7. About / Team Introduction Section (#about) -->
-  <AboutPreview />
+  <!-- 6. About / Team Introduction Section (#about) -->
+  <AboutPreview settings={settings} />
 
-  <!-- 8. Final High-Impact Contact CTA Section (#contact) -->
+  <!-- 7. Final High-Impact Contact CTA Section (#contact) -->
   <ContactCTA />
 </BaseLayout>

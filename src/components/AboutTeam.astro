@@ -15,22 +15,25 @@ const technicians = business.technicians.map((tech) => {
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
   {
-    technicians.map((tech) => (
-      <article class="flex flex-col sm:flex-row items-center sm:items-start gap-5 p-6 sm:p-7 bg-white rounded-2xl border border-brand-border shadow-soft hover:shadow-card hover:border-brand-blue/30 transition-all duration-200">
-        <!-- Initials / Neutral Technical Avatar Architecture (Prepared for future real photo swap) -->
-        <div class="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-brand-navy to-brand-blue flex items-center justify-center text-white font-extrabold text-2xl sm:text-3xl flex-shrink-0 shadow-soft border-2 border-white">
+    technicians.map((tech, idx) => (
+      <article class={`card-spotlight flex flex-col sm:flex-row items-center sm:items-start gap-5 p-6 sm:p-7 bg-white rounded-2xl sm:rounded-3xl border border-brand-border/90 shadow-card hover:shadow-card-elevated hover:border-brand-ice/50 card-hover-effect transition-all duration-300 relative group overflow-hidden reveal-init stagger-${idx + 1} active:scale-[0.99] sm:active:scale-100`}>
+        <!-- Top hover accent line -->
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-ice via-sky-400 to-brand-blue opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
+
+        <!-- Initials / Neutral Technical Avatar Architecture -->
+        <div class="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-brand-navy via-brand-navy-surface to-brand-blue flex items-center justify-center text-white font-extrabold text-2xl sm:text-3xl flex-shrink-0 shadow-md border-2 border-white group-hover:scale-105 transition-transform duration-300">
           <span class="tracking-wider">{tech.initials}</span>
-          <span class="absolute -bottom-1.5 -right-1.5 w-6 h-6 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-[10px] text-white font-bold" title="Active on-site technician">
+          <span class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-[10px] text-white font-bold shadow-xs" title="Active on-site technician">
             ✓
           </span>
         </div>
 
         <!-- Details -->
         <div class="flex-grow text-center sm:text-left">
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-surface-alt text-brand-blue border border-brand-border mb-1.5">
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-brand-surface-alt text-brand-blue border border-brand-border mb-2 shadow-xs">
             {tech.role}
           </span>
-          <h3 class="text-xl sm:text-2xl font-bold text-brand-navy">
+          <h3 class="text-xl sm:text-2xl font-bold text-brand-navy font-display group-hover:text-brand-blue transition-colors">
             {tech.name}
           </h3>
           <p class="mt-2 text-xs sm:text-sm text-brand-text-muted leading-relaxed">
@@ -38,15 +41,17 @@ const technicians = business.technicians.map((tech) => {
           </p>
 
           <!-- Technician Action Links -->
-          <div class="mt-4 pt-3 border-t border-brand-border/60 flex flex-wrap items-center justify-center sm:justify-start gap-3">
+          <div class="mt-4 pt-3.5 border-t border-brand-border/60 flex flex-wrap items-center justify-center sm:justify-start gap-3.5">
             <a
               href={business.phones.primaryTel}
-              class="text-xs font-bold text-brand-blue hover:text-brand-ice transition-colors flex items-center gap-1.5 py-1 min-h-[44px]"
+              class="text-xs font-bold text-brand-blue hover:text-brand-ice transition-colors flex items-center gap-1.5 py-1 min-h-[44px] group/link"
               aria-label={`Call ${tech.name} at ${business.phones.primaryFormatted}`}
             >
-              <svg class="w-3.5 h-3.5 text-brand-ice" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-              </svg>
+              <div class="w-6 h-6 rounded-lg bg-brand-blue/10 flex items-center justify-center flex-shrink-0 group-hover/link:bg-brand-blue/20 transition-colors">
+                <svg class="w-3.5 h-3.5 text-brand-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+              </div>
               <span>{business.phones.primaryFormatted}</span>
             </a>
 
@@ -56,12 +61,14 @@ const technicians = business.technicians.map((tech) => {
               href={business.phones.whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              class="text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition-colors flex items-center gap-1.5 py-1 min-h-[44px]"
+              class="text-xs font-bold text-emerald-600 hover:text-emerald-700 transition-colors flex items-center gap-1.5 py-1 min-h-[44px] group/link"
               aria-label={`Message ${tech.name} on WhatsApp`}
             >
-              <svg class="w-3.5 h-3.5 text-emerald-500" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12.031 2C6.495 2 2 6.495 2 12.031c0 1.97.57 3.811 1.558 5.368L2.094 22l4.743-1.442a9.98 9.98 0 005.194 1.473h.004c5.535 0 10.03-4.495 10.03-10.031 0-2.68-1.043-5.2-2.935-7.093A9.972 9.972 0 0012.031 2zm0 18.257h-.003a8.217 8.217 0 01-4.186-1.144l-.3-.178-3.11.946.963-3.033-.195-.311a8.22 8.22 0 01-1.26-4.506c0-4.544 3.697-8.241 8.243-8.241 2.2 0 4.27.859 5.827 2.417a8.196 8.196 0 012.413 5.826c0 4.546-3.698 8.244-8.242 8.244z"/>
-              </svg>
+              <div class="w-6 h-6 rounded-lg bg-emerald-50 flex items-center justify-center flex-shrink-0 group-hover/link:bg-emerald-100 transition-colors">
+                <svg class="w-3.5 h-3.5 text-emerald-500" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12.031 2C6.495 2 2 6.495 2 12.031c0 1.97.57 3.811 1.558 5.368L2.094 22l4.743-1.442a9.98 9.98 0 005.194 1.473h.004c5.535 0 10.03-4.495 10.03-10.031 0-2.68-1.043-5.2-2.935-7.093A9.972 9.972 0 0012.031 2zm0 18.257h-.003a8.217 8.217 0 01-4.186-1.144l-.3-.178-3.11.946.963-3.033-.195-.311a8.22 8.22 0 01-1.26-4.506c0-4.544 3.697-8.241 8.243-8.241 2.2 0 4.27.859 5.827 2.417a8.196 8.196 0 012.413 5.826c0 4.546-3.698 8.244-8.242 8.244z"/>
+                </svg>
+              </div>
               <span>WhatsApp</span>
             </a>
           </div>

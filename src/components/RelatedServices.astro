@@ -11,14 +11,14 @@ const { currentSlug } = Astro.props;
 const otherServices = services.filter((s) => s.slug !== currentSlug).slice(0, 3);
 ---
 
-<section class="py-12 sm:py-16 bg-brand-surface-alt/60 border-b border-brand-border">
+<section class="py-14 sm:py-20 bg-brand-surface-alt/60 border-b border-brand-border/80">
   <Container>
-    <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-10 gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-12 gap-4 reveal-init">
       <div>
         <span class="text-xs font-bold uppercase tracking-wider text-brand-ice block mb-1">
           Explore Other Solutions
         </span>
-        <h2 class="text-2xl sm:text-3xl font-extrabold text-brand-navy tracking-tight">
+        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-brand-navy tracking-tight">
           Related Air Conditioning Services
         </h2>
       </div>
@@ -33,35 +33,38 @@ const otherServices = services.filter((s) => s.slug !== currentSlug).slice(0, 3)
       </a>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
       {
-        otherServices.map((service) => (
-          <article class="bg-white rounded-2xl p-6 border border-brand-border hover:border-brand-blue/30 hover:shadow-card transition-all duration-200 flex flex-col justify-between group">
+        otherServices.map((service, idx) => (
+          <article class={`card-spotlight bg-white rounded-3xl p-7 border border-brand-border/90 hover:border-brand-ice/50 hover:shadow-card-elevated transition-all duration-300 flex flex-col justify-between group reveal-init stagger-${idx + 1} relative overflow-hidden active:scale-[0.99] sm:active:scale-100`}>
+            <!-- Top hover accent line -->
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-ice via-sky-400 to-brand-blue opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
+
             <div>
-              <div class="flex items-center justify-between gap-3 mb-4">
-                <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-brand-surface border border-brand-border text-brand-text-subtle uppercase">
+              <div class="flex items-center justify-between gap-3 mb-5">
+                <span class="text-[11px] font-bold px-3 py-1 rounded-full bg-brand-surface-alt border border-brand-border/80 text-brand-blue uppercase tracking-wider shadow-xs">
                   {service.category === 'both' ? 'Homes & Offices' : service.category}
                 </span>
-                <span class="text-xs text-brand-text-subtle">Indore</span>
+                <span class="text-xs font-semibold text-slate-400">Indore</span>
               </div>
-              <h3 class="text-base sm:text-lg font-bold text-brand-navy group-hover:text-brand-blue transition-colors mb-2">
+              <h3 class="text-lg sm:text-xl font-bold text-brand-navy font-display group-hover:text-brand-blue transition-colors mb-2.5">
                 <a href={`/services/${service.slug}/`}>
                   {service.title}
                 </a>
               </h3>
-              <p class="text-xs sm:text-sm text-brand-text-muted leading-relaxed mb-4">
+              <p class="text-xs sm:text-sm text-brand-text-muted leading-relaxed mb-6">
                 {service.shortDescription}
               </p>
             </div>
 
-            <div class="pt-3 border-t border-brand-border/60">
+            <div class="pt-4 border-t border-brand-border/60">
               <a
                 href={`/services/${service.slug}/`}
-                class="inline-flex items-center justify-between w-full text-xs sm:text-sm font-semibold text-brand-blue group-hover:text-brand-ice transition-colors min-h-[44px]"
+                class="inline-flex items-center justify-between w-full text-xs sm:text-sm font-bold text-brand-blue group-hover:text-brand-ice transition-colors min-h-[44px] group/link"
                 aria-label={`Learn more about ${service.title}`}
               >
                 <span>View {service.title} details</span>
-                <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <svg class="w-4 h-4 transform group-hover/link:translate-x-1.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                 </svg>
               </a>

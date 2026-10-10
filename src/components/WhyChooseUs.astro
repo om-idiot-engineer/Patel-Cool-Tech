@@ -39,28 +39,41 @@ const reasons = [
 ];
 ---
 
-<section class="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-brand-navy-dark via-brand-navy to-brand-navy-dark text-white border-y border-brand-navy-light/40 relative overflow-hidden">
-  <!-- Subtle technical ambient cooling glow -->
-  <div class="absolute top-1/4 -right-20 w-96 h-96 bg-brand-ice/15 rounded-full blur-3xl pointer-events-none" aria-hidden="true"></div>
-  <div class="absolute -bottom-20 -left-20 w-80 h-80 bg-brand-blue/20 rounded-full blur-3xl pointer-events-none" aria-hidden="true"></div>
+<section class="py-16 sm:py-20 lg:py-24 bg-brand-navy-dark bg-gradient-to-b from-brand-navy-dark via-brand-navy to-brand-navy-dark text-white border-y border-brand-navy-light/40 relative overflow-hidden bg-tech-dots-dark">
+  <!-- Subtle technical ambient cooling glow (organic aurora drift) -->
+  <div class="absolute top-1/4 -right-20 w-[30rem] h-[30rem] bg-brand-ice/15 rounded-full blur-3xl pointer-events-none animate-aurora -z-0" aria-hidden="true"></div>
+  <div class="absolute -bottom-24 -left-20 w-[26rem] h-[26rem] bg-brand-blue/20 rounded-full blur-3xl pointer-events-none animate-pulseGlow -z-0" aria-hidden="true"></div>
+
+  <!-- Fine Technical HVAC Grid Lines (Pure SVG Motif) -->
+  <div class="absolute inset-0 pointer-events-none opacity-[0.035] -z-0" aria-hidden="true">
+    <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="why-grid-pattern" width="48" height="48" patternUnits="userSpaceOnUse">
+          <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#FFFFFF" stroke-width="0.8" />
+          <circle cx="24" cy="24" r="1" fill="#38BDF8" opacity="0.4" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#why-grid-pattern)" />
+    </svg>
+  </div>
 
   <Container class="relative z-10">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
       <!-- Left Column: Context, Technicians, Direct Conversion -->
       <div class="lg:col-span-5 flex flex-col items-start text-left reveal-init">
-        <span class="inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wide uppercase bg-brand-ice/15 text-brand-ice-light border border-brand-ice/30 mb-4 backdrop-blur-sm">
+        <span class="inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wide uppercase bg-brand-ice/15 text-brand-ice-light border border-brand-ice/30 mb-4 backdrop-blur-md shadow-xs">
           <span class="w-2 h-2 rounded-full bg-brand-ice animate-pulse mr-2"></span>
           Direct &amp; Practical AC Care
         </span>
-        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
+        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight font-display">
           Why Patel Cool Tech
         </h2>
         <p class="mt-4 text-base sm:text-lg text-slate-300 leading-relaxed font-normal">
           Air conditioning requires precise diagnostics, careful handling of refrigerant pressures, and proper electrical safety. We deliver straightforward on-site service backed by direct communication.
         </p>
 
-        <!-- Direct Contact Summary Card (Navy Dark Glass) -->
-        <div class="mt-8 p-6 sm:p-7 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 shadow-darkCard w-full">
+        <!-- Direct Contact Summary Card (Navy Dark Glass with Subtle Border Glow) -->
+        <div class="mt-8 p-6 sm:p-7 bg-white/[0.05] backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-white/15 shadow-darkCard w-full hover:border-brand-ice/40 transition-colors duration-300">
           <div class="flex items-center gap-3 mb-3">
             <span class="relative flex h-3 w-3">
               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -76,7 +89,7 @@ const reasons = [
               href={business.phones.primaryTel}
               variant="primary"
               size="sm"
-              class="w-full sm:w-auto font-bold justify-center min-h-[48px] shadow-iceGlow"
+              class="w-full sm:w-auto font-bold justify-center min-h-[48px] shadow-iceGlow border border-brand-ice/40 active:scale-[0.98] transition-all"
               aria-label={`Call ${business.phones.primaryFormatted}`}
             >
               Call {business.phones.primaryFormatted}
@@ -87,7 +100,7 @@ const reasons = [
               rel="noopener noreferrer"
               variant="whatsapp"
               size="sm"
-              class="w-full sm:w-auto font-bold justify-center min-h-[48px]"
+              class="w-full sm:w-auto font-bold justify-center min-h-[48px] active:scale-[0.98] transition-all"
               aria-label="WhatsApp Patel Cool Tech"
             >
               WhatsApp Us
@@ -96,49 +109,54 @@ const reasons = [
         </div>
       </div>
 
-      <!-- Right Column: Factual Checklist / Benefit Rows in Modern Technical Grid -->
-      <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4 reveal-init stagger-2">
+      <!-- Right Column: Factual Checklist / Benefit Rows in Modern Technical Grid with Spotlights -->
+      <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
         {
           reasons.map((reason, idx) => (
-            <div class="p-5 sm:p-6 bg-white/[0.04] hover:bg-white/[0.07] backdrop-blur-sm rounded-2xl border border-white/10 hover:border-brand-ice/40 transition-all duration-300 flex flex-col justify-between group">
+            <div
+              class:list={[
+                'card-spotlight-dark p-5 sm:p-6 bg-white/[0.04] hover:bg-white/[0.08] backdrop-blur-md rounded-2xl sm:rounded-3xl border border-white/10 hover:border-brand-ice/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-card-elevated flex flex-col justify-between group reveal-init active:scale-[0.99] sm:active:scale-100',
+                `stagger-${(idx % 3) + 1}`,
+              ]}
+            >
               <div>
-                <!-- Icon badge -->
-                <div class="w-11 h-11 rounded-xl bg-brand-ice/15 text-brand-ice border border-brand-ice/20 flex items-center justify-center flex-shrink-0 mb-4 group-hover:scale-110 group-hover:bg-brand-ice group-hover:text-white transition-all duration-300 shadow-sm">
+                <!-- Icon badge with micro-motion -->
+                <div class="w-12 h-12 rounded-2xl bg-brand-ice/15 text-brand-ice border border-brand-ice/25 flex items-center justify-center flex-shrink-0 mb-4 group-hover:scale-110 group-hover:rotate-6 group-hover:bg-brand-ice group-hover:text-white transition-all duration-300 shadow-sm">
                   {reason.icon === 'user-check' && (
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                   )}
                   {reason.icon === 'home-check' && (
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                     </svg>
                   )}
                   {reason.icon === 'cpu' && (
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
                     </svg>
                   )}
                   {reason.icon === 'wrench-double' && (
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                   )}
                   {reason.icon === 'map-pin' && (
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                   )}
                   {reason.icon === 'building' && (
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
                   )}
                 </div>
 
-                <h3 class="text-base sm:text-lg font-bold text-white mb-2 leading-snug">
+                <h3 class="text-base sm:text-lg font-bold text-white mb-2 leading-snug group-hover:text-brand-ice-light transition-colors font-display">
                   {reason.title}
                 </h3>
                 <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">

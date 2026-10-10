@@ -2,101 +2,131 @@
 import { services } from '../data/services';
 import Container from './Container.astro';
 import SectionHeading from './SectionHeading.astro';
+
+// Service specific color themes and clean micro-highlights (zero repetitive fluff)
+const serviceMeta: Record<string, { gradient: string; tag: string; shortText: string }> = {
+  'ac-service': {
+    gradient: 'from-cyan-500 to-blue-600',
+    tag: 'Deep Wet Wash',
+    shortText: 'High-pressure jet pump wash & coil disinfection.',
+  },
+  'ac-repair': {
+    gradient: 'from-blue-600 to-indigo-700',
+    tag: 'Fast Diagnosis',
+    shortText: 'Cooling fix, water leakage & PCB board repair.',
+  },
+  'ac-gas-refilling': {
+    gradient: 'from-sky-500 to-cyan-600',
+    tag: 'Leak Test & Refill',
+    shortText: 'Nitrogen test & genuine R32/R410A gas top-up.',
+  },
+  'ac-installation': {
+    gradient: 'from-slate-700 to-brand-navy',
+    tag: 'Safe Fitting',
+    shortText: 'Split/window mounting, copper piping & shifting.',
+  },
+  'ac-amc': {
+    gradient: 'from-emerald-500 to-teal-700',
+    tag: 'Year-Round Care',
+    shortText: 'Preventive maintenance plans for homes & offices.',
+  },
+};
 ---
 
-<section id="services" class="py-14 sm:py-20 lg:py-24 bg-white border-b border-brand-border scroll-mt-20 relative">
+<section id="services" class="py-10 sm:py-16 lg:py-20 bg-white border-b border-brand-border scroll-mt-20 relative">
   <Container>
+    <!-- Crisp, Non-Bloated Header -->
     <div class="reveal-init">
       <SectionHeading
-        badge="Our Services"
-        title="AC Services for Homes &amp; Businesses"
-        subtitle="Complete on-site air conditioning solutions across Indore, Rau, and Pithampur. From precision installation and diagnostics to deep jet-spray servicing and gas refilling."
+        badge="AC Solutions"
+        title="Complete AC Services"
+        subtitle="Fast doorstep repairs, jet pump servicing & genuine gas charging with upfront pricing."
         align="center"
       />
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch mt-10">
+    <!-- Responsive Compact Grid: 2-Cols on Mobile (Zero Endless Scrolling) + 5-Cols on Desktop -->
+    <div class="grid grid-cols-2 lg:grid-cols-5 gap-2.5 sm:gap-4 lg:gap-4 items-stretch mt-6 sm:mt-10">
       {
         services.map((service, index) => {
-          const isLastOnLg = index === 4;
+          const meta = serviceMeta[service.id] || {
+            gradient: 'from-brand-blue to-brand-navy',
+            tag: 'Expert Service',
+            shortText: service.shortDescription,
+          };
+          const isFifthOnMobile = index === 4;
+
           return (
             <article
               class:list={[
-                'flex flex-col justify-between bg-brand-surface rounded-2xl p-6 sm:p-7 border border-brand-border/90 transition-all duration-300 hover:border-brand-blue/50 hover:shadow-hover card-hover-effect group reveal-init',
-                `stagger-${(index % 3) + 1}`,
-                isLastOnLg ? 'md:col-span-2 lg:col-span-1' : '',
+                'group relative flex flex-col justify-between bg-white rounded-2xl p-3.5 sm:p-5 border border-slate-200/90 transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_12px_28px_-6px_rgba(2,132,199,0.18)] hover:border-brand-ice active:scale-[0.98] overflow-hidden reveal-init shadow-soft',
+                `stagger-${(index % 5) + 1}`,
+                // 5th card spans 2 columns on mobile so it forms a balanced, compact horizontal card
+                isFifthOnMobile ? 'col-span-2 lg:col-span-1' : '',
               ]}
             >
-              <div>
-                <!-- Service Icon & Category Tag -->
-                <div class="flex items-center justify-between gap-4 mb-5">
-                  <div class="w-12 h-12 rounded-xl bg-brand-blue-light text-brand-blue flex items-center justify-center flex-shrink-0 group-hover:bg-brand-navy group-hover:text-brand-ice transition-colors duration-200 shadow-sm">
-                    {service.id === 'ac-installation' && (
-                      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                      </svg>
-                    )}
-                    {service.id === 'ac-repair' && (
-                      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
-                      </svg>
-                    )}
-                    {service.id === 'ac-service' && (
-                      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                      </svg>
-                    )}
-                    {service.id === 'ac-gas-refilling' && (
-                      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                      </svg>
-                    )}
-                    {(service.id === 'ac-amc' || service.id === 'amc-maintenance') && (
-                      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                      </svg>
-                    )}
-                  </div>
-                  <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white border border-brand-border text-brand-text-subtle capitalize shadow-sm">
-                    {service.category === 'both' ? 'Homes & Offices' : service.category}
-                  </span>
+              <!-- Animated top accent glow bar on hover -->
+              <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-ice via-sky-400 to-brand-blue transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left z-20"></div>
+
+              <div class={isFifthOnMobile ? 'flex items-center gap-3 sm:block' : ''}>
+                <!-- Icon with Distinct Brand Gradient -->
+                <div class:list={[
+                  'w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br text-white flex items-center justify-center flex-shrink-0 shadow-xs group-hover:scale-105 group-hover:rotate-3 transition-transform duration-300 mb-2.5 sm:mb-3.5',
+                  meta.gradient,
+                  isFifthOnMobile ? 'mb-0 sm:mb-3.5' : '',
+                ]}>
+                  {service.id === 'ac-installation' && (
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                  )}
+                  {service.id === 'ac-repair' && (
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
+                    </svg>
+                  )}
+                  {service.id === 'ac-service' && (
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                  )}
+                  {service.id === 'ac-gas-refilling' && (
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  )}
+                  {(service.id === 'ac-amc' || service.id === 'amc-maintenance') && (
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                  )}
                 </div>
 
-                <!-- Service Title & Factual Description -->
-                <h3 class="text-xl font-bold text-brand-navy mb-2.5 group-hover:text-brand-blue transition-colors">
-                  <a href={`/services/${service.slug}/`} class="hover:underline">
-                    {service.title}
-                  </a>
-                </h3>
-                <p class="text-sm sm:text-base text-brand-text-muted leading-relaxed mb-4">
-                  {service.shortDescription}
-                </p>
+                <div class={isFifthOnMobile ? 'min-w-0 flex-1' : ''}>
+                  <!-- Title -->
+                  <h3 class="text-sm sm:text-base font-bold text-brand-navy group-hover:text-brand-blue transition-colors font-display tracking-tight leading-tight">
+                    <a href={`/services/${service.slug}/`} class="focus-visible:outline-none after:absolute after:inset-0">
+                      {service.title}
+                    </a>
+                  </h3>
 
-                <!-- Key Factual Features -->
-                <ul class="space-y-2 mb-6 border-t border-brand-border/60 pt-4" role="list">
-                  {service.features.slice(0, 3).map((feature) => (
-                    <li class="flex items-start gap-2.5 text-xs sm:text-sm text-brand-text">
-                      <svg class="w-4 h-4 text-brand-ice flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
+                  <!-- Crisp 1-Line Highlight (Fluff Removed) -->
+                  <p class="text-[11px] sm:text-xs text-slate-500 leading-snug mt-1 line-clamp-2">
+                    {meta.shortText}
+                  </p>
+                </div>
               </div>
 
-              <!-- Direct link to dedicated service page -->
-              <div class="pt-3 border-t border-brand-border/60">
-                <a
-                  href={`/services/${service.slug}/`}
-                  class="inline-flex items-center justify-between w-full text-sm font-bold text-brand-blue group-hover:text-brand-navy transition-colors duration-150 py-2 min-h-[48px] focus-visible:outline-2 focus-visible:outline-brand-blue rounded-md"
-                  aria-label={`View details and process for ${service.title}`}
-                >
-                  <span>Learn more about {service.title}</span>
-                  <svg class="w-4 h-4 transform group-hover:translate-x-1.5 transition-transform duration-150 text-brand-ice" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              <!-- Compact Bottom Indicator -->
+              <div class="mt-2.5 sm:mt-4 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] sm:text-xs font-semibold text-brand-blue group-hover:text-brand-navy transition-colors">
+                <span class="inline-block text-[10px] sm:text-[11px] font-semibold text-brand-ice bg-sky-50 px-1.5 py-0.5 rounded">
+                  {meta.tag}
+                </span>
+                <span class="inline-flex items-center group-hover:translate-x-1 transition-transform text-slate-400 group-hover:text-brand-blue">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
                   </svg>
-                </a>
+                </span>
               </div>
             </article>
           );
@@ -104,14 +134,14 @@ import SectionHeading from './SectionHeading.astro';
       }
     </div>
 
-    <!-- Explore All Services Directory CTA -->
-    <div class="mt-12 text-center reveal-init">
+    <!-- Clean, Compact Explore Directory Button -->
+    <div class="mt-8 text-center reveal-init">
       <a
         href="/services/"
-        class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-brand-surface-alt hover:bg-brand-blue-light/70 border border-brand-border text-brand-navy font-bold text-sm sm:text-base transition-all duration-200 shadow-soft hover:shadow-card focus-visible:outline-2 focus-visible:outline-brand-blue group"
+        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-surface-alt hover:bg-brand-blue-light/70 border border-brand-border text-brand-navy font-bold text-xs sm:text-sm transition-all duration-200 shadow-soft hover:shadow-hover hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-brand-blue group"
       >
-        <span>View Complete AC Services Directory</span>
-        <svg class="w-4 h-4 text-brand-blue group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <span>View Full Services &amp; Pricing Directory</span>
+        <svg class="w-3.5 h-3.5 text-brand-blue group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
         </svg>
       </a>

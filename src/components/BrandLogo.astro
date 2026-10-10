@@ -24,6 +24,12 @@ const iconSizeClasses = {
   lg: 'w-12 h-12 rounded-2xl',
 }[size];
 
+const customLogoImageClasses = {
+  sm: 'max-h-8 max-w-[120px] w-auto object-contain rounded',
+  md: 'max-h-10 sm:max-h-11 max-w-[150px] w-auto object-contain rounded-md',
+  lg: 'max-h-12 sm:max-h-14 max-w-[180px] w-auto object-contain rounded-lg',
+}[size];
+
 const textSizeClasses = {
   sm: 'text-sm sm:text-base',
   md: 'text-base sm:text-lg lg:text-xl',
@@ -33,12 +39,12 @@ const textSizeClasses = {
 const isLight = variant === 'light';
 ---
 
-<div class={`brand-logo-container flex items-center gap-2.5 sm:gap-3 group ${className}`} data-logo-variant={variant}>
+<div class={`brand-logo-container flex items-center gap-2.5 sm:gap-3 group ${className}`} data-logo-variant={variant} data-logo-size={size}>
   {customLogoUrl ? (
     <img
       src={customLogoUrl}
       alt={`${business.name} official logo`}
-      class={`object-contain ${iconSizeClasses}`}
+      class={`brand-logo-img ${customLogoImageClasses}`}
       loading="eager"
       decoding="async"
     />
@@ -85,3 +91,43 @@ const isLight = variant === 'light';
     )}
   </div>
 </div>
+
+<script>
+  function syncGlobalBrandLogos() {
+    let customLogo: string | null = null;
+    try {
+      customLogo = localStorage.getItem('pct_custom_logo');
+    } catch (e) {}
+
+    const containers = document.querySelectorAll<HTMLElement>('.brand-logo-container');
+    containers.forEach((container) => {
+      const existingImg = container.querySelector<HTMLImageElement>('.brand-logo-img');
+      const existingMark = container.querySelector<HTMLElement>('.brand-logo-mark');
+
+      if (customLogo) {
+        if (existingImg) {
+          if (existingImg.src !== customLogo) existingImg.src = customLogo;
+        } else if (existingMark) {
+          const size = container.dataset.logoSize || 'md';
+          const sizeClasses =
+            size === 'sm'
+              ? 'max-h-8 max-w-[120px] w-auto object-contain rounded'
+              : size === 'lg'
+              ? 'max-h-12 sm:max-h-14 max-w-[180px] w-auto object-contain rounded-lg'
+              : 'max-h-10 sm:max-h-11 max-w-[150px] w-auto object-contain rounded-md';
+
+          const img = document.createElement('img');
+          img.src = customLogo;
+          img.alt = 'Patel Cool Tech official logo';
+          img.className = `brand-logo-img ${sizeClasses}`;
+          img.loading = 'eager';
+          existingMark.replaceWith(img);
+        }
+      }
+    });
+  }
+
+  syncGlobalBrandLogos();
+  document.addEventListener('astro:page-load', syncGlobalBrandLogos);
+  window.addEventListener('pct:logo-updated', syncGlobalBrandLogos);
+</script>
