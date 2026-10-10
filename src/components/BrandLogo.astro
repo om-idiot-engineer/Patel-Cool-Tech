@@ -17,17 +17,11 @@ const {
   class: className = '',
 } = Astro.props;
 
-// Size classes
-const iconSizeClasses = {
-  sm: 'w-8 h-8 rounded-lg',
-  md: 'w-10 h-10 rounded-xl',
-  lg: 'w-12 h-12 rounded-2xl',
-}[size];
-
-const customLogoImageClasses = {
-  sm: 'max-h-8 max-w-[120px] w-auto object-contain rounded',
-  md: 'max-h-10 sm:max-h-11 max-w-[150px] w-auto object-contain rounded-md',
-  lg: 'max-h-12 sm:max-h-14 max-w-[180px] w-auto object-contain rounded-lg',
+// Circle frame size classes
+const frameSizeClasses = {
+  sm: 'w-8 h-8 sm:w-9 sm:h-9',
+  md: 'w-10 h-10 sm:w-11 sm:h-11',
+  lg: 'w-12 h-12 sm:w-14 sm:h-14',
 }[size];
 
 const textSizeClasses = {
@@ -42,16 +36,24 @@ const isLight = variant === 'light';
 <div class={`brand-logo-container flex items-center gap-2.5 sm:gap-3 group ${className}`} data-logo-variant={variant} data-logo-size={size}>
   <div class="brand-logo-visual flex-shrink-0 flex items-center justify-center">
     {customLogoUrl ? (
-      <img
-        src={customLogoUrl}
-        alt={`${business.name} official logo`}
-        class={`brand-logo-img ${customLogoImageClasses}`}
-        loading="eager"
-        decoding="async"
-      />
+      <div
+        class={`brand-logo-frame ${frameSizeClasses} rounded-full overflow-hidden flex items-center justify-center bg-white flex-shrink-0 transition-transform duration-300 group-hover:scale-105 ${
+          isLight
+            ? 'ring-2 ring-white/20 shadow-md shadow-brand-navy/30'
+            : 'ring-1.5 ring-slate-200/90 shadow-xs'
+        }`}
+      >
+        <img
+          src={customLogoUrl}
+          alt={`${business.name} official logo`}
+          class="brand-logo-img w-full h-full object-cover rounded-full"
+          loading="eager"
+          decoding="async"
+        />
+      </div>
     ) : (
       <div
-        class={`brand-logo-mark ${iconSizeClasses} relative flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-105 shadow-sm ${
+        class={`brand-logo-mark ${frameSizeClasses} rounded-full relative flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-105 shadow-sm ${
           isLight
             ? 'bg-white/10 text-brand-ice border border-white/20 backdrop-blur-md'
             : 'bg-gradient-to-br from-brand-navy to-brand-navy-dark text-brand-ice border border-brand-blue/30 shadow-brand-navy/10'
@@ -66,7 +68,7 @@ const isLight = variant === 'light';
           <circle cx="19" cy="5" r="1.5" fill="#38BDF8" stroke="none" />
         </svg>
         <!-- Ambient corner glow -->
-        <div class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-brand-ice animate-pulse opacity-70"></div>
+        <div class="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-brand-ice animate-pulse opacity-70"></div>
       </div>
     )}
   </div>
@@ -105,37 +107,39 @@ const isLight = variant === 'light';
       const size = container.dataset.logoSize || 'md';
       const isLight = container.dataset.logoVariant === 'light';
 
-      const sizeClasses =
+      const frameSizeClasses =
         size === 'sm'
-          ? 'max-h-8 max-w-[120px] w-auto object-contain rounded'
+          ? 'w-8 h-8 sm:w-9 sm:h-9'
           : size === 'lg'
-          ? 'max-h-12 sm:max-h-14 max-w-[180px] w-auto object-contain rounded-lg'
-          : 'max-h-10 sm:max-h-11 max-w-[150px] w-auto object-contain rounded-md';
-
-      const iconSizeClasses =
-        size === 'sm' ? 'w-8 h-8 rounded-lg' : size === 'lg' ? 'w-12 h-12 rounded-2xl' : 'w-10 h-10 rounded-xl';
+          ? 'w-12 h-12 sm:w-14 sm:h-14'
+          : 'w-10 h-10 sm:w-11 sm:h-11';
 
       if (logoUrl && logoUrl.trim().length > 0) {
+        let frame = visual.querySelector<HTMLElement>('.brand-logo-frame');
         let img = visual.querySelector('img.brand-logo-img') as HTMLImageElement | null;
-        if (!img) {
+        if (!frame || !img) {
           visual.innerHTML = `
-            <img
-              src="${logoUrl}"
-              alt="Patel Cool Tech official logo"
-              class="brand-logo-img ${sizeClasses}"
-              loading="eager"
-              decoding="async"
-            />
+            <div class="brand-logo-frame ${frameSizeClasses} rounded-full overflow-hidden flex items-center justify-center bg-white flex-shrink-0 transition-transform duration-300 group-hover:scale-105 ${
+              isLight ? 'ring-2 ring-white/20 shadow-md shadow-brand-navy/30' : 'ring-1.5 ring-slate-200/90 shadow-xs'
+            }">
+              <img
+                src="${logoUrl}"
+                alt="Patel Cool Tech official logo"
+                class="brand-logo-img w-full h-full object-cover rounded-full"
+                loading="eager"
+                decoding="async"
+              />
+            </div>
           `;
         } else if (img.src !== logoUrl) {
           img.src = logoUrl;
         }
       } else {
-        const existingImg = visual.querySelector('img.brand-logo-img');
-        if (existingImg) {
+        const existingFrame = visual.querySelector('.brand-logo-frame') || visual.querySelector('img.brand-logo-img');
+        if (existingFrame) {
           visual.innerHTML = `
             <div
-              class="brand-logo-mark ${iconSizeClasses} relative flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-105 shadow-sm ${
+              class="brand-logo-mark ${frameSizeClasses} rounded-full relative flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-105 shadow-sm ${
                 isLight
                   ? 'bg-white/10 text-brand-ice border border-white/20 backdrop-blur-md'
                   : 'bg-gradient-to-br from-brand-navy to-brand-navy-dark text-brand-ice border border-brand-blue/30 shadow-brand-navy/10'
@@ -146,7 +150,7 @@ const isLight = variant === 'light';
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 3L4 14h7l-1 7 9-11h-7l1-7z" />
                 <circle cx="19" cy="5" r="1.5" fill="#38BDF8" stroke="none" />
               </svg>
-              <div class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-brand-ice animate-pulse opacity-70"></div>
+              <div class="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-brand-ice animate-pulse opacity-70"></div>
             </div>
           `;
         }

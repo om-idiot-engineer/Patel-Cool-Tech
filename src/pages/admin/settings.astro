@@ -306,11 +306,11 @@ const settings = await getSiteSettings();
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <!-- Dark Theme Container (Footer & Admin CMS) -->
           <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-3.5">
-            <div id="preview-logo-dark" class="w-12 h-12 rounded-xl bg-slate-950 border border-slate-700/80 flex items-center justify-center p-1 overflow-hidden flex-shrink-0">
+            <div id="preview-logo-dark" class="w-12 h-12 rounded-full bg-white ring-2 ring-white/20 shadow-md flex items-center justify-center overflow-hidden flex-shrink-0">
               {settings.logo_url ? (
-                <img src={settings.logo_url} alt="Logo preview" class="max-h-10 max-w-full object-contain" />
+                <img src={settings.logo_url} alt="Logo preview" class="w-full h-full object-cover rounded-full" />
               ) : (
-                <div class="w-9 h-9 rounded-lg bg-white/10 text-brand-ice flex items-center justify-center">
+                <div class="w-full h-full rounded-full bg-slate-950 text-brand-ice flex items-center justify-center">
                   <svg class="w-5 h-5 text-brand-ice" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 3L4 14h7l-1 7 9-11h-7l1-7z" />
                   </svg>
@@ -328,11 +328,11 @@ const settings = await getSiteSettings();
 
           <!-- Light Theme Container (Customer Header & Mobile Menu) -->
           <div class="p-4 rounded-xl bg-white border border-slate-200 flex items-center gap-3.5 shadow-sm">
-            <div id="preview-logo-light" class="w-12 h-12 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center p-1 overflow-hidden flex-shrink-0">
+            <div id="preview-logo-light" class="w-12 h-12 rounded-full bg-white ring-1.5 ring-slate-200/90 shadow-xs flex items-center justify-center overflow-hidden flex-shrink-0">
               {settings.logo_url ? (
-                <img src={settings.logo_url} alt="Logo preview" class="max-h-10 max-w-full object-contain" />
+                <img src={settings.logo_url} alt="Logo preview" class="w-full h-full object-cover rounded-full" />
               ) : (
-                <div class="w-9 h-9 rounded-lg bg-brand-navy text-brand-ice flex items-center justify-center">
+                <div class="w-full h-full rounded-full bg-brand-navy text-brand-ice flex items-center justify-center">
                   <svg class="w-5 h-5 text-brand-ice" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 3L4 14h7l-1 7 9-11h-7l1-7z" />
                   </svg>
@@ -637,7 +637,7 @@ const settings = await getSiteSettings();
 
     // Default vector mark SVG
     const defaultVectorDark = `
-      <div class="w-9 h-9 rounded-lg bg-white/10 text-brand-ice flex items-center justify-center">
+      <div class="w-full h-full rounded-full bg-slate-950 text-brand-ice flex items-center justify-center">
         <svg class="w-5 h-5 text-brand-ice" viewBox="0 0 24 24" fill="none" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 3L4 14h7l-1 7 9-11h-7l1-7z" />
         </svg>
@@ -645,7 +645,7 @@ const settings = await getSiteSettings();
     `;
 
     const defaultVectorLight = `
-      <div class="w-9 h-9 rounded-lg bg-brand-navy text-brand-ice flex items-center justify-center">
+      <div class="w-full h-full rounded-full bg-brand-navy text-brand-ice flex items-center justify-center">
         <svg class="w-5 h-5 text-brand-ice" viewBox="0 0 24 24" fill="none" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 3L4 14h7l-1 7 9-11h-7l1-7z" />
         </svg>
@@ -655,10 +655,10 @@ const settings = await getSiteSettings();
     function updateLogoPreview(url: string | null) {
       if (url && url.trim().length > 0) {
         if (previewLogoDark) {
-          previewLogoDark.innerHTML = `<img src="${url}" alt="Logo preview dark" class="max-h-10 max-w-full object-contain" />`;
+          previewLogoDark.innerHTML = `<img src="${url}" alt="Logo preview dark" class="w-full h-full object-cover rounded-full" />`;
         }
         if (previewLogoLight) {
-          previewLogoLight.innerHTML = `<img src="${url}" alt="Logo preview light" class="max-h-10 max-w-full object-contain" />`;
+          previewLogoLight.innerHTML = `<img src="${url}" alt="Logo preview light" class="w-full h-full object-cover rounded-full" />`;
         }
         if (logoBadgeStatus) {
           logoBadgeStatus.textContent = 'Custom Logo Active';
@@ -707,9 +707,10 @@ const settings = await getSiteSettings();
       logoUploadSpinner?.classList.remove('hidden');
       if (logoUploadMsg) logoUploadMsg.textContent = `Uploading "${file.name}" to cloud storage...`;
 
-      // Show immediate local object preview
+      // Show immediate local object preview and update tab icon instantly
       const localPreviewUrl = URL.createObjectURL(file);
       updateLogoPreview(localPreviewUrl);
+      broadcastSettingsUpdate({ logo_url: localPreviewUrl });
 
       if (isSupabaseConfigured && supabase) {
         try {
@@ -794,6 +795,7 @@ const settings = await getSiteSettings();
     // Update preview when URL input changes manually
     logoUrlInput?.addEventListener('input', () => {
       updateLogoPreview(logoUrlInput.value);
+      broadcastSettingsUpdate({ logo_url: logoUrlInput.value });
     });
 
     // Hero Media File Picker

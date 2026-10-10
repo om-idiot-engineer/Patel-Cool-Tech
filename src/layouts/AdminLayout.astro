@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import BrandLogo from '../components/BrandLogo.astro';
 import { isSupabaseConfigured, getSiteSettings } from '../utils/supabase';
+import { getFaviconMimeType } from '../utils/favicon';
 
 interface Props {
   title: string;
@@ -10,6 +11,9 @@ interface Props {
 
 const { title, activeTab = 'dashboard' } = Astro.props;
 const settings = await getSiteSettings();
+const siteLogoUrl = settings?.logo_url || '';
+const initialFavicon = siteLogoUrl || '/favicon.svg';
+const initialFaviconType = getFaviconMimeType(initialFavicon);
 ---
 
 <!doctype html>
@@ -19,9 +23,55 @@ const settings = await getSiteSettings();
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>{title} | Patel Cool Tech Admin</title>
     <meta name="robots" content="noindex, nofollow" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Favicon & Mobile Web App Icons (Dynamic to Owner Logo) -->
+    <link
+      id="dynamic-favicon"
+      rel="icon"
+      {...(initialFaviconType ? { type: initialFaviconType } : {})}
+      href={initialFavicon}
+    />
+    <link
+      id="dynamic-apple-icon"
+      rel="apple-touch-icon"
+      href={initialFavicon}
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Zero-latency inline script: applies owner-uploaded original logo to browser tab immediately -->
+    <script is:inline>
+      (function() {
+        try {
+          var logo = localStorage.getItem('pct_custom_logo');
+          if (!logo) {
+            var raw = localStorage.getItem('pct_site_settings');
+            if (raw) {
+              var s = JSON.parse(raw);
+              if (s && s.logo_url) logo = s.logo_url;
+            }
+          }
+          if (logo && logo.trim()) {
+            var icon = document.getElementById('dynamic-favicon');
+            var apple = document.getElementById('dynamic-apple-icon');
+            var clean = logo.split('?')[0].toLowerCase();
+            var mime = '';
+            if (clean.indexOf('.svg') !== -1 || logo.indexOf('data:image/svg') === 0) mime = 'image/svg+xml';
+            else if (clean.indexOf('.png') !== -1 || logo.indexOf('data:image/png') === 0) mime = 'image/png';
+            else if (clean.indexOf('.jpg') !== -1 || clean.indexOf('.jpeg') !== -1 || logo.indexOf('data:image/jpeg') === 0) mime = 'image/jpeg';
+            else if (clean.indexOf('.webp') !== -1 || logo.indexOf('data:image/webp') === 0) mime = 'image/webp';
+            else if (clean.indexOf('.ico') !== -1 || logo.indexOf('data:image/x-icon') === 0) mime = 'image/x-icon';
+
+            if (icon && icon.getAttribute('href') !== logo) {
+              icon.href = logo;
+              if (mime) icon.type = mime; else icon.removeAttribute('type');
+            }
+            if (apple && apple.getAttribute('href') !== logo) {
+              apple.href = logo;
+            }
+          }
+        } catch (_) {}
+      })();
+    </script>
 
     <!-- Immediate Pre-Render Owner Auth Check: Blocks any unauthenticated access instantly -->
     <style is:inline id="admin-auth-guard-style">
@@ -271,9 +321,13 @@ const settings = await getSiteSettings();
       <p>&copy; {new Date().getFullYear()} Patel Cool Tech &bull; Owner Administration System</p>
     </footer>
 
-    <!-- Client-side Cryptographic Auth Guardian Script -->
+    <!-- Client-side Cryptographic Auth Guardian Script & Live Sync -->
     <script>
       import { supabase, isSupabaseConfigured, isAuthorizedOwner } from '../utils/supabase';
+      import { initLiveSync } from '../utils/liveSync';
+
+      // Initialize liveSync to keep browser favicon and business settings synced
+      initLiveSync();
 
       async function checkAdminAuth() {
         const isAuth = sessionStorage.getItem('pct_admin_authenticated');

@@ -3,6 +3,8 @@ import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 import { siteConfig } from '../data/site';
 import { buildPageTitle, generateLocalBusinessSchema } from '../utils/seo';
+import { getSiteSettings } from '../utils/supabase';
+import { getFaviconMimeType } from '../utils/favicon';
 import Header from '../components/Header.astro';
 import MobileMenu from '../components/MobileMenu.astro';
 import Footer from '../components/Footer.astro';
@@ -45,6 +47,11 @@ const canonicalUrl = (() => {
 
 const pageTitle = buildPageTitle(title);
 const schemaData = generateLocalBusinessSchema();
+
+const settings = await getSiteSettings();
+const siteLogoUrl = settings?.logo_url || '';
+const initialFavicon = siteLogoUrl || '/favicon.svg';
+const initialFaviconType = getFaviconMimeType(initialFavicon);
 ---
 
 <!doctype html>
@@ -94,9 +101,54 @@ const schemaData = generateLocalBusinessSchema();
     <meta name="twitter:description" content={description} />
     {ogImage && <meta name="twitter:image" content={new URL(ogImage, Astro.site || siteConfig.siteUrl).href} />}
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Favicon & Mobile Web App Icons (Dynamic to Owner Logo) -->
+    <link
+      id="dynamic-favicon"
+      rel="icon"
+      {...(initialFaviconType ? { type: initialFaviconType } : {})}
+      href={initialFavicon}
+    />
+    <link
+      id="dynamic-apple-icon"
+      rel="apple-touch-icon"
+      href={initialFavicon}
+    />
     <meta name="theme-color" content="#0b1f3a" />
+
+    <!-- Zero-latency inline script: applies owner-uploaded original logo to browser tab immediately -->
+    <script is:inline>
+      (function() {
+        try {
+          var logo = localStorage.getItem('pct_custom_logo');
+          if (!logo) {
+            var raw = localStorage.getItem('pct_site_settings');
+            if (raw) {
+              var s = JSON.parse(raw);
+              if (s && s.logo_url) logo = s.logo_url;
+            }
+          }
+          if (logo && logo.trim()) {
+            var icon = document.getElementById('dynamic-favicon');
+            var apple = document.getElementById('dynamic-apple-icon');
+            var clean = logo.split('?')[0].toLowerCase();
+            var mime = '';
+            if (clean.indexOf('.svg') !== -1 || logo.indexOf('data:image/svg') === 0) mime = 'image/svg+xml';
+            else if (clean.indexOf('.png') !== -1 || logo.indexOf('data:image/png') === 0) mime = 'image/png';
+            else if (clean.indexOf('.jpg') !== -1 || clean.indexOf('.jpeg') !== -1 || logo.indexOf('data:image/jpeg') === 0) mime = 'image/jpeg';
+            else if (clean.indexOf('.webp') !== -1 || logo.indexOf('data:image/webp') === 0) mime = 'image/webp';
+            else if (clean.indexOf('.ico') !== -1 || logo.indexOf('data:image/x-icon') === 0) mime = 'image/x-icon';
+
+            if (icon && icon.getAttribute('href') !== logo) {
+              icon.href = logo;
+              if (mime) icon.type = mime; else icon.removeAttribute('type');
+            }
+            if (apple && apple.getAttribute('href') !== logo) {
+              apple.href = logo;
+            }
+          }
+        } catch (_) {}
+      })();
+    </script>
 
     <!-- LocalBusiness JSON-LD Schema (omitted on error / noindex pages) -->
     {!noindex && <script type="application/ld+json" set:html={JSON.stringify(schemaData)} />}

@@ -1,5 +1,6 @@
 import { supabase, isSupabaseConfigured, defaultSiteSettings } from './supabase';
 import type { SiteSettingsDB, WorkItemDB } from '../types/database';
+import { updateBrowserFavicon } from './favicon';
 
 // Storage keys
 export const SETTINGS_KEY = 'pct_site_settings';
@@ -56,6 +57,7 @@ export function broadcastSettingsUpdate(settings: Partial<SiteSettingsDB>) {
       } else {
         localStorage.removeItem(LOGO_KEY);
       }
+      updateBrowserFavicon(settings.logo_url);
     }
     window.dispatchEvent(new CustomEvent('pct:settings-updated', { detail: merged }));
     if (typeof settings.logo_url === 'string') {
@@ -112,8 +114,24 @@ export async function fetchLiveWorkItems(): Promise<WorkItemDB[] | null> {
 }
 
 export function initLiveSync() {
+  // Sync browser favicon immediately on every execution (including view transitions)
+  const currentLogo = getStoredLogo();
+  if (currentLogo) {
+    updateBrowserFavicon(currentLogo);
+  }
+
   if (typeof window === 'undefined' || isInitialized) return;
   isInitialized = true;
+
+  // Listen to custom logo & settings events
+  window.addEventListener('pct:logo-updated', (e: any) => {
+    updateBrowserFavicon(e.detail?.logoUrl);
+  });
+  window.addEventListener('pct:settings-updated', (e: any) => {
+    if (typeof e.detail?.logo_url === 'string') {
+      updateBrowserFavicon(e.detail.logo_url);
+    }
+  });
 
   // Listen to BroadcastChannel messages from other tabs/admin
   if (broadcastChannel) {
@@ -122,6 +140,7 @@ export function initLiveSync() {
       if (type === 'SETTINGS_UPDATE' && data) {
         window.dispatchEvent(new CustomEvent('pct:settings-updated', { detail: data }));
         if (typeof data.logo_url === 'string') {
+          updateBrowserFavicon(data.logo_url);
           window.dispatchEvent(new CustomEvent('pct:logo-updated', { detail: { logoUrl: data.logo_url } }));
         }
       } else if (type === 'WORK_ITEMS_UPDATE' && data) {
@@ -137,10 +156,12 @@ export function initLiveSync() {
         const parsed = JSON.parse(e.newValue);
         window.dispatchEvent(new CustomEvent('pct:settings-updated', { detail: parsed }));
         if (parsed.logo_url) {
+          updateBrowserFavicon(parsed.logo_url);
           window.dispatchEvent(new CustomEvent('pct:logo-updated', { detail: { logoUrl: parsed.logo_url } }));
         }
       } catch (_) {}
     } else if (e.key === LOGO_KEY) {
+      updateBrowserFavicon(e.newValue || '');
       window.dispatchEvent(new CustomEvent('pct:logo-updated', { detail: { logoUrl: e.newValue || '' } }));
     } else if (e.key === WORK_ITEMS_KEY && e.newValue) {
       try {

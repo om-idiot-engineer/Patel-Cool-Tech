@@ -2,8 +2,12 @@
 import '../../styles/global.css';
 import BrandLogo from '../../components/BrandLogo.astro';
 import { getSiteSettings, OWNER_EMAIL } from '../../utils/supabase';
+import { getFaviconMimeType } from '../../utils/favicon';
 
 const settings = await getSiteSettings();
+const siteLogoUrl = settings?.logo_url || '';
+const initialFavicon = siteLogoUrl || '/favicon.svg';
+const initialFaviconType = getFaviconMimeType(initialFavicon);
 ---
 
 <!doctype html>
@@ -13,9 +17,55 @@ const settings = await getSiteSettings();
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Owner Portal Login | Patel Cool Tech</title>
     <meta name="robots" content="noindex, nofollow" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Favicon & Mobile Web App Icons (Dynamic to Owner Logo) -->
+    <link
+      id="dynamic-favicon"
+      rel="icon"
+      {...(initialFaviconType ? { type: initialFaviconType } : {})}
+      href={initialFavicon}
+    />
+    <link
+      id="dynamic-apple-icon"
+      rel="apple-touch-icon"
+      href={initialFavicon}
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Zero-latency inline script: applies owner-uploaded original logo to browser tab immediately -->
+    <script is:inline>
+      (function() {
+        try {
+          var logo = localStorage.getItem('pct_custom_logo');
+          if (!logo) {
+            var raw = localStorage.getItem('pct_site_settings');
+            if (raw) {
+              var s = JSON.parse(raw);
+              if (s && s.logo_url) logo = s.logo_url;
+            }
+          }
+          if (logo && logo.trim()) {
+            var icon = document.getElementById('dynamic-favicon');
+            var apple = document.getElementById('dynamic-apple-icon');
+            var clean = logo.split('?')[0].toLowerCase();
+            var mime = '';
+            if (clean.indexOf('.svg') !== -1 || logo.indexOf('data:image/svg') === 0) mime = 'image/svg+xml';
+            else if (clean.indexOf('.png') !== -1 || logo.indexOf('data:image/png') === 0) mime = 'image/png';
+            else if (clean.indexOf('.jpg') !== -1 || clean.indexOf('.jpeg') !== -1 || logo.indexOf('data:image/jpeg') === 0) mime = 'image/jpeg';
+            else if (clean.indexOf('.webp') !== -1 || logo.indexOf('data:image/webp') === 0) mime = 'image/webp';
+            else if (clean.indexOf('.ico') !== -1 || logo.indexOf('data:image/x-icon') === 0) mime = 'image/x-icon';
+
+            if (icon && icon.getAttribute('href') !== logo) {
+              icon.href = logo;
+              if (mime) icon.type = mime; else icon.removeAttribute('type');
+            }
+            if (apple && apple.getAttribute('href') !== logo) {
+              apple.href = logo;
+            }
+          }
+        } catch (_) {}
+      })();
+    </script>
   </head>
   <body class="flex flex-col min-h-full items-center justify-center p-4 sm:p-6 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 font-sans">
     <!-- Ambient glow -->

@@ -38,14 +38,14 @@ const {
       <div class="flex items-center gap-2 lg:gap-2.5 min-w-0">
         <div
           id="ac-brand-badge"
-          class="h-7 lg:h-9 min-w-[1.75rem] lg:min-w-[2.25rem] max-w-[3.5rem] lg:max-w-[4.5rem] px-1 rounded-lg lg:rounded-xl bg-brand-navy text-white flex items-center justify-center font-black text-xs lg:text-sm shadow-xs border border-cyan-400/30 overflow-hidden flex-shrink-0 transition-all"
+          class="w-7 h-7 lg:w-8.5 lg:h-8.5 rounded-full bg-white text-brand-navy flex items-center justify-center font-black text-xs shadow-xs border border-cyan-400/50 overflow-hidden flex-shrink-0 transition-all ring-1 ring-white/60"
         >
           {logoUrl ? (
             <img
               id="ac-brand-logo-img"
               src={logoUrl}
               alt={`${businessName} logo`}
-              class="max-h-5 lg:max-h-6 w-auto max-w-full object-contain"
+              class="w-full h-full object-cover rounded-full"
               loading="eager"
             />
           ) : (
@@ -321,9 +321,11 @@ const {
           img = document.createElement('img');
           img.id = 'ac-brand-logo-img';
           img.alt = 'Patel Cool Tech logo';
-          img.className = 'max-h-5 lg:max-h-6 w-auto max-w-full object-contain';
+          img.className = 'w-full h-full object-cover rounded-full';
           img.loading = 'eager';
           badge.appendChild(img);
+        } else {
+          img.className = 'w-full h-full object-cover rounded-full';
         }
         if (img.src !== targetUrl) {
           img.src = targetUrl;
