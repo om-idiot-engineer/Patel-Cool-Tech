@@ -40,34 +40,36 @@ const isLight = variant === 'light';
 ---
 
 <div class={`brand-logo-container flex items-center gap-2.5 sm:gap-3 group ${className}`} data-logo-variant={variant} data-logo-size={size}>
-  {customLogoUrl ? (
-    <img
-      src={customLogoUrl}
-      alt={`${business.name} official logo`}
-      class={`brand-logo-img ${customLogoImageClasses}`}
-      loading="eager"
-      decoding="async"
-    />
-  ) : (
-    <div
-      class={`brand-logo-mark ${iconSizeClasses} relative flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-105 shadow-sm ${
-        isLight
-          ? 'bg-white/10 text-brand-ice border border-white/20 backdrop-blur-md'
-          : 'bg-gradient-to-br from-brand-navy to-brand-navy-dark text-brand-ice border border-brand-blue/30 shadow-brand-navy/10'
-      }`}
-      aria-hidden="true"
-    >
-      <!-- Stylized Cooling HVAC Icon with airflow & snowflake geometry -->
-      <svg class="w-3/5 h-3/5 transition-transform duration-300 group-hover:rotate-12" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <!-- Dual cooling blades / power bolt -->
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 3L4 14h7l-1 7 9-11h-7l1-7z" />
-        <!-- Subtle cooling dot -->
-        <circle cx="19" cy="5" r="1.5" fill="#38BDF8" stroke="none" />
-      </svg>
-      <!-- Ambient corner glow -->
-      <div class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-brand-ice animate-pulse opacity-70"></div>
-    </div>
-  )}
+  <div class="brand-logo-visual flex-shrink-0 flex items-center justify-center">
+    {customLogoUrl ? (
+      <img
+        src={customLogoUrl}
+        alt={`${business.name} official logo`}
+        class={`brand-logo-img ${customLogoImageClasses}`}
+        loading="eager"
+        decoding="async"
+      />
+    ) : (
+      <div
+        class={`brand-logo-mark ${iconSizeClasses} relative flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-105 shadow-sm ${
+          isLight
+            ? 'bg-white/10 text-brand-ice border border-white/20 backdrop-blur-md'
+            : 'bg-gradient-to-br from-brand-navy to-brand-navy-dark text-brand-ice border border-brand-blue/30 shadow-brand-navy/10'
+        }`}
+        aria-hidden="true"
+      >
+        <!-- Stylized Cooling HVAC Icon with airflow & snowflake geometry -->
+        <svg class="w-3/5 h-3/5 transition-transform duration-300 group-hover:rotate-12" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <!-- Dual cooling blades / power bolt -->
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 3L4 14h7l-1 7 9-11h-7l1-7z" />
+          <!-- Subtle cooling dot -->
+          <circle cx="19" cy="5" r="1.5" fill="#38BDF8" stroke="none" />
+        </svg>
+        <!-- Ambient corner glow -->
+        <div class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-brand-ice animate-pulse opacity-70"></div>
+      </div>
+    )}
+  </div>
 
   <div class="flex flex-col leading-none">
     <span
@@ -93,41 +95,113 @@ const isLight = variant === 'light';
 </div>
 
 <script>
-  function syncGlobalBrandLogos() {
-    let customLogo: string | null = null;
-    try {
-      customLogo = localStorage.getItem('pct_custom_logo');
-    } catch (e) {}
+  import { supabase, isSupabaseConfigured } from '../utils/supabase';
 
+  function applyLogoToContainers(logoUrl: string | null) {
     const containers = document.querySelectorAll<HTMLElement>('.brand-logo-container');
     containers.forEach((container) => {
-      const existingImg = container.querySelector<HTMLImageElement>('.brand-logo-img');
-      const existingMark = container.querySelector<HTMLElement>('.brand-logo-mark');
+      const visual = container.querySelector<HTMLElement>('.brand-logo-visual') || container;
+      const size = container.dataset.logoSize || 'md';
+      const isLight = container.dataset.logoVariant === 'light';
 
-      if (customLogo) {
-        if (existingImg) {
-          if (existingImg.src !== customLogo) existingImg.src = customLogo;
-        } else if (existingMark) {
-          const size = container.dataset.logoSize || 'md';
-          const sizeClasses =
-            size === 'sm'
-              ? 'max-h-8 max-w-[120px] w-auto object-contain rounded'
-              : size === 'lg'
-              ? 'max-h-12 sm:max-h-14 max-w-[180px] w-auto object-contain rounded-lg'
-              : 'max-h-10 sm:max-h-11 max-w-[150px] w-auto object-contain rounded-md';
+      const sizeClasses =
+        size === 'sm'
+          ? 'max-h-8 max-w-[120px] w-auto object-contain rounded'
+          : size === 'lg'
+          ? 'max-h-12 sm:max-h-14 max-w-[180px] w-auto object-contain rounded-lg'
+          : 'max-h-10 sm:max-h-11 max-w-[150px] w-auto object-contain rounded-md';
 
-          const img = document.createElement('img');
-          img.src = customLogo;
-          img.alt = 'Patel Cool Tech official logo';
-          img.className = `brand-logo-img ${sizeClasses}`;
-          img.loading = 'eager';
-          existingMark.replaceWith(img);
-        }
+      const iconSizeClasses =
+        size === 'sm'
+          ? 'w-8 h-8 rounded-lg'
+          : size === 'lg'
+          ? 'w-12 h-12 rounded-2xl'
+          : 'w-10 h-10 rounded-xl';
+
+      if (logoUrl) {
+        visual.innerHTML = `
+          <img
+            src="${logoUrl}"
+            alt="Patel Cool Tech official logo"
+            class="brand-logo-img ${sizeClasses}"
+            loading="eager"
+            decoding="async"
+          />
+        `;
+      } else {
+        visual.innerHTML = `
+          <div
+            class="brand-logo-mark ${iconSizeClasses} relative flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-105 shadow-sm ${
+              isLight
+                ? 'bg-white/10 text-brand-ice border border-white/20 backdrop-blur-md'
+                : 'bg-gradient-to-br from-brand-navy to-brand-navy-dark text-brand-ice border border-brand-blue/30 shadow-brand-navy/10'
+            }"
+            aria-hidden="true"
+          >
+            <svg class="w-3/5 h-3/5 transition-transform duration-300 group-hover:rotate-12" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 3L4 14h7l-1 7 9-11h-7l1-7z" />
+              <circle cx="19" cy="5" r="1.5" fill="#38BDF8" stroke="none" />
+            </svg>
+            <div class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-brand-ice animate-pulse opacity-70"></div>
+          </div>
+        `;
       }
     });
   }
 
-  syncGlobalBrandLogos();
+  async function syncGlobalBrandLogos() {
+    try {
+      const cachedLogo = localStorage.getItem('pct_custom_logo');
+      if (cachedLogo) {
+        applyLogoToContainers(cachedLogo);
+      }
+    } catch (_) {}
+
+    if (!supabase || !isSupabaseConfigured) return;
+    try {
+      const { data, error } = await supabase
+        .from('site_settings')
+        .select('logo_url')
+        .eq('id', 'default')
+        .single();
+
+      if (!error && data) {
+        const logo = data.logo_url || null;
+        applyLogoToContainers(logo);
+        try {
+          if (logo) {
+            localStorage.setItem('pct_custom_logo', logo);
+          } else {
+            localStorage.removeItem('pct_custom_logo');
+          }
+        } catch (_) {}
+      }
+    } catch (e) {
+      console.warn('Could not sync brand logo:', e);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', syncGlobalBrandLogos);
+  } else {
+    syncGlobalBrandLogos();
+  }
   document.addEventListener('astro:page-load', syncGlobalBrandLogos);
   window.addEventListener('pct:logo-updated', syncGlobalBrandLogos);
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') syncGlobalBrandLogos();
+  });
+  window.addEventListener('focus', syncGlobalBrandLogos);
+
+  if (supabase) {
+    try {
+      supabase
+        .channel('public:site_settings_logo')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'site_settings' }, () => {
+          syncGlobalBrandLogos();
+        })
+        .subscribe();
+    } catch (_) {}
+  }
 </script>

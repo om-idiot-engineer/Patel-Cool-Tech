@@ -1,14 +1,19 @@
 ---
 import { business } from '../data/business';
+import { getSiteSettings } from '../utils/supabase';
+
+const settings = await getSiteSettings();
 
 const technicians = business.technicians.map((tech) => {
   const initials = tech.name
     .split(' ')
     .map((part) => part[0])
     .join('');
+  const photoUrl = initials === 'MP' ? (settings?.tech_mahendra_photo_url || '') : (settings?.tech_satyam_photo_url || '');
   return {
     ...tech,
     initials,
+    photoUrl,
   };
 });
 ---
@@ -20,9 +25,22 @@ const technicians = business.technicians.map((tech) => {
         <!-- Top hover accent line -->
         <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-ice via-sky-400 to-brand-blue opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
 
-        <!-- Initials / Neutral Technical Avatar Architecture -->
-        <div class="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-brand-navy via-brand-navy-surface to-brand-blue flex items-center justify-center text-white font-extrabold text-2xl sm:text-3xl flex-shrink-0 shadow-md border-2 border-white group-hover:scale-105 transition-transform duration-300">
-          <span class="tracking-wider">{tech.initials}</span>
+        <!-- Initials / Real Profile Photo Architecture -->
+        <div class="relative w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 tech-team-avatar-container" data-tech-initials={tech.initials} data-tech-name={tech.name}>
+          <div class="tech-team-avatar-content w-full h-full">
+            {tech.photoUrl ? (
+              <img
+                src={tech.photoUrl}
+                alt={tech.name}
+                class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover shadow-md border-2 border-white group-hover:scale-105 transition-transform duration-300"
+                loading="lazy"
+              />
+            ) : (
+              <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-brand-navy via-brand-navy-surface to-brand-blue flex items-center justify-center text-white font-extrabold text-2xl sm:text-3xl shadow-md border-2 border-white group-hover:scale-105 transition-transform duration-300">
+                <span class="tracking-wider">{tech.initials}</span>
+              </div>
+            )}
+          </div>
           <span class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-[10px] text-white font-bold shadow-xs" title="Active on-site technician">
             ✓
           </span>
@@ -77,3 +95,72 @@ const technicians = business.technicians.map((tech) => {
     ))
   }
 </div>
+
+<script>
+  import { supabase, isSupabaseConfigured } from '../utils/supabase';
+
+  async function syncTeamTechPhotos() {
+    if (!supabase || !isSupabaseConfigured) return;
+    try {
+      const { data, error } = await supabase
+        .from('site_settings')
+        .select('tech_mahendra_photo_url, tech_satyam_photo_url')
+        .eq('id', 'default')
+        .single();
+
+      if (error || !data) return;
+
+      const containers = document.querySelectorAll<HTMLElement>('.tech-team-avatar-container');
+      containers.forEach((container) => {
+        const initials = container.dataset.techInitials;
+        const name = container.dataset.techName || '';
+        const contentBox = container.querySelector<HTMLElement>('.tech-team-avatar-content');
+        if (!contentBox) return;
+
+        const photoUrl = initials === 'MP' ? data.tech_mahendra_photo_url : data.tech_satyam_photo_url;
+
+        if (photoUrl) {
+          contentBox.innerHTML = `
+            <img
+              src="${photoUrl}"
+              alt="${name}"
+              class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover shadow-md border-2 border-white group-hover:scale-105 transition-transform duration-300"
+              loading="lazy"
+            />
+          `;
+        } else {
+          contentBox.innerHTML = `
+            <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-brand-navy via-brand-navy-surface to-brand-blue flex items-center justify-center text-white font-extrabold text-2xl sm:text-3xl shadow-md border-2 border-white group-hover:scale-105 transition-transform duration-300">
+              <span class="tracking-wider">${initials}</span>
+            </div>
+          `;
+        }
+      });
+    } catch (e) {
+      console.warn('Could not sync team tech photos:', e);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', syncTeamTechPhotos);
+  } else {
+    syncTeamTechPhotos();
+  }
+  document.addEventListener('astro:page-load', syncTeamTechPhotos);
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') syncTeamTechPhotos();
+  });
+  window.addEventListener('focus', syncTeamTechPhotos);
+
+  if (supabase) {
+    try {
+      supabase
+        .channel('public:site_settings_team_page')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'site_settings' }, () => {
+          syncTeamTechPhotos();
+        })
+        .subscribe();
+    } catch (_) {}
+  }
+</script>

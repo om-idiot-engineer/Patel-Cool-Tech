@@ -76,19 +76,21 @@ const technicianProfiles = [
             <!-- Top Row: Avatar / Photo + Name + Dispatch Status -->
             <div class="flex items-center gap-3.5 sm:gap-4 lg:gap-5">
               <!-- Modern Squircle Avatar or Real Profile Photo -->
-              <div class="relative flex-shrink-0">
-                {tech.photoUrl ? (
-                  <img
-                    src={tech.photoUrl}
-                    alt={tech.name}
-                    class={`w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl lg:rounded-3xl object-cover shadow-md ring-2 ${tech.ringColor} group-hover:scale-105 transition-transform duration-200`}
-                    loading="lazy"
-                  />
-                ) : (
-                  <div class={`w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl lg:rounded-3xl bg-gradient-to-br ${tech.gradient} flex items-center justify-center text-white font-extrabold text-xl sm:text-2xl lg:text-3xl shadow-md ring-2 ${tech.ringColor} group-hover:scale-105 transition-transform duration-200`}>
-                    <span class="tracking-wider">{tech.initials}</span>
-                  </div>
-                )}
+              <div class="relative flex-shrink-0 tech-avatar-container" data-tech-initials={tech.initials} data-tech-name={tech.name} data-tech-ring={tech.ringColor} data-tech-gradient={tech.gradient}>
+                <div class="tech-avatar-content">
+                  {tech.photoUrl ? (
+                    <img
+                      src={tech.photoUrl}
+                      alt={tech.name}
+                      class={`tech-avatar-img w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl lg:rounded-3xl object-cover shadow-md ring-2 ${tech.ringColor} group-hover:scale-105 transition-transform duration-200`}
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div class={`tech-avatar-monogram w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl lg:rounded-3xl bg-gradient-to-br ${tech.gradient} flex items-center justify-center text-white font-extrabold text-xl sm:text-2xl lg:text-3xl shadow-md ring-2 ${tech.ringColor} group-hover:scale-105 transition-transform duration-200`}>
+                      <span class="tracking-wider">{tech.initials}</span>
+                    </div>
+                  )}
+                </div>
                 <!-- Verified Badge -->
                 <span class="absolute -bottom-1 -right-1 w-5 h-5 lg:w-6 lg:h-6 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-[9px] lg:text-[10px] text-white font-bold shadow-xs" title="Verified Technician">
                   ✓
@@ -174,3 +176,74 @@ const technicianProfiles = [
     </div>
   </Container>
 </section>
+
+<script>
+  import { supabase, isSupabaseConfigured } from '../utils/supabase';
+
+  async function syncTechPhotos() {
+    if (!supabase || !isSupabaseConfigured) return;
+    try {
+      const { data, error } = await supabase
+        .from('site_settings')
+        .select('tech_mahendra_photo_url, tech_satyam_photo_url')
+        .eq('id', 'default')
+        .single();
+
+      if (error || !data) return;
+
+      const containers = document.querySelectorAll<HTMLElement>('.tech-avatar-container');
+      containers.forEach((container) => {
+        const initials = container.dataset.techInitials;
+        const name = container.dataset.techName || '';
+        const ring = container.dataset.techRing || '';
+        const gradient = container.dataset.techGradient || '';
+        const contentBox = container.querySelector<HTMLElement>('.tech-avatar-content');
+        if (!contentBox) return;
+
+        const photoUrl = initials === 'MP' ? data.tech_mahendra_photo_url : data.tech_satyam_photo_url;
+
+        if (photoUrl) {
+          contentBox.innerHTML = `
+            <img
+              src="${photoUrl}"
+              alt="${name}"
+              class="tech-avatar-img w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl lg:rounded-3xl object-cover shadow-md ring-2 ${ring} group-hover:scale-105 transition-transform duration-200"
+              loading="lazy"
+            />
+          `;
+        } else {
+          contentBox.innerHTML = `
+            <div class="tech-avatar-monogram w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl lg:rounded-3xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white font-extrabold text-xl sm:text-2xl lg:text-3xl shadow-md ring-2 ${ring} group-hover:scale-105 transition-transform duration-200">
+              <span class="tracking-wider">${initials}</span>
+            </div>
+          `;
+        }
+      });
+    } catch (e) {
+      console.warn('Could not sync tech photos:', e);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', syncTechPhotos);
+  } else {
+    syncTechPhotos();
+  }
+  document.addEventListener('astro:page-load', syncTechPhotos);
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') syncTechPhotos();
+  });
+  window.addEventListener('focus', syncTechPhotos);
+
+  if (supabase) {
+    try {
+      supabase
+        .channel('public:site_settings_team_preview')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'site_settings' }, () => {
+          syncTechPhotos();
+        })
+        .subscribe();
+    } catch (_) {}
+  }
+</script>
