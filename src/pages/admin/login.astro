@@ -39,6 +39,29 @@ const settings = await getSiteSettings();
         </p>
       </div>
 
+      <!-- Active Session Banner (When owner is already authenticated) -->
+      <div id="already-logged-in-banner" class="hidden mb-4 p-4 rounded-2xl bg-cyan-950/70 border border-cyan-800/80 text-cyan-200 text-xs shadow-lg">
+        <div class="flex items-center justify-between gap-3 flex-wrap">
+          <div>
+            <div class="flex items-center gap-1.5 font-bold text-white text-xs">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>Active Admin Session Found</span>
+            </div>
+            <p class="text-[11px] text-cyan-300 mt-0.5">
+              Signed in as <span id="active-session-email" class="font-semibold text-white">patelcooltech@gmail.com</span>
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <a href="/admin/" class="px-3 py-1.5 bg-brand-ice hover:bg-brand-ice-hover text-white text-xs font-bold rounded-lg transition-colors shadow-xs">
+              Open Dashboard &rarr;
+            </a>
+            <button type="button" id="force-logout-btn" class="px-2.5 py-1.5 bg-rose-900/60 hover:bg-rose-900 text-rose-200 text-xs font-semibold rounded-lg border border-rose-700 transition-colors cursor-pointer">
+              Log Out
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- Security Notice Banner (when redirecting from protected route) -->
       <div id="login-notice" class="hidden mb-4 p-3.5 rounded-xl bg-amber-950/60 border border-amber-800/80 text-amber-200 text-xs flex items-start gap-2.5">
         <svg class="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -52,7 +75,7 @@ const settings = await getSiteSettings();
         <svg class="w-4 h-4 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
         </svg>
-        <span id="login-success-msg">You have been logged out safely.</span>
+        <span id="login-success-msg">You have been logged out safely. Please enter password to log in again.</span>
       </div>
 
       <!-- Error / Alert Banner -->
@@ -187,14 +210,34 @@ const settings = await getSiteSettings();
         successBox.classList.remove('hidden');
       }
 
-      // Auto redirect if already verified and logged in
+      // Check existing session: show active session banner if logged in, do NOT auto-redirect silently
+      const activeBanner = document.getElementById('already-logged-in-banner');
+      const activeEmail = document.getElementById('active-session-email');
+      const forceLogoutBtn = document.getElementById('force-logout-btn');
+
+      if (forceLogoutBtn) {
+        forceLogoutBtn.addEventListener('click', async () => {
+          if (supabase) {
+            try { await supabase.auth.signOut(); } catch (_) {}
+          }
+          try {
+            localStorage.clear();
+            sessionStorage.clear();
+          } catch (_) {}
+          if (activeBanner) activeBanner.classList.add('hidden');
+          if (successBox) successBox.classList.remove('hidden');
+          if (passInput) passInput.value = '';
+        });
+      }
+
       async function checkExistingSession() {
         if (!isSupabaseConfigured || !supabase) return;
 
         try {
           const { data: { session } } = await supabase.auth.getSession();
           if (session && session.user && isAuthorizedOwner(session.user.email)) {
-            window.location.replace('/admin/');
+            if (activeBanner) activeBanner.classList.remove('hidden');
+            if (activeEmail && session.user.email) activeEmail.textContent = session.user.email;
           }
         } catch (_) {}
       }

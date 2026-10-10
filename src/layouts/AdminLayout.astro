@@ -25,7 +25,8 @@ const settings = await getSiteSettings();
 
     <!-- Immediate Pre-Render Owner Auth Check: Blocks any unauthenticated access instantly -->
     <style is:inline id="admin-auth-guard-style">
-      body {
+      html, body {
+        display: none !important;
         visibility: hidden !important;
         opacity: 0 !important;
       }
@@ -310,6 +311,11 @@ const settings = await getSiteSettings();
           if (guardStyle) {
             guardStyle.remove();
           }
+          document.documentElement.style.removeProperty('display');
+          document.documentElement.style.removeProperty('visibility');
+          document.documentElement.style.removeProperty('opacity');
+          document.body.style.removeProperty('display');
+          document.body.style.display = 'flex';
           document.body.style.setProperty('visibility', 'visible', 'important');
           document.body.style.setProperty('opacity', '1', 'important');
           document.body.style.transition = 'opacity 0.2s ease-in';
@@ -325,6 +331,7 @@ const settings = await getSiteSettings();
             emailEl.textContent = session.user.email;
           }
         } catch (err) {
+          try { localStorage.clear(); sessionStorage.clear(); } catch (_) {}
           window.location.replace('/admin/login/?unauthorized=1');
         }
       }
@@ -333,6 +340,7 @@ const settings = await getSiteSettings();
       if (supabase) {
         supabase.auth.onAuthStateChange((event, session) => {
           if (event === 'SIGNED_OUT' || !session || !isAuthorizedOwner(session?.user?.email)) {
+            try { localStorage.clear(); sessionStorage.clear(); } catch (_) {}
             window.location.replace('/admin/login/?logout=1');
           }
         });
@@ -343,15 +351,11 @@ const settings = await getSiteSettings();
       if (logoutBtn) {
         logoutBtn.addEventListener('click', async () => {
           if (supabase) {
-            await supabase.auth.signOut();
+            try { await supabase.auth.signOut(); } catch (_) {}
           }
           try {
-            for (let i = localStorage.length - 1; i >= 0; i--) {
-              const key = localStorage.key(i);
-              if (key && key.indexOf('-auth-token') !== -1) {
-                localStorage.removeItem(key);
-              }
-            }
+            localStorage.clear();
+            sessionStorage.clear();
           } catch (_) {}
           window.location.replace('/admin/login/?logout=1');
         });
