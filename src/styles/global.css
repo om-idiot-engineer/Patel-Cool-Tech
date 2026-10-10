@@ -305,10 +305,15 @@
   .marquee-mask {
     mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+    touch-action: pan-y;
   }
   .marquee-track {
     display: flex;
     width: max-content;
+    touch-action: pan-y;
+    will-change: transform;
+    user-select: none;
+    -webkit-user-select: none;
   }
   .marquee-track:hover,
   .marquee-track:focus-within,

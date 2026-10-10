@@ -4,30 +4,72 @@ import Container from './Container.astro';
 import SectionHeading from './SectionHeading.astro';
 
 // Service specific color themes and clean micro-highlights (zero repetitive fluff)
-const serviceMeta: Record<string, { gradient: string; tag: string; shortText: string }> = {
-  'ac-service': {
-    gradient: 'from-cyan-500 to-blue-600',
-    tag: 'Deep Wet Wash',
-    shortText: 'High-pressure jet pump wash & coil disinfection.',
-  },
-  'ac-repair': {
-    gradient: 'from-blue-600 to-indigo-700',
-    tag: 'Fast Diagnosis',
-    shortText: 'Cooling fix, water leakage & PCB board repair.',
-  },
-  'ac-gas-refilling': {
-    gradient: 'from-sky-500 to-cyan-600',
-    tag: 'Leak Test & Refill',
-    shortText: 'Nitrogen test & genuine R32/R410A gas top-up.',
-  },
+const serviceMeta: Record<
+  string,
+  {
+    gradient: string;
+    shadow: string;
+    borderHover: string;
+    topGlow: string;
+    ambientBg: string;
+    tag: string;
+    tagBadge: string;
+    shortText: string;
+  }
+> = {
   'ac-installation': {
-    gradient: 'from-slate-700 to-brand-navy',
+    // Professional Royal Sapphire & Deep Navy
+    gradient: 'from-blue-600 via-indigo-600 to-brand-navy',
+    shadow: 'shadow-[0_8px_20px_-4px_rgba(37,99,235,0.4)]',
+    borderHover: 'hover:border-blue-400/80',
+    topGlow: 'from-blue-500 via-indigo-500 to-blue-600',
+    ambientBg: 'from-blue-500/15 to-indigo-500/5',
     tag: 'Safe Fitting',
+    tagBadge: 'bg-blue-50/90 text-blue-700 border-blue-200/80 font-medium',
     shortText: 'Split/window mounting, copper piping & shifting.',
   },
+  'ac-repair': {
+    // Energetic Sunset Amber to Coral Flame (Diagnostic & Repair tools)
+    gradient: 'from-amber-500 via-orange-500 to-rose-600',
+    shadow: 'shadow-[0_8px_20px_-4px_rgba(249,115,22,0.4)]',
+    borderHover: 'hover:border-amber-400/80',
+    topGlow: 'from-amber-400 via-orange-500 to-rose-500',
+    ambientBg: 'from-amber-500/15 to-orange-500/5',
+    tag: 'Fast Diagnosis',
+    tagBadge: 'bg-amber-50/90 text-amber-800 border-amber-200/80 font-medium',
+    shortText: 'Cooling fix, water leakage & PCB board repair.',
+  },
+  'ac-service': {
+    // Pure Arctic Aqua to Crisp Sky Blue (Deep Jet wet wash)
+    gradient: 'from-cyan-400 via-sky-500 to-blue-600',
+    shadow: 'shadow-[0_8px_20px_-4px_rgba(6,182,212,0.4)]',
+    borderHover: 'hover:border-cyan-400/80',
+    topGlow: 'from-cyan-400 via-sky-400 to-blue-500',
+    ambientBg: 'from-cyan-500/15 to-sky-500/5',
+    tag: 'Deep Wet Wash',
+    tagBadge: 'bg-cyan-50/90 text-cyan-800 border-cyan-200/80 font-medium',
+    shortText: 'High-pressure jet pump wash & coil disinfection.',
+  },
+  'ac-gas-refilling': {
+    // Vivid Violet to Electric Indigo (Precision pressure test & cold gas)
+    gradient: 'from-violet-500 via-purple-600 to-indigo-700',
+    shadow: 'shadow-[0_8px_20px_-4px_rgba(147,51,234,0.4)]',
+    borderHover: 'hover:border-purple-400/80',
+    topGlow: 'from-violet-400 via-purple-500 to-indigo-600',
+    ambientBg: 'from-purple-500/15 to-indigo-500/5',
+    tag: 'Leak Test & Refill',
+    tagBadge: 'bg-purple-50/90 text-purple-800 border-purple-200/80 font-medium',
+    shortText: 'Nitrogen test & genuine R32/R410A gas top-up.',
+  },
   'ac-amc': {
-    gradient: 'from-emerald-500 to-teal-700',
+    // Fresh Emerald to Deep Forest Teal (Guarantee, assurance, care)
+    gradient: 'from-emerald-400 via-emerald-600 to-teal-700',
+    shadow: 'shadow-[0_8px_20px_-4px_rgba(16,185,129,0.4)]',
+    borderHover: 'hover:border-emerald-400/80',
+    topGlow: 'from-emerald-400 via-emerald-500 to-teal-600',
+    ambientBg: 'from-emerald-500/15 to-teal-500/5',
     tag: 'Year-Round Care',
+    tagBadge: 'bg-emerald-50/90 text-emerald-800 border-emerald-200/80 font-medium',
     shortText: 'Preventive maintenance plans for homes & offices.',
   },
 };
@@ -51,7 +93,12 @@ const serviceMeta: Record<string, { gradient: string; tag: string; shortText: st
         services.map((service, index) => {
           const meta = serviceMeta[service.id] || {
             gradient: 'from-brand-blue to-brand-navy',
+            shadow: 'shadow-blue-500/20',
+            borderHover: 'hover:border-brand-ice',
+            topGlow: 'from-brand-ice via-sky-400 to-brand-blue',
+            ambientBg: 'from-sky-500/10 to-transparent',
             tag: 'Expert Service',
+            tagBadge: 'bg-sky-50 text-brand-ice border-sky-200/60 font-medium',
             shortText: service.shortDescription,
           };
           const isFifthOnMobile = index === 4;
@@ -59,45 +106,73 @@ const serviceMeta: Record<string, { gradient: string; tag: string; shortText: st
           return (
             <article
               class:list={[
-                'group relative flex flex-col justify-between bg-white rounded-2xl p-3.5 sm:p-5 border border-slate-200/90 transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_12px_28px_-6px_rgba(2,132,199,0.18)] hover:border-brand-ice active:scale-[0.98] overflow-hidden reveal-init shadow-soft',
+                'group relative flex flex-col justify-between bg-white rounded-2xl p-3.5 sm:p-5 border border-slate-200/90 transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl active:scale-[0.98] overflow-hidden reveal-init shadow-soft',
+                meta.borderHover,
                 `stagger-${(index % 5) + 1}`,
                 // 5th card spans 2 columns on mobile so it forms a balanced, compact horizontal card
                 isFifthOnMobile ? 'col-span-2 lg:col-span-1' : '',
               ]}
             >
               <!-- Animated top accent glow bar on hover -->
-              <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-ice via-sky-400 to-brand-blue transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left z-20"></div>
+              <div class:list={[
+                'absolute top-0 left-0 right-0 h-1 bg-gradient-to-r transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left z-20',
+                meta.topGlow,
+              ]}></div>
 
-              <div class={isFifthOnMobile ? 'flex items-center gap-3 sm:block' : ''}>
-                <!-- Icon with Distinct Brand Gradient -->
+              <!-- Ambient soft light wash on hover -->
+              <div class:list={[
+                'absolute -top-12 -right-12 w-28 h-28 rounded-full bg-gradient-to-br opacity-0 group-hover:opacity-100 blur-2xl transition-opacity duration-500 pointer-events-none',
+                meta.ambientBg,
+              ]}></div>
+
+              <div class={isFifthOnMobile ? 'flex items-center gap-3 sm:block relative z-10' : 'relative z-10'}>
+                <!-- Premium Vibrant Icon with Glass Sheen & Colored Shadow -->
                 <div class:list={[
-                  'w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br text-white flex items-center justify-center flex-shrink-0 shadow-xs group-hover:scale-105 group-hover:rotate-3 transition-transform duration-300 mb-2.5 sm:mb-3.5',
+                  'w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br text-white flex items-center justify-center flex-shrink-0 ring-1 ring-white/35 group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300 ease-out mb-2.5 sm:mb-3.5 relative overflow-hidden',
                   meta.gradient,
+                  meta.shadow,
                   isFifthOnMobile ? 'mb-0 sm:mb-3.5' : '',
                 ]}>
+                  <!-- Subtle inner glass sheen highlight -->
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-white/25 pointer-events-none"></div>
+
                   {service.id === 'ac-installation' && (
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    <svg class="w-5 h-5 sm:w-5.5 sm:h-5.5 text-white relative z-10 drop-shadow-xs" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="AC Installation Icon">
+                      <rect x="2" y="4" width="20" height="9" rx="2" stroke-width="2" />
+                      <line x1="6" y1="9" x2="18" y2="9" stroke-width="2" />
+                      <circle cx="17.5" cy="6.5" r="0.75" fill="currentColor" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 17h14M7 13v7M17 13v7" />
                     </svg>
                   )}
                   {service.id === 'ac-repair' && (
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
+                    <svg class="w-5 h-5 sm:w-5.5 sm:h-5.5 text-white relative z-10 drop-shadow-xs" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="AC Repair Icon">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.77 3.77z" />
+                      <circle cx="16" cy="8" r="0.75" fill="currentColor" />
                     </svg>
                   )}
                   {service.id === 'ac-service' && (
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    <svg class="w-5 h-5 sm:w-5.5 sm:h-5.5 text-white relative z-10 drop-shadow-xs" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="AC Jet Service Icon">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.5 14a3.5 3.5 0 003.5 3.5" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M18.5 4.5l1.5-1.5M20 8h2M16 2v2" />
                     </svg>
                   )}
                   {service.id === 'ac-gas-refilling' && (
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    <svg class="w-5 h-5 sm:w-5.5 sm:h-5.5 text-white relative z-10 drop-shadow-xs" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="Gas Pressure Gauge Icon">
+                      <circle cx="12" cy="11" r="8" stroke-width="2" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11l3-3" />
+                      <circle cx="12" cy="11" r="1.5" fill="currentColor" />
+                      <line x1="12" y1="5" x2="12" y2="6.5" stroke-width="2" stroke-linecap="round" />
+                      <line x1="6" y1="11" x2="7.5" y2="11" stroke-width="2" stroke-linecap="round" />
+                      <line x1="18" y1="11" x2="16.5" y2="11" stroke-width="2" stroke-linecap="round" />
+                      <line x1="12" y1="19" x2="12" y2="22" stroke-width="2" stroke-linecap="round" />
+                      <line x1="9" y1="22" x2="15" y2="22" stroke-width="2" stroke-linecap="round" />
                     </svg>
                   )}
                   {(service.id === 'ac-amc' || service.id === 'amc-maintenance') && (
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    <svg class="w-5 h-5 sm:w-5.5 sm:h-5.5 text-white relative z-10 drop-shadow-xs" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="AMC Warranty Shield Icon">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4" />
                     </svg>
                   )}
                 </div>
@@ -117,12 +192,15 @@ const serviceMeta: Record<string, { gradient: string; tag: string; shortText: st
                 </div>
               </div>
 
-              <!-- Compact Bottom Indicator -->
-              <div class="mt-2.5 sm:mt-4 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] sm:text-xs font-semibold text-brand-blue group-hover:text-brand-navy transition-colors">
-                <span class="inline-block text-[10px] sm:text-[11px] font-semibold text-brand-ice bg-sky-50 px-1.5 py-0.5 rounded">
+              <!-- Compact Bottom Indicator with Harmonized Tag Badge -->
+              <div class="mt-2.5 sm:mt-4 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] sm:text-xs font-semibold relative z-10">
+                <span class:list={[
+                  'inline-block text-[10px] sm:text-[11px] px-2 py-0.5 rounded-md border transition-all duration-200',
+                  meta.tagBadge,
+                ]}>
                   {meta.tag}
                 </span>
-                <span class="inline-flex items-center group-hover:translate-x-1 transition-transform text-slate-400 group-hover:text-brand-blue">
+                <span class="inline-flex items-center group-hover:translate-x-1 transition-transform text-slate-400 group-hover:text-brand-navy">
                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
                   </svg>

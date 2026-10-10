@@ -24,11 +24,11 @@ import SectionHeading from './SectionHeading.astro';
     <!-- Cool Dual-Directional Seamless Infinite Ticker -->
     <div class="mt-8 space-y-4 relative">
       <!-- Edge Gradient Masks for Seamless Floating Look -->
-      <div class="relative overflow-hidden marquee-mask py-1.5">
+      <div id="brands-row1-container" class="relative overflow-hidden marquee-mask py-1.5 touch-pan-y cursor-grab active:cursor-grabbing select-none">
         <!-- Row 1: Flowing Left -->
-        <div class="marquee-track animate-marquee-left gap-4 flex items-center hover:[animation-play-state:paused]">
+        <div id="brands-track-row1" class="marquee-track animate-marquee-left gap-4 flex items-center hover:[animation-play-state:paused]">
           {
-            [...brandsRow1, ...brandsRow1, ...brandsRow1].map((brand) => (
+            [...brandsRow1, ...brandsRow1, ...brandsRow1, ...brandsRow1].map((brand) => (
               <div
                 class="flex-shrink-0 flex items-center gap-3.5 px-5 py-3.5 rounded-2xl bg-white/95 backdrop-blur-sm border border-brand-border/90 hover:border-brand-ice hover:shadow-[0_10px_25px_-5px_rgba(2,132,199,0.22)] hover:-translate-y-1 transition-all duration-300 card-hover-effect group select-none shadow-soft"
               >
@@ -95,10 +95,10 @@ import SectionHeading from './SectionHeading.astro';
       </div>
 
       <!-- Row 2: Flowing Right (Opposite Direction) -->
-      <div class="relative overflow-hidden marquee-mask py-1.5">
-        <div class="marquee-track animate-marquee-right gap-4 flex items-center hover:[animation-play-state:paused]">
+      <div id="brands-row2-container" class="relative overflow-hidden marquee-mask py-1.5 touch-pan-y cursor-grab active:cursor-grabbing select-none">
+        <div id="brands-track-row2" class="marquee-track animate-marquee-right gap-4 flex items-center hover:[animation-play-state:paused]">
           {
-            [...brandsRow2, ...brandsRow2, ...brandsRow2].map((brand) => (
+            [...brandsRow2, ...brandsRow2, ...brandsRow2, ...brandsRow2].map((brand) => (
               <div
                 class="flex-shrink-0 flex items-center gap-3.5 px-5 py-3.5 rounded-2xl bg-white/95 backdrop-blur-sm border border-brand-border/90 hover:border-brand-ice hover:shadow-[0_10px_25px_-5px_rgba(2,132,199,0.22)] hover:-translate-y-1 transition-all duration-300 card-hover-effect group select-none shadow-soft"
               >
@@ -180,3 +180,28 @@ import SectionHeading from './SectionHeading.astro';
     </div>
   </Container>
 </section>
+
+<script>
+  import { initInteractiveMarquee, type MarqueeController } from '../utils/marquee';
+
+  let controllers: MarqueeController[] = [];
+
+  function setupBrandsMarquee() {
+    controllers.forEach((c) => c.destroy());
+    controllers = [];
+
+    const row1 = document.getElementById('brands-track-row1');
+    const row2 = document.getElementById('brands-track-row2');
+
+    if (row1) controllers.push(initInteractiveMarquee(row1, { direction: 'left', cycleSeconds: 32 }));
+    if (row2) controllers.push(initInteractiveMarquee(row2, { direction: 'right', cycleSeconds: 32 }));
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupBrandsMarquee);
+  } else {
+    setupBrandsMarquee();
+  }
+  document.addEventListener('astro:page-load', setupBrandsMarquee);
+</script>
+

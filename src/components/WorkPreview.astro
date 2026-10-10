@@ -72,7 +72,7 @@ const row2Items = buildTrackItems(row2Source);
   <!-- Dual-Row Animated Showcase Stream: Row 1 Left, Row 2 Right with Identical Speed & Rich Card Sizing -->
   <div class="mt-6 sm:mt-9 relative space-y-3 sm:space-y-4">
     <!-- Row 1: Flowing Left -->
-    <div class="relative overflow-hidden marquee-mask py-1">
+    <div id="preview-row1-container" class="relative overflow-hidden marquee-mask py-1 touch-pan-y cursor-grab active:cursor-grabbing select-none">
       <div id="preview-track-row1" class="marquee-track animate-marquee-left gap-3 sm:gap-4 lg:gap-5 flex items-center hover:[animation-play-state:paused] active:[animation-play-state:paused]">
         {
           row1Items.map((item) => {
@@ -98,7 +98,7 @@ const row2Items = buildTrackItems(row2Source);
                     muted
                     playsinline
                     preload="metadata"
-                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none select-none"
                   ></video>
                 ) : (
                   <img
@@ -108,7 +108,8 @@ const row2Items = buildTrackItems(row2Source);
                     height="260"
                     loading="lazy"
                     decoding="async"
-                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                    draggable="false"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none select-none"
                   />
                 )}
 
@@ -164,7 +165,7 @@ const row2Items = buildTrackItems(row2Source);
     </div>
 
     <!-- Row 2: Flowing Right (Opposite Direction at Identical Speed) -->
-    <div class="relative overflow-hidden marquee-mask py-1">
+    <div id="preview-row2-container" class="relative overflow-hidden marquee-mask py-1 touch-pan-y cursor-grab active:cursor-grabbing select-none">
       <div id="preview-track-row2" class="marquee-track animate-marquee-right gap-3 sm:gap-4 lg:gap-5 flex items-center hover:[animation-play-state:paused] active:[animation-play-state:paused]">
         {
           row2Items.map((item) => {
@@ -190,7 +191,7 @@ const row2Items = buildTrackItems(row2Source);
                     muted
                     playsinline
                     preload="metadata"
-                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none select-none"
                   ></video>
                 ) : (
                   <img
@@ -200,7 +201,8 @@ const row2Items = buildTrackItems(row2Source);
                     height="260"
                     loading="lazy"
                     decoding="async"
-                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                    draggable="false"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none select-none"
                   />
                 )}
 
@@ -386,10 +388,13 @@ const row2Items = buildTrackItems(row2Source);
 <script>
   import type { WorkItemDB } from '../types/database';
   import { getStoredWorkItems } from '../utils/liveSync';
+  import { initInteractiveMarquee, type MarqueeController } from '../utils/marquee';
 
   let currentItemsData: WorkItemDB[] = [];
   let isLightboxOpen = false;
   let currentIndex = 0;
+  let dragEndedAt = 0;
+  let activeControllers: MarqueeController[] = [];
 
   function createCardHTML(item: WorkItemDB, liveItems: WorkItemDB[]) {
     const isVideo = item.media_type === 'video' || Boolean(item.video_url) || (Boolean(item.image_url) && /\.(mp4|webm|mov)$/i.test(item.image_url));
@@ -415,7 +420,8 @@ const row2Items = buildTrackItems(row2Source);
             muted
             playsinline
             preload="metadata"
-            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none"
+            draggable="false"
+            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none select-none"
           ></video>
         ` : `
           <img
@@ -425,7 +431,8 @@ const row2Items = buildTrackItems(row2Source);
             height="260"
             loading="lazy"
             decoding="async"
-            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+            draggable="false"
+            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none select-none"
           />
         `}
         <div class="absolute inset-0 bg-gradient-to-t from-brand-navy-dark/95 via-brand-navy-dark/40 to-transparent pointer-events-none"></div>
@@ -513,6 +520,10 @@ const row2Items = buildTrackItems(row2Source);
 
     row1Track.innerHTML = buildTrackItems(row1Source).map((item) => createCardHTML(item, liveItems)).join('');
     row2Track.innerHTML = buildTrackItems(row2Source).map((item) => createCardHTML(item, liveItems)).join('');
+
+    requestAnimationFrame(() => {
+      activeControllers.forEach((c) => c.recalc());
+    });
   }
 
   function setupWorkPreviewLightbox() {
@@ -532,6 +543,25 @@ const row2Items = buildTrackItems(row2Source);
     const dataEl = document.getElementById('work-preview-data');
     if (currentItemsData.length === 0) {
       currentItemsData = dataEl ? JSON.parse(dataEl.textContent || '[]') : [];
+    }
+
+    // Initialize interactive touch-and-drag marquee controllers
+    activeControllers.forEach((c) => c.destroy());
+    activeControllers = [];
+
+    const row1Track = document.getElementById('preview-track-row1');
+    const row2Track = document.getElementById('preview-track-row2');
+    if (row1Track) {
+      activeControllers.push(initInteractiveMarquee(row1Track, {
+        direction: 'left',
+        onDragEnd: () => { dragEndedAt = Date.now(); }
+      }));
+    }
+    if (row2Track) {
+      activeControllers.push(initInteractiveMarquee(row2Track, {
+        direction: 'right',
+        onDragEnd: () => { dragEndedAt = Date.now(); }
+      }));
     }
 
     // Check cached items
@@ -609,10 +639,16 @@ const row2Items = buildTrackItems(row2Source);
       isLightboxOpen = false;
     }
 
-    // Delegated click listener on #work section so clicks on row 1 or row 2 open the lightbox
+    // Delegated click listener on #work section:
+    // Clicks on cards open the lightbox, BUT dragging/sliding suppresses the click!
     const workSection = document.getElementById('work');
     if (workSection) {
       workSection.onclick = (e) => {
+        if (Date.now() - dragEndedAt < 300) {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
         const target = e.target as HTMLElement | null;
         const item = target?.closest<HTMLElement>('.work-preview-item');
         if (item) {
@@ -651,5 +687,9 @@ const row2Items = buildTrackItems(row2Source);
     if (Array.isArray(e.detail)) {
       renderMarqueeTracks(e.detail);
     }
+  });
+
+  window.addEventListener('load', () => {
+    activeControllers.forEach((c) => c.recalc());
   });
 </script>
