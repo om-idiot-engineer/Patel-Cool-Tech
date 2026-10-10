@@ -104,7 +104,7 @@ const totalVideos = displayItems.filter(i => i.media_type === 'video').length;
   </div>
 
   <!-- Quick Action Navigation Tiles (Mobile Tap Cards) -->
-  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-8 sm:mb-10">
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-8 sm:mb-10">
     <a
       href="/admin/work/"
       class="p-4 sm:p-5 rounded-2xl bg-slate-900/80 hover:bg-slate-900 active:bg-slate-800 border border-slate-800 hover:border-brand-ice/40 transition-all flex items-center justify-between group active:scale-[0.99]"
@@ -116,31 +116,11 @@ const totalVideos = displayItems.filter(i => i.media_type === 'video').length;
           </svg>
         </div>
         <div>
-          <h2 class="text-sm sm:text-base font-bold text-white group-hover:text-brand-ice transition-colors">Manage Work Items</h2>
-          <p class="text-xs text-slate-400 mt-0.5">Add, edit, or remove installation &amp; repair projects</p>
+          <h2 class="text-sm sm:text-base font-bold text-white group-hover:text-brand-ice transition-colors">Manage Work Items &amp; Photos</h2>
+          <p class="text-xs text-slate-400 mt-0.5">Upload photos/videos, add projects &amp; manage live showcase</p>
         </div>
       </div>
       <svg class="w-5 h-5 text-slate-500 group-hover:text-brand-ice flex-shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-      </svg>
-    </a>
-
-    <a
-      href="/admin/media/"
-      class="p-4 sm:p-5 rounded-2xl bg-slate-900/80 hover:bg-slate-900 active:bg-slate-800 border border-slate-800 hover:border-brand-ice/40 transition-all flex items-center justify-between group active:scale-[0.99]"
-    >
-      <div class="flex items-center gap-3.5">
-        <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-purple-500/15 text-purple-400 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-        </div>
-        <div>
-          <h2 class="text-sm sm:text-base font-bold text-white group-hover:text-purple-300 transition-colors">Media Library</h2>
-          <p class="text-xs text-slate-400 mt-0.5">Upload photos, videos, and storage files</p>
-        </div>
-      </div>
-      <svg class="w-5 h-5 text-slate-500 group-hover:text-purple-300 flex-shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
       </svg>
     </a>

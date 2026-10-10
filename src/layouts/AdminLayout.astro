@@ -157,17 +157,6 @@ const initialFaviconType = getFaviconMimeType(initialFavicon);
               Work Portfolio
             </a>
             <a
-              href="/admin/media/"
-              class:list={[
-                'px-3.5 py-2 rounded-xl text-sm font-semibold transition-colors',
-                activeTab === 'media'
-                  ? 'bg-slate-800 text-white font-bold text-brand-ice-light'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/60',
-              ]}
-            >
-              Media Library
-            </a>
-            <a
               href="/admin/settings/"
               class:list={[
                 'px-3.5 py-2 rounded-xl text-sm font-semibold transition-colors',
@@ -228,7 +217,7 @@ const initialFaviconType = getFaviconMimeType(initialFavicon);
       class="fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-xl border-t border-slate-800 shadow-[0_-4px_24px_rgba(0,0,0,0.6)] md:hidden pb-[max(0.6rem,env(safe-area-inset-bottom))] pt-1 px-2"
       aria-label="Mobile Admin Navigation"
     >
-      <div class="grid grid-cols-4 items-center">
+      <div class="grid grid-cols-3 items-center">
         <!-- Tab 1: Dashboard -->
         <a
           href="/admin/"
@@ -271,28 +260,7 @@ const initialFaviconType = getFaviconMimeType(initialFavicon);
           <span class="text-[10px] mt-0.5 tracking-tight font-medium">Work</span>
         </a>
 
-        <!-- Tab 3: Media -->
-        <a
-          href="/admin/media/"
-          class:list={[
-            'flex flex-col items-center justify-center py-1.5 px-1 rounded-xl transition-all active:scale-95 min-h-[50px]',
-            activeTab === 'media'
-              ? 'text-brand-ice font-bold'
-              : 'text-slate-400 hover:text-slate-200',
-          ]}
-        >
-          <div class:list={[
-            'p-1 rounded-lg transition-colors',
-            activeTab === 'media' ? 'bg-brand-ice/15' : 'bg-transparent',
-          ]}>
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-          </div>
-          <span class="text-[10px] mt-0.5 tracking-tight font-medium">Media</span>
-        </a>
-
-        <!-- Tab 4: Settings -->
+        <!-- Tab 3: Settings -->
         <a
           href="/admin/settings/"
           class:list={[
