@@ -7,13 +7,13 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 sm:pb-6 border-b border-slate-800">
     <div>
       <span class="text-xs font-bold uppercase tracking-wider text-brand-ice">Homepage Showcase &amp; Portfolio</span>
-      <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-0.5">Work Projects &amp; Photos</h1>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-0.5">Work Projects &amp; Portfolio</h1>
       <p class="text-xs sm:text-sm text-slate-400 mt-1">
-        Website ke homepage par chalne wale photos aur video reels ko yahan se manage karein.
+        Manage showcase photos and video reels displayed on the website homepage.
       </p>
     </div>
 
-    <!-- ONE Single, Big, Clear Button to Add New Project -->
+    <!-- Single, Clean Button to Add New Project -->
     <div>
       <button
         type="button"
@@ -23,31 +23,20 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
         </svg>
-        <span>+ Naya Photo / Project Dalein</span>
+        <span>+ Add Project</span>
       </button>
     </div>
   </div>
 
-  <!-- Easy Help Banner for Owner -->
-  <div class="my-4 sm:my-5 p-4 rounded-2xl bg-sky-950/40 border border-sky-800/60 flex items-start sm:items-center gap-3.5 text-sky-200 shadow-sm">
-    <div class="w-10 h-10 rounded-xl bg-sky-500/20 text-sky-300 flex items-center justify-center flex-shrink-0 text-lg">
-      💡
-    </div>
-    <div class="text-xs sm:text-sm leading-relaxed">
-      <span class="font-bold text-white">Photo ya Details Kaise Badlein:</span>
-      <span class="text-sky-200"> Kisi bhi photo par click karein ya uske neeche diye gaye <strong class="text-white underline decoration-sky-400">"✏️ Badlein (Edit)"</strong> button ko dabayein. Nayi photo upload karein aur <strong class="text-white">Save</strong> kar dein!</span>
-    </div>
-  </div>
-
   <!-- Row Filter Tabs / Section Switcher -->
-  <div class="mt-4 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+  <div class="mt-6 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
     <button
       type="button"
       id="tab-filter-all"
       class="tab-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer bg-brand-ice text-white shadow-sm"
       data-filter="all"
     >
-      Sabhi Photos (<span id="count-all">0</span>)
+      All Projects (<span id="count-all">0</span>)
     </button>
     <button
       type="button"
@@ -55,7 +44,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       class="tab-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700"
       data-filter="top"
     >
-      ⬆️ Upar Wali Line (Row 1) &bull; <span id="count-top">0</span>
+      ⬆️ Top Line (Row 1) &bull; <span id="count-top">0</span>
     </button>
     <button
       type="button"
@@ -63,7 +52,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       class="tab-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700"
       data-filter="bottom"
     >
-      ⬇️ Niche Wali Line (Row 2) &bull; <span id="count-bottom">0</span>
+      ⬇️ Bottom Line (Row 2) &bull; <span id="count-bottom">0</span>
     </button>
   </div>
 
@@ -95,9 +84,9 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         <div class="flex items-center gap-2.5">
           <span class="w-2.5 h-2.5 rounded-full bg-sky-400 animate-pulse"></span>
           <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-            <span>⬆️ Upar Wali Line (Row 1)</span>
+            <span>Top Line Showcase (Row 1)</span>
             <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-sky-950 text-sky-300 border border-sky-800/60">
-              Left flow &bull; <span id="section-top-count">0</span> photos
+              Flows Left &bull; <span id="section-top-count">0</span> items
             </span>
           </h2>
         </div>
@@ -106,7 +95,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           class="add-row-shortcut-btn text-xs font-bold text-brand-ice hover:text-white px-3 py-1.5 rounded-lg hover:bg-slate-800 transition-colors cursor-pointer"
           data-row="top"
         >
-          + Is Line me dalein
+          + Add to Top Line
         </button>
       </div>
       <div id="top-items-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -120,9 +109,9 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         <div class="flex items-center gap-2.5">
           <span class="w-2.5 h-2.5 rounded-full bg-indigo-400 animate-pulse"></span>
           <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-            <span>⬇️ Niche Wali Line (Row 2)</span>
+            <span>Bottom Line Showcase (Row 2)</span>
             <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-950 text-indigo-300 border border-indigo-800/60">
-              Right flow &bull; <span id="section-bottom-count">0</span> photos
+              Flows Right &bull; <span id="section-bottom-count">0</span> items
             </span>
           </h2>
         </div>
@@ -131,7 +120,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           class="add-row-shortcut-btn text-xs font-bold text-indigo-400 hover:text-white px-3 py-1.5 rounded-lg hover:bg-slate-800 transition-colors cursor-pointer"
           data-row="bottom"
         >
-          + Is Line me dalein
+          + Add to Bottom Line
         </button>
       </div>
       <div id="bottom-items-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -160,8 +149,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       <!-- Header -->
       <div class="px-5 py-4 sm:p-6 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
         <div>
-          <h2 id="modal-title" class="text-lg sm:text-xl font-bold text-white">Photo ya Details Badlein</h2>
-          <p id="modal-subtitle" class="text-xs text-slate-400 mt-0.5">Nayi photo upload karein ya title badal kar Save karein</p>
+          <h2 id="modal-title" class="text-lg sm:text-xl font-bold text-white">Edit Project</h2>
+          <p id="modal-subtitle" class="text-xs text-slate-400 mt-0.5">Update project photos, details, or showcase placement</p>
         </div>
         <button
           type="button"
@@ -179,21 +168,21 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       <form id="work-form" class="p-4 sm:p-6 space-y-4 overflow-y-auto flex-grow text-sm">
         <input type="hidden" id="form-work-id" value="" />
 
-        <!-- 1. PHOTO UPLOAD & PREVIEW SECTION (MOST PROMINENT) -->
+        <!-- 1. PHOTO UPLOAD & PREVIEW SECTION -->
         <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800">
           <label class="block text-xs font-bold uppercase tracking-wider text-brand-ice mb-2.5">
-            1. Photo / Video * <span class="text-slate-400 normal-case font-normal">(Ye photo website par dikhegi)</span>
+            Project Media *
           </label>
 
           <!-- Current Photo Preview -->
           <div id="modal-image-preview-container" class="hidden mb-3">
             <div class="relative max-w-xs mx-auto aspect-[4/3] rounded-xl overflow-hidden border border-slate-700 bg-slate-900 shadow-md">
-              <img id="modal-image-preview" src="" alt="Selected work photo preview" class="w-full h-full object-cover" />
+              <img id="modal-image-preview" src="" alt="Selected project photo preview" class="w-full h-full object-cover" />
               <div class="absolute bottom-2 left-2 right-2 bg-slate-950/85 backdrop-blur-sm rounded-lg px-2.5 py-1 text-[11px] font-semibold text-emerald-300 flex items-center justify-center gap-1.5 border border-emerald-500/20">
                 <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
                 </svg>
-                <span>Current Photo (Chuni hui photo)</span>
+                <span>Current Photo</span>
               </div>
             </div>
           </div>
@@ -207,17 +196,17 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             </div>
-            <p id="upload-btn-text" class="text-sm font-bold text-white">📷 Nayi Photo Chunein ya Camera se lein</p>
-            <p class="text-[11px] text-slate-400 mt-1">Yahan tap karke phone camera ya gallery se photo chunein</p>
+            <p id="upload-btn-text" class="text-sm font-bold text-white">Upload from Device or Camera</p>
+            <p class="text-[11px] text-slate-400 mt-1">Tap to capture from camera or choose an image / video file</p>
           </div>
 
           <!-- Upload In-Progress State -->
           <div id="upload-progress-state" class="hidden text-center py-4 bg-slate-900/60 rounded-2xl border border-brand-ice/30">
             <div class="inline-block animate-spin w-6 h-6 border-2 border-brand-ice border-t-transparent rounded-full mb-2"></div>
-            <p class="text-xs text-brand-ice-light font-bold" id="upload-status-text">Photo upload ho rahi hai... Kripya rukein</p>
+            <p class="text-xs text-brand-ice-light font-bold" id="upload-status-text">Uploading to cloud storage...</p>
           </div>
 
-          <!-- Advanced Direct URL field (hidden inside details to keep UI super simple) -->
+          <!-- Advanced Direct URL field (hidden inside details to keep UI clean) -->
           <details class="mt-2 text-xs text-slate-500">
             <summary class="cursor-pointer hover:text-slate-400 pt-1">Advanced: Direct image URL (optional)</summary>
             <div class="mt-2">
@@ -235,16 +224,16 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         <!-- 2. Line Placement Selector (Top Line vs Bottom Line) -->
         <div class="p-3.5 sm:p-4 rounded-2xl bg-slate-950 border border-slate-800">
           <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
-            2. Website par kahan chalegi:
+            Showcase Placement *
           </label>
           <div class="grid grid-cols-2 gap-3">
             <label class="cursor-pointer">
               <input type="radio" name="work-row-position" value="top" id="radio-row-top" class="hidden peer" checked />
               <div class="p-3 rounded-xl border border-slate-700 bg-slate-900/60 peer-checked:border-brand-ice peer-checked:bg-brand-ice/15 peer-checked:text-brand-ice text-slate-300 transition-all text-center">
                 <div class="text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5">
-                  <span>⬆️ Upar Wali Line</span>
+                  <span>⬆️ Top Line (Row 1)</span>
                 </div>
-                <p class="text-[10px] text-slate-400 mt-0.5">Row 1 (Left flow)</p>
+                <p class="text-[10px] text-slate-400 mt-0.5">Flows Left on homepage</p>
               </div>
             </label>
 
@@ -252,9 +241,9 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
               <input type="radio" name="work-row-position" value="bottom" id="radio-row-bottom" class="hidden peer" />
               <div class="p-3 rounded-xl border border-slate-700 bg-slate-900/60 peer-checked:border-indigo-400 peer-checked:bg-indigo-500/15 peer-checked:text-indigo-300 text-slate-300 transition-all text-center">
                 <div class="text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5">
-                  <span>⬇️ Niche Wali Line</span>
+                  <span>⬇️ Bottom Line (Row 2)</span>
                 </div>
-                <p class="text-[10px] text-slate-400 mt-0.5">Row 2 (Right flow)</p>
+                <p class="text-[10px] text-slate-400 mt-0.5">Flows Right on homepage</p>
               </div>
             </label>
           </div>
@@ -262,7 +251,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
         <div>
           <label for="work-title" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
-            3. Project Ka Naam (Title) *
+            Project Title *
           </label>
           <input
             type="text"
@@ -276,16 +265,16 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
             <label for="work-category" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
-              4. Category *
+              Category *
             </label>
             <select
               id="work-category"
               required
               class="w-full px-3 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-base sm:text-sm min-h-[48px]"
             >
-              <option value="Installation">Installation (Fitting)</option>
+              <option value="Installation">Installation</option>
               <option value="Repair">Repair</option>
-              <option value="AC Service">AC Service (Jet Pump)</option>
+              <option value="AC Service">AC Service</option>
               <option value="Gas Refilling">Gas Refilling</option>
               <option value="Maintenance / AMC">Maintenance / AMC</option>
               <option value="Other">Other</option>
@@ -301,8 +290,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
               required
               class="w-full px-3 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-brand-ice text-base sm:text-sm min-h-[48px]"
             >
-              <option value="image">Photo (Photograph)</option>
-              <option value="video">Video Clip / Reel</option>
+              <option value="image">Photograph (Image)</option>
+              <option value="video">Work Video Reel</option>
             </select>
           </div>
         </div>
@@ -321,12 +310,12 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
         <div>
           <label for="work-description" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
-            Chhota Vivaran (Description - Optional)
+            Description (Optional)
           </label>
           <textarea
             id="work-description"
             rows="2"
-            placeholder="Kaam ke baare me 1 line (e.g. Copper piping installation with bracket fitting)"
+            placeholder="Short details about the completed job"
             class="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-brand-ice text-base sm:text-sm"
           ></textarea>
         </div>
@@ -349,12 +338,12 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           <button
             type="submit"
             id="save-work-btn"
-            class="px-8 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-extrabold shadow-lg shadow-emerald-900/40 transition-all active:scale-[0.98] min-h-[48px] cursor-pointer flex-grow sm:flex-grow-0 flex items-center justify-center gap-2"
+            class="px-8 py-3 rounded-xl bg-brand-ice hover:bg-brand-ice-hover text-white text-xs sm:text-sm font-extrabold shadow-lg shadow-brand-ice/25 transition-all active:scale-[0.98] min-h-[48px] cursor-pointer flex-grow sm:flex-grow-0 flex items-center justify-center gap-2"
           >
             <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
             </svg>
-            <span>✓ Save Karein (Update Website)</span>
+            <span>Save Project</span>
           </button>
         </div>
       </form>
@@ -375,9 +364,9 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
         </svg>
       </div>
-      <h3 class="text-lg font-bold text-white">Kya aap ye photo delete karna chahte hain?</h3>
+      <h3 class="text-lg font-bold text-white">Delete this project?</h3>
       <p class="text-xs text-slate-400 mt-2">
-        Ye photo website se hat jayegi. Is action ko wapas nahi laya ja sakta.
+        This item will be removed from the public website showcase. This action cannot be undone.
       </p>
       <div class="mt-6 flex items-center justify-center gap-3">
         <button
@@ -392,7 +381,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           id="confirm-delete-btn"
           class="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold shadow-md transition-all active:scale-[0.98] cursor-pointer min-h-[42px]"
         >
-          Delete Karein
+          Delete Project
         </button>
       </div>
     </div>
@@ -465,7 +454,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       return `
         <article class="bg-slate-900 border border-slate-800 hover:border-brand-ice/60 rounded-2xl overflow-hidden flex flex-col justify-between group shadow-md transition-all hover:shadow-xl hover:shadow-brand-ice/10">
           <!-- Clickable Image with direct Edit trigger -->
-          <div class="relative w-full aspect-[4/3] bg-slate-950 overflow-hidden cursor-pointer edit-card-trigger" data-id="${item.id}" title="Click to change or edit this photo">
+          <div class="relative w-full aspect-[4/3] bg-slate-950 overflow-hidden cursor-pointer edit-card-trigger" data-id="${item.id}" title="Click to edit this project">
             ${isVideo ? `
               <video
                 src="${videoSrc}#t=0.001"
@@ -496,7 +485,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
             <!-- Row Badge -->
             <span class="absolute bottom-2.5 left-2.5 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider ${isTop ? 'bg-sky-950/90 text-sky-300 border border-sky-700/70' : 'bg-indigo-950/90 text-indigo-300 border border-indigo-700/70'} backdrop-blur-md shadow-xs flex items-center gap-1">
-              ${isTop ? '⬆️ Row 1 (Upar)' : '⬇️ Row 2 (Niche)'}
+              ${isTop ? '⬆️ Row 1 (Top Line)' : '⬇️ Row 2 (Bottom Line)'}
             </span>
 
             <!-- Status Badge -->
@@ -510,7 +499,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                 </svg>
-                <span>Photo Badlein (Edit)</span>
+                <span>Edit Project</span>
               </span>
             </div>
           </div>
@@ -521,7 +510,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
               <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed">${item.description || 'Patel Cool Tech installation / service'}</p>
             </div>
 
-            <!-- Big, High-Contrast Action Buttons -->
+            <!-- Clean, High-Contrast Action Buttons -->
             <div class="mt-4 pt-3 border-t border-slate-800 space-y-2">
               <div class="flex items-center gap-2">
                 <!-- Obvious Primary Edit Button -->
@@ -533,7 +522,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                   <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                   </svg>
-                  <span>Badlein (Edit Photo)</span>
+                  <span>Edit Project</span>
                 </button>
 
                 <!-- Delete Button -->
@@ -541,7 +530,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                   type="button"
                   class="delete-btn px-3 py-2.5 rounded-xl text-xs font-bold text-rose-400 hover:text-white bg-rose-950/40 hover:bg-rose-900 border border-rose-800/50 transition-colors cursor-pointer min-h-[42px] flex items-center justify-center gap-1"
                   data-id="${item.id}"
-                  title="Photo Delete Karein"
+                  title="Delete Project"
                 >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -557,7 +546,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                 data-target-row="${isTop ? 'bottom' : 'top'}"
                 title="Switch between Row 1 and Row 2"
               >
-                <span>${isTop ? '⬇️ Niche Wali Line (Row 2) me bhejein' : '⬆️ Upar Wali Line (Row 1) me bhejein'}</span>
+                <span>${isTop ? '⬇️ Move to Bottom Line (Row 2)' : '⬆️ Move to Top Line (Row 1)'}</span>
               </button>
             </div>
           </div>
@@ -602,9 +591,9 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       if (topItems.length === 0) {
         topGrid.innerHTML = `
           <div class="col-span-full py-8 text-center text-slate-500 bg-slate-900/40 rounded-2xl border border-dashed border-slate-800">
-            <p class="text-sm font-bold text-slate-400">Upar wali line me abhi koi photo nahi hai</p>
+            <p class="text-sm font-bold text-slate-400">No projects in Top Line yet</p>
             <button type="button" class="add-row-shortcut-btn mt-2 inline-flex items-center gap-1 text-xs text-brand-ice font-bold px-4 py-2 rounded-xl bg-brand-navy border border-brand-ice/40" data-row="top">
-              + Upar Wali Line me Pehla Photo Dalein
+              + Add First Project to Top Line
             </button>
           </div>
         `;
@@ -616,9 +605,9 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       if (bottomItems.length === 0) {
         bottomGrid.innerHTML = `
           <div class="col-span-full py-8 text-center text-slate-500 bg-slate-900/40 rounded-2xl border border-dashed border-slate-800">
-            <p class="text-sm font-bold text-slate-400">Niche wali line me abhi koi photo nahi hai</p>
+            <p class="text-sm font-bold text-slate-400">No projects in Bottom Line yet</p>
             <button type="button" class="add-row-shortcut-btn mt-2 inline-flex items-center gap-1 text-xs text-indigo-300 font-bold px-4 py-2 rounded-xl bg-brand-navy border border-indigo-400/40" data-row="bottom">
-              + Niche Wali Line me Pehla Photo Dalein
+              + Add First Project to Bottom Line
             </button>
           </div>
         `;
@@ -674,7 +663,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           if (item) item.row_position = targetRow;
           broadcastWorkItemsUpdate(localWorkItems);
 
-          showToast(`Photo ${targetRow === 'top' ? 'Upar Wali Line (Row 1)' : 'Niche Wali Line (Row 2)'} me move ho gayi.`);
+          showToast(`Moved project to ${targetRow === 'top' ? 'Top Line' : 'Bottom Line'}.`);
           renderCards();
         });
       });
@@ -710,8 +699,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       const uploadBtnText = document.getElementById('upload-btn-text');
 
       if (item) {
-        if (modalTitle) modalTitle.textContent = '✏️ Photo ya Details Badlein (Edit)';
-        if (modalSubtitle) modalSubtitle.textContent = 'Nayi photo upload karein ya title/category badal kar Save karein';
+        if (modalTitle) modalTitle.textContent = 'Edit Project';
+        if (modalSubtitle) modalSubtitle.textContent = 'Update project photo, title, category, or placement';
         if (formId) formId.value = item.id;
         if (titleInput) titleInput.value = item.title;
         if (catSelect) catSelect.value = item.category;
@@ -734,10 +723,10 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           previewImg.src = item.image_url;
           previewContainer.classList.remove('hidden');
         }
-        if (uploadBtnText) uploadBtnText.textContent = '📷 Doosri Photo Lagayein (Change Photo)';
+        if (uploadBtnText) uploadBtnText.textContent = 'Upload New Photo / Video';
       } else {
-        if (modalTitle) modalTitle.textContent = defaultRow === 'top' ? '➕ Upar Wali Line me Naya Project Dalein' : '➕ Niche Wali Line me Naya Project Dalein';
-        if (modalSubtitle) modalSubtitle.textContent = 'Phone se photo lein ya gallery se chunein';
+        if (modalTitle) modalTitle.textContent = defaultRow === 'top' ? 'Add Project to Top Line' : 'Add Project to Bottom Line';
+        if (modalSubtitle) modalSubtitle.textContent = 'Upload photo or video from device or camera';
         form?.reset();
         if (formId) formId.value = '';
         if (imageUrlInput) imageUrlInput.value = '';
@@ -749,7 +738,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
         if (previewContainer) previewContainer.classList.add('hidden');
         if (previewImg) previewImg.src = '';
-        if (uploadBtnText) uploadBtnText.textContent = '📷 Photo Chunein ya Camera se lein';
+        if (uploadBtnText) uploadBtnText.textContent = 'Upload from Device or Camera';
       }
 
       // Toggle video container
@@ -837,7 +826,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             previewImg.src = publicUrl;
             previewContainer.classList.remove('hidden');
           }
-          if (uploadBtnText) uploadBtnText.textContent = '📷 Doosri Photo Chunein (Change)';
+          if (uploadBtnText) uploadBtnText.textContent = 'Replace Photo / Video';
 
           if (file.type.startsWith('video') || /\.(mp4|webm|mov)$/i.test(file.name)) {
             const videoInput = document.getElementById('work-video-url') as HTMLInputElement | null;
@@ -845,7 +834,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             if (mediaTypeSelect) mediaTypeSelect.value = 'video';
             if (videoUrlContainer) videoUrlContainer.classList.remove('hidden');
           }
-          showToast('✓ Photo upload ho gayi!');
+          showToast('Media uploaded to storage successfully.');
         } catch (err: any) {
           alert('Upload failed: ' + err.message);
         }
@@ -878,7 +867,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       const featured = (document.getElementById('work-featured') as HTMLInputElement | null)?.checked ?? true;
 
       if (!image_url) {
-        alert('Kripya photo select karein ya URL dalein.');
+        alert('Please select a photo or enter a valid image URL.');
         return;
       }
 
@@ -916,7 +905,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       broadcastWorkItemsUpdate(localWorkItems);
       closeModal();
       renderCards();
-      showToast('✓ Project successfully save ho gaya!');
+      showToast('Project saved successfully.');
 
       // Persist to Supabase
       if (isSupabaseConfigured && supabase) {
@@ -964,7 +953,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           if (error) throw error;
         }
         closeDeleteDialog();
-        showToast('✓ Photo delete ho gayi.');
+        showToast('Project deleted.');
         await loadItems();
       } catch (err: any) {
         console.error('Work delete error:', err);
