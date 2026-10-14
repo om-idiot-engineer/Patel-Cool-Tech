@@ -8,7 +8,7 @@ interface Props {
 }
 
 const {
-  logoUrl,
+  logoUrl = '/images/brand-logo-512.png',
   businessName = business.name,
 } = Astro.props;
 ---
@@ -309,7 +309,7 @@ const {
       const badge = document.getElementById('ac-brand-badge');
       if (!badge) return;
 
-      const targetUrl = typeof url === 'string' ? url : (localStorage.getItem('pct_custom_logo') || '');
+      const targetUrl = typeof url === 'string' && url.trim() ? url.trim() : (localStorage.getItem('pct_custom_logo') || '/images/brand-logo-512.png');
 
       if (targetUrl) {
         const fallback = document.getElementById('ac-brand-default-mark') || document.getElementById('ac-brand-logo-fallback');

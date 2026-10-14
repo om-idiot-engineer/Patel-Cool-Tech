@@ -18,7 +18,7 @@ export function getFaviconMimeType(url: string): string | undefined {
 export function updateBrowserFavicon(url?: string | null) {
   if (typeof document === 'undefined') return;
 
-  const targetUrl = url && url.trim() ? url.trim() : '/favicon.svg';
+  const targetUrl = url && url.trim() ? url.trim() : '/favicon-32x32.png';
   const mimeType = getFaviconMimeType(targetUrl);
 
   // Remove existing favicon and shortcut icon links to bypass browser cache and force re-rendering

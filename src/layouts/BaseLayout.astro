@@ -4,7 +4,6 @@ import '../styles/global.css';
 import { siteConfig } from '../data/site';
 import { buildPageTitle, generateLocalBusinessSchema } from '../utils/seo';
 import { getSiteSettings } from '../utils/supabase';
-import { getFaviconMimeType } from '../utils/favicon';
 import Header from '../components/Header.astro';
 import MobileMenu from '../components/MobileMenu.astro';
 import Footer from '../components/Footer.astro';
@@ -50,8 +49,6 @@ const schemaData = generateLocalBusinessSchema();
 
 const settings = await getSiteSettings();
 const siteLogoUrl = settings?.logo_url || '';
-const initialFavicon = siteLogoUrl || '/favicon.svg';
-const initialFaviconType = getFaviconMimeType(initialFavicon);
 ---
 
 <!doctype html>
@@ -101,19 +98,23 @@ const initialFaviconType = getFaviconMimeType(initialFavicon);
     <meta name="twitter:description" content={description} />
     {ogImage && <meta name="twitter:image" content={new URL(ogImage, Astro.site || siteConfig.siteUrl).href} />}
 
-    <!-- Favicon & Mobile Web App Icons (Dynamic to Owner Logo) -->
+    <!-- Favicon & Mobile Web App Icons (Official Brand Logo) -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico?v=2" />
     <link
       id="dynamic-favicon"
       rel="icon"
-      {...(initialFaviconType ? { type: initialFaviconType } : {})}
-      href={initialFavicon}
+      type="image/png"
+      sizes="32x32"
+      href="/favicon-32x32.png?v=2"
     />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=2" />
     <link
       id="dynamic-apple-icon"
       rel="apple-touch-icon"
-      href={initialFavicon}
+      sizes="180x180"
+      href="/apple-touch-icon.png?v=2"
     />
-    <link rel="alternate icon" href="/favicon.ico" />
+    <link rel="shortcut icon" href="/favicon.ico?v=2" />
     <meta name="theme-color" content="#0b1f3a" />
 
     <!-- Zero-latency inline script: applies owner-uploaded original logo to browser tab immediately -->
@@ -128,7 +129,7 @@ const initialFaviconType = getFaviconMimeType(initialFavicon);
               if (s && s.logo_url) logo = s.logo_url;
             }
           }
-          if (logo && logo.trim()) {
+          if (logo && logo.trim() && logo.indexOf('1791641075898-1000391347.png') === -1 && logo.indexOf('brand-logo') === -1) {
             var icon = document.getElementById('dynamic-favicon');
             var apple = document.getElementById('dynamic-apple-icon');
             var clean = logo.split('?')[0].toLowerCase();

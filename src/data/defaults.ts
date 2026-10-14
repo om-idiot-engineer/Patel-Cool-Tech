@@ -94,7 +94,7 @@ export const defaultSiteSettings: SiteSettingsDB = {
   phone_secondary: business.phones.secondaryFormatted,
   whatsapp_number: business.phones.whatsappNumber,
   email: business.email,
-  logo_url: '',
+  logo_url: '/images/brand-logo-512.png',
   hero_media_type: 'image',
   hero_media_url: '/images/hero/hero-technician.webp',
   hero_poster_url: '/images/hero/hero-technician.webp',

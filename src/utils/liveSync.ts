@@ -41,7 +41,7 @@ export function getStoredLogo(): string {
     const settings = getStoredSettings();
     if (settings?.logo_url) return settings.logo_url;
   } catch (_) {}
-  return '';
+  return '/images/brand-logo-512.png';
 }
 
 /**

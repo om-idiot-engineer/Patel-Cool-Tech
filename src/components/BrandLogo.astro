@@ -31,11 +31,12 @@ const textSizeClasses = {
 }[size];
 
 const isLight = variant === 'light';
+const effectiveLogo = customLogoUrl || '/images/brand-logo-512.png';
 ---
 
 <div class={`brand-logo-container flex items-center gap-2.5 sm:gap-3 group ${className}`} data-logo-variant={variant} data-logo-size={size}>
   <div class="brand-logo-visual flex-shrink-0 flex items-center justify-center">
-    {customLogoUrl ? (
+    {effectiveLogo ? (
       <div
         class={`brand-logo-frame ${frameSizeClasses} rounded-full overflow-hidden flex items-center justify-center bg-white flex-shrink-0 transition-transform duration-300 group-hover:scale-105 ${
           isLight
@@ -44,7 +45,7 @@ const isLight = variant === 'light';
         }`}
       >
         <img
-          src={customLogoUrl}
+          src={effectiveLogo}
           alt={`${business.name} official logo`}
           class="brand-logo-img w-full h-full object-cover rounded-full"
           loading="eager"
