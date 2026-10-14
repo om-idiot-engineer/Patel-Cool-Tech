@@ -388,7 +388,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   </div>
 
   <script>
-    import { supabase, isSupabaseConfigured, defaultFallbackWork } from '../../utils/supabase';
+    import { adminSupabase as supabase, isSupabaseConfigured, defaultFallbackWork } from '../../utils/supabase';
     import type { WorkItemDB } from '../../types/database';
     import { broadcastWorkItemsUpdate } from '../../utils/liveSync';
 

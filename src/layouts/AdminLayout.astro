@@ -35,8 +35,7 @@ const initialFaviconType = getFaviconMimeType(initialFavicon);
       rel="apple-touch-icon"
       href={initialFavicon}
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="alternate icon" href="/favicon.ico" />
 
     <!-- Zero-latency inline script: applies owner-uploaded original logo to browser tab immediately -->
     <script is:inline>
@@ -291,7 +290,7 @@ const initialFaviconType = getFaviconMimeType(initialFavicon);
 
     <!-- Client-side Cryptographic Auth Guardian Script & Live Sync -->
     <script>
-      import { supabase, isSupabaseConfigured, isAuthorizedOwner } from '../utils/supabase';
+      import { adminSupabase, isSupabaseConfigured, isAuthorizedOwner, ADMIN_AUTH_KEY } from '../utils/supabase';
       import { initLiveSync } from '../utils/liveSync';
 
       // Initialize liveSync to keep browser favicon and business settings synced
@@ -301,28 +300,31 @@ const initialFaviconType = getFaviconMimeType(initialFavicon);
         const isAuth = sessionStorage.getItem('pct_admin_authenticated');
         if (isAuth !== 'true') {
           try {
-            if (supabase) await supabase.auth.signOut();
-            localStorage.clear();
+            if (adminSupabase) await adminSupabase.auth.signOut({ scope: 'local' });
+            localStorage.removeItem(ADMIN_AUTH_KEY);
             sessionStorage.clear();
           } catch (_) {}
           window.location.replace('/admin/login/?unauthorized=1');
           return;
         }
 
-        if (!isSupabaseConfigured || !supabase) {
-          try { sessionStorage.clear(); } catch (_) {}
+        if (!isSupabaseConfigured || !adminSupabase) {
+          try {
+            localStorage.removeItem(ADMIN_AUTH_KEY);
+            sessionStorage.clear();
+          } catch (_) {}
           window.location.replace('/admin/login/?unauthorized=1');
           return;
         }
 
         try {
-          const { data: { session }, error } = await supabase.auth.getSession();
+          const { data: { session }, error } = await adminSupabase.auth.getSession();
 
           if (error || !session || !session.user || !isAuthorizedOwner(session.user.email)) {
             // Unauthenticated or not owner: sign out and redirect immediately
             try {
-              await supabase.auth.signOut();
-              localStorage.clear();
+              await adminSupabase.auth.signOut({ scope: 'local' });
+              localStorage.removeItem(ADMIN_AUTH_KEY);
               sessionStorage.clear();
             } catch (_) {}
             window.location.replace('/admin/login/?unauthorized=1');
@@ -354,16 +356,22 @@ const initialFaviconType = getFaviconMimeType(initialFavicon);
             emailEl.textContent = session.user.email;
           }
         } catch (err) {
-          try { localStorage.clear(); sessionStorage.clear(); } catch (_) {}
+          try {
+            localStorage.removeItem(ADMIN_AUTH_KEY);
+            sessionStorage.clear();
+          } catch (_) {}
           window.location.replace('/admin/login/?unauthorized=1');
         }
       }
 
       // Real-time auth listener: if token revoked or sign-out triggered, immediately lock screen
-      if (supabase) {
-        supabase.auth.onAuthStateChange((event, session) => {
-          if (event === 'SIGNED_OUT' || !session || !isAuthorizedOwner(session?.user?.email)) {
-            try { localStorage.clear(); sessionStorage.clear(); } catch (_) {}
+      if (adminSupabase) {
+        adminSupabase.auth.onAuthStateChange((event, session) => {
+          if (event === 'SIGNED_OUT' || (event === 'TOKEN_REFRESHED' && !session) || !session || !isAuthorizedOwner(session?.user?.email)) {
+            try {
+              localStorage.removeItem(ADMIN_AUTH_KEY);
+              sessionStorage.clear();
+            } catch (_) {}
             window.location.replace('/admin/login/?logout=1');
           }
         });
@@ -373,11 +381,11 @@ const initialFaviconType = getFaviconMimeType(initialFavicon);
       const logoutBtn = document.getElementById('admin-logout-btn');
       if (logoutBtn) {
         logoutBtn.addEventListener('click', async () => {
-          if (supabase) {
-            try { await supabase.auth.signOut(); } catch (_) {}
+          if (adminSupabase) {
+            try { await adminSupabase.auth.signOut({ scope: 'local' }); } catch (_) {}
           }
           try {
-            localStorage.clear();
+            localStorage.removeItem(ADMIN_AUTH_KEY);
             sessionStorage.clear();
           } catch (_) {}
           window.location.replace('/admin/login/?logout=1');

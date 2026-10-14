@@ -10,7 +10,7 @@ export default defineConfig({
   compressHTML: true,
   prefetch: {
     prefetchAll: true,
-    defaultStrategy: 'viewport',
+    defaultStrategy: 'hover',
   },
   build: {
     inlineStylesheets: 'auto',

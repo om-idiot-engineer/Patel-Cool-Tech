@@ -46,6 +46,7 @@ const serviceCardThemes: Record<
   {
     gradient: string;
     shadow: string;
+    borderMobile: string;
     borderHover: string;
     topGlow: string;
   }
@@ -53,31 +54,36 @@ const serviceCardThemes: Record<
   'ac-installation': {
     gradient: 'from-blue-600 via-indigo-600 to-brand-navy',
     shadow: 'shadow-[0_8px_20px_-4px_rgba(37,99,235,0.4)]',
-    borderHover: 'hover:border-blue-400/80',
+    borderMobile: 'border-blue-400/80',
+    borderHover: 'sm:hover:border-blue-400/80',
     topGlow: 'from-blue-500 via-indigo-500 to-blue-600',
   },
   'ac-repair': {
     gradient: 'from-amber-500 via-orange-500 to-rose-600',
     shadow: 'shadow-[0_8px_20px_-4px_rgba(249,115,22,0.4)]',
-    borderHover: 'hover:border-amber-400/80',
+    borderMobile: 'border-amber-400/80',
+    borderHover: 'sm:hover:border-amber-400/80',
     topGlow: 'from-amber-400 via-orange-500 to-rose-500',
   },
   'ac-service': {
     gradient: 'from-cyan-400 via-sky-500 to-blue-600',
     shadow: 'shadow-[0_8px_20px_-4px_rgba(6,182,212,0.4)]',
-    borderHover: 'hover:border-cyan-400/80',
+    borderMobile: 'border-cyan-400/80',
+    borderHover: 'sm:hover:border-cyan-400/80',
     topGlow: 'from-cyan-400 via-sky-400 to-blue-500',
   },
   'ac-gas-refilling': {
     gradient: 'from-violet-500 via-purple-600 to-indigo-700',
     shadow: 'shadow-[0_8px_20px_-4px_rgba(147,51,234,0.4)]',
-    borderHover: 'hover:border-purple-400/80',
+    borderMobile: 'border-purple-400/80',
+    borderHover: 'sm:hover:border-purple-400/80',
     topGlow: 'from-violet-400 via-purple-500 to-indigo-600',
   },
   'ac-amc': {
     gradient: 'from-emerald-400 via-emerald-600 to-teal-700',
     shadow: 'shadow-[0_8px_20px_-4px_rgba(16,185,129,0.4)]',
-    borderHover: 'hover:border-emerald-400/80',
+    borderMobile: 'border-emerald-400/80',
+    borderHover: 'sm:hover:border-emerald-400/80',
     topGlow: 'from-emerald-400 via-emerald-500 to-teal-600',
   },
 };
@@ -226,33 +232,40 @@ const serviceCardThemes: Record<
         {
           services.map((service, index) => {
             const isLast = index === 4;
+            const theme = serviceCardThemes[service.id] || {
+              gradient: 'from-blue-600 via-indigo-600 to-brand-navy',
+              shadow: 'shadow-[0_8px_20px_-4px_rgba(37,99,235,0.4)]',
+              borderMobile: 'border-blue-400/80',
+              borderHover: 'sm:hover:border-blue-400/80',
+              topGlow: 'from-blue-500 via-indigo-500 to-blue-600',
+            };
             return (
               <article
                 class:list={[
-                  'card-spotlight group relative flex flex-col justify-between bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_16px_32px_-8px_rgba(2,132,199,0.18)] hover:border-sky-400/80 active:scale-[0.98] sm:active:scale-100 overflow-hidden reveal-init',
+                  'card-spotlight group relative flex flex-col justify-between bg-white rounded-2xl p-5 sm:p-6 border transition-all duration-300 ease-out sm:hover:-translate-y-1.5 sm:hover:shadow-[0_16px_32px_-8px_rgba(2,132,199,0.18)] active:scale-[0.98] sm:active:scale-100 overflow-hidden reveal-init',
+                  theme.borderMobile,
+                  'sm:border-slate-200/90',
+                  theme.borderHover,
                   `stagger-${(index % 3) + 1}`,
                   isLast ? 'sm:col-span-2 lg:col-span-1' : '',
                 ]}
               >
-                <!-- Animated top accent line on hover -->
-                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-ice via-sky-400 to-brand-blue transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left z-20"></div>
+                <!-- Animated top accent line: active on mobile, hover on desktop -->
+                <div class:list={[
+                  'absolute top-0 left-0 right-0 h-1 bg-gradient-to-r transform scale-x-100 sm:scale-x-0 sm:group-hover:scale-x-100 transition-transform duration-500 origin-left z-20',
+                  theme.topGlow,
+                ]}></div>
 
                 <!-- Shimmer light sheen sweep across card on hover -->
                 <div class="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-sky-100/35 to-transparent pointer-events-none z-10 ease-in-out"></div>
 
                 <div>
                   <div class="flex items-center justify-between gap-3 mb-4 relative z-20">
-                    {(() => {
-                      const theme = serviceCardThemes[service.id] || {
-                        gradient: 'from-blue-600 via-indigo-600 to-brand-navy',
-                        shadow: 'shadow-[0_8px_20px_-4px_rgba(37,99,235,0.4)]',
-                      };
-                      return (
-                        <div class:list={[
-                          'w-12 h-12 rounded-2xl bg-gradient-to-br text-white flex items-center justify-center flex-shrink-0 ring-1 ring-white/35 shadow-md group-hover:scale-110 group-hover:-rotate-3 group-hover:shadow-lg transition-all duration-300 ease-out relative overflow-hidden',
-                          theme.gradient,
-                          theme.shadow,
-                        ]}>
+                    <div class:list={[
+                      'w-12 h-12 rounded-2xl bg-gradient-to-br text-white flex items-center justify-center flex-shrink-0 ring-1 ring-white/35 shadow-md sm:group-hover:scale-110 sm:group-hover:-rotate-3 sm:group-hover:shadow-lg transition-all duration-300 ease-out relative overflow-hidden',
+                      theme.gradient,
+                      theme.shadow,
+                    ]}>
                           <div class="absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-white/25 pointer-events-none"></div>
                           {service.id === 'ac-installation' && (
                             <svg class="w-6 h-6 text-white relative z-10 drop-shadow-xs" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="AC Installation Icon">
@@ -294,8 +307,6 @@ const serviceCardThemes: Record<
                             </svg>
                           )}
                         </div>
-                      );
-                    })()}
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-slate-50 border border-slate-200/90 text-slate-600 shadow-xs">
                       <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true"></span>
                       <span>{service.category === 'both' ? 'Homes & Offices' : service.category}</span>

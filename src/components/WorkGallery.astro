@@ -76,15 +76,7 @@ const gridColsClass = {
 
             <!-- Media Visual Container -->
             <div class="relative w-full aspect-[4/3] bg-brand-surface-alt overflow-hidden">
-              {isVideo ? (
-                <video
-                  src={`${videoSrc}#t=0.001`}
-                  muted
-                  playsinline
-                  preload="metadata"
-                  class="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out pointer-events-none"
-                ></video>
-              ) : (
+              {(item.thumbnail_url || !/\.(mp4|webm|mov)$/i.test(item.image_url)) ? (
                 <img
                   src={item.thumbnail_url || item.image_url}
                   alt={item.alt_text || item.title}
@@ -94,6 +86,14 @@ const gridColsClass = {
                   decoding="async"
                   class="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
                 />
+              ) : (
+                <video
+                  src={videoSrc}
+                  muted
+                  playsinline
+                  preload="none"
+                  class="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out pointer-events-none"
+                ></video>
               )}
 
               <!-- Dark Vignette on Hover -->
@@ -279,17 +279,9 @@ const gridColsClass = {
       >
         <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-ice via-sky-400 to-brand-blue opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
         <div class="relative w-full aspect-[4/3] bg-brand-surface-alt overflow-hidden">
-          ${isVideo ? `
-            <video
-              src="${videoSrc}#t=0.001"
-              muted
-              playsinline
-              preload="metadata"
-              class="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out pointer-events-none"
-            ></video>
-          ` : `
+          ${(item.thumbnail_url || !/\.(mp4|webm|mov)$/i.test(item.image_url)) ? `
             <img
-              src="${mediaSrc}"
+              src="${item.thumbnail_url || item.image_url}"
               alt="${item.alt_text || item.title}"
               width="800"
               height="600"
@@ -297,6 +289,14 @@ const gridColsClass = {
               decoding="async"
               class="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
             />
+          ` : `
+            <video
+              src="${videoSrc}"
+              muted
+              playsinline
+              preload="none"
+              class="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out pointer-events-none"
+            ></video>
           `}
           <div class="absolute inset-0 bg-gradient-to-t from-brand-navy-dark/70 via-brand-navy/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
           <span class="absolute top-3 left-3 px-3 py-1 rounded-xl text-xs font-bold uppercase tracking-wider glass-pill-dark text-white shadow-sm border border-white/20">

@@ -29,8 +29,7 @@ const initialFaviconType = getFaviconMimeType(initialFavicon);
       rel="apple-touch-icon"
       href={initialFavicon}
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="alternate icon" href="/favicon.ico" />
 
     <!-- Zero-latency inline script: applies owner-uploaded original logo to browser tab immediately -->
     <script is:inline>
@@ -195,7 +194,7 @@ const initialFaviconType = getFaviconMimeType(initialFavicon);
 
     <!-- Client-side Secure Login Handler -->
     <script>
-      import { supabase, isSupabaseConfigured, isAuthorizedOwner } from '../../utils/supabase';
+      import { adminSupabase, isSupabaseConfigured, isAuthorizedOwner, ADMIN_AUTH_KEY } from '../../utils/supabase';
 
       const form = document.getElementById('admin-login-form') as HTMLFormElement | null;
       const emailInput = document.getElementById('admin-email') as HTMLInputElement | null;
@@ -241,11 +240,13 @@ const initialFaviconType = getFaviconMimeType(initialFavicon);
 
       // Ensure clean state on login page: clear lingering tokens if redirected
       async function clearPreviousAuth() {
-        if (!isSupabaseConfigured || !supabase) return;
         try {
           if (urlParams.get('logout') === '1' || urlParams.get('unauthorized') === '1') {
-            await supabase.auth.signOut();
-            localStorage.clear();
+            if (isSupabaseConfigured && adminSupabase) {
+              await adminSupabase.auth.signOut({ scope: 'local' });
+            }
+            localStorage.removeItem(ADMIN_AUTH_KEY);
+            localStorage.removeItem('sb-cvbbinnkbekyglbrqvvd-auth-token');
             sessionStorage.clear();
           }
         } catch (_) {}
@@ -275,7 +276,7 @@ const initialFaviconType = getFaviconMimeType(initialFavicon);
           btnSpinner?.classList.remove('hidden');
           if (submitBtn) submitBtn.disabled = true;
 
-          if (!isSupabaseConfigured || !supabase) {
+          if (!isSupabaseConfigured || !adminSupabase) {
             if (errorBox && errorMsg) {
               errorMsg.textContent = 'Supabase authentication service is currently unavailable.';
               errorBox.classList.remove('hidden');
@@ -287,7 +288,7 @@ const initialFaviconType = getFaviconMimeType(initialFavicon);
           }
 
           try {
-            const { data, error } = await supabase.auth.signInWithPassword({
+            const { data, error } = await adminSupabase.auth.signInWithPassword({
               email,
               password,
             });
@@ -305,7 +306,8 @@ const initialFaviconType = getFaviconMimeType(initialFavicon);
 
             // Verify owner authorization
             if (!isAuthorizedOwner(data.user?.email)) {
-              await supabase.auth.signOut();
+              await adminSupabase.auth.signOut({ scope: 'local' });
+              localStorage.removeItem(ADMIN_AUTH_KEY);
               if (errorBox && errorMsg) {
                 errorMsg.textContent = 'Access restricted: Only authorized Patel Cool Tech owner account is permitted.';
                 errorBox.classList.remove('hidden');

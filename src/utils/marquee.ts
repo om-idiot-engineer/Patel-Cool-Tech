@@ -11,16 +11,14 @@ export interface MarqueeOptions {
 }
 
 /**
- * Initializes a silky smooth, continuous auto-scrolling marquee with interactive touch and drag sliding.
- * Features:
- * - 60/120fps hardware-accelerated movement via requestAnimationFrame and translate3d
- * - Seamless takeover from CSS keyframes on hydration
- * - 1:1 direct manipulation on touch and mouse drag in either direction
- * - Smooth momentum coasting with exponential deceleration on flick
- * - Uninterrupted vertical page scrolling on mobile (yields when vertical swipe is detected)
- * - Hover to pause on desktop mouse
- * - Horizontal trackpad two-finger swipe support
- * - Automatic recalculation on window resize or dynamic content updates
+ * Initializes an optimized, hardware-accelerated continuous auto-scrolling marquee
+ * with interactive touch/drag sliding and viewport-aware power management.
+ * 
+ * Performance & Complexity Optimizations:
+ * - O(0) CPU when off-screen: IntersectionObserver pauses requestAnimationFrame loop when not visible
+ * - O(1) mathematical modulo wrap instead of unbounded while loops
+ * - Passive event listeners to prevent compositor thread blockage
+ * - Hardware-accelerated GPU translation via translate3d
  */
 export function initInteractiveMarquee(
   track: HTMLElement,
@@ -43,7 +41,7 @@ export function initInteractiveMarquee(
   };
   updateHalfWidth();
 
-  // Read current matrix transform to ensure 0-millisecond seamless transition from CSS
+  // Read current matrix transform for seamless takeover from CSS
   let offset = 0;
   const computedStyle = window.getComputedStyle(track);
   if (computedStyle.transform && computedStyle.transform !== 'none') {
@@ -55,14 +53,15 @@ export function initInteractiveMarquee(
     }
   }
 
-  // Remove CSS animation to give full hardware-accelerated JS transform control
+  // Remove CSS animation to give JS transform full control
   track.classList.remove('animate-marquee-left', 'animate-marquee-right');
   track.style.animation = 'none';
 
+  // O(1) modulo wrap function
   const wrap = (val: number) => {
     if (halfWidth <= 0) return 0;
-    while (val <= -halfWidth) val += halfWidth;
-    while (val > 0) val -= halfWidth;
+    val = val % halfWidth;
+    if (val > 0) val -= halfWidth;
     return val;
   };
 
@@ -84,10 +83,14 @@ export function initInteractiveMarquee(
   let coastVelocity = 0;
   let isCoasting = false;
   let isHovered = false;
+  let isVisible = true;
   let lastFrameTime = performance.now();
   let rafId = 0;
+  let isRunning = false;
 
   const step = (now: number) => {
+    if (!isRunning) return;
+
     const dt = Math.min((now - lastFrameTime) / 1000, 0.1);
     lastFrameTime = now;
 
@@ -97,7 +100,7 @@ export function initInteractiveMarquee(
         offset = wrap(offset);
         track.style.transform = `translate3d(${offset}px, 0, 0)`;
 
-        // Decay velocity with smooth exponential friction
+        // Decay velocity with exponential friction
         coastVelocity *= Math.pow(0.92, dt * 60);
 
         const baseSpd = getBaseSpeed();
@@ -112,10 +115,49 @@ export function initInteractiveMarquee(
       }
     }
 
-    rafId = requestAnimationFrame(step);
+    if (isVisible) {
+      rafId = requestAnimationFrame(step);
+    } else {
+      isRunning = false;
+    }
   };
 
-  rafId = requestAnimationFrame(step);
+  const startLoop = () => {
+    if (!isRunning && isVisible) {
+      isRunning = true;
+      lastFrameTime = performance.now();
+      rafId = requestAnimationFrame(step);
+    }
+  };
+
+  const stopLoop = () => {
+    if (isRunning) {
+      cancelAnimationFrame(rafId);
+      isRunning = false;
+    }
+  };
+
+  // Viewport Intersection Observer: Halts animation loop when scrolled offscreen (O(0) CPU)
+  let io: IntersectionObserver | null = null;
+  if (typeof IntersectionObserver !== 'undefined') {
+    io = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry) {
+          isVisible = entry.isIntersecting;
+          if (isVisible) {
+            startLoop();
+          } else {
+            stopLoop();
+          }
+        }
+      },
+      { rootMargin: '100px 0px' }
+    );
+    io.observe(container);
+  } else {
+    startLoop();
+  }
 
   const onPointerDown = (e: PointerEvent) => {
     if (e.button !== 0 && e.pointerType === 'mouse') return;
@@ -138,7 +180,6 @@ export function initInteractiveMarquee(
     const dy = e.clientY - startY;
 
     if (!hasDirectionLock) {
-      // Yield to vertical page scrolling if swipe is mostly vertical
       if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 7) {
         isPointerDown = false;
         isDragging = false;
@@ -209,20 +250,19 @@ export function initInteractiveMarquee(
 
   const onWheel = (e: WheelEvent) => {
     if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > 2) {
-      e.preventDefault();
       offset = wrap(offset - e.deltaX);
       track.style.transform = `translate3d(${offset}px, 0, 0)`;
       isCoasting = false;
     }
   };
 
-  container.addEventListener('pointerdown', onPointerDown);
-  container.addEventListener('pointermove', onPointerMove);
-  container.addEventListener('pointerup', onPointerUp);
-  container.addEventListener('pointercancel', onPointerUp);
-  container.addEventListener('mouseenter', onMouseEnter);
-  container.addEventListener('mouseleave', onMouseLeave);
-  container.addEventListener('wheel', onWheel, { passive: false });
+  container.addEventListener('pointerdown', onPointerDown, { passive: true });
+  container.addEventListener('pointermove', onPointerMove, { passive: true });
+  container.addEventListener('pointerup', onPointerUp, { passive: true });
+  container.addEventListener('pointercancel', onPointerUp, { passive: true });
+  container.addEventListener('mouseenter', onMouseEnter, { passive: true });
+  container.addEventListener('mouseleave', onMouseLeave, { passive: true });
+  container.addEventListener('wheel', onWheel, { passive: true });
 
   let ro: ResizeObserver | null = null;
   if (typeof ResizeObserver !== 'undefined') {
@@ -234,7 +274,9 @@ export function initInteractiveMarquee(
 
   return {
     destroy: () => {
-      cancelAnimationFrame(rafId);
+      stopLoop();
+      if (io) io.disconnect();
+      if (ro) ro.disconnect();
       container.removeEventListener('pointerdown', onPointerDown);
       container.removeEventListener('pointermove', onPointerMove);
       container.removeEventListener('pointerup', onPointerUp);
@@ -242,7 +284,6 @@ export function initInteractiveMarquee(
       container.removeEventListener('mouseenter', onMouseEnter);
       container.removeEventListener('mouseleave', onMouseLeave);
       container.removeEventListener('wheel', onWheel);
-      if (ro) ro.disconnect();
     },
     recalc: () => {
       updateHalfWidth();

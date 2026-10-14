@@ -113,15 +113,22 @@ const technicians = business.technicians.map((tech) => {
       const photoUrl = initials === 'MP' ? settings.tech_mahendra_photo_url : settings.tech_satyam_photo_url;
 
       if (photoUrl && photoUrl.trim().length > 0) {
+        const existingImg = contentBox.querySelector<HTMLImageElement>('img');
+        if (existingImg) {
+          if (existingImg.src !== photoUrl) existingImg.src = photoUrl;
+          return;
+        }
         contentBox.innerHTML = `
           <img
             src="${photoUrl}"
             alt="${name}"
             class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover shadow-md border-2 border-white group-hover:scale-105 transition-transform duration-300"
             loading="lazy"
+            decoding="async"
           />
         `;
       } else {
+        if (contentBox.querySelector('span')) return;
         contentBox.innerHTML = `
           <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-brand-navy via-brand-navy-surface to-brand-blue flex items-center justify-center text-white font-extrabold text-2xl sm:text-3xl shadow-md border-2 border-white group-hover:scale-105 transition-transform duration-300">
             <span class="tracking-wider">${initials}</span>

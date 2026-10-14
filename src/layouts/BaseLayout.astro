@@ -64,13 +64,26 @@ const initialFaviconType = getFaviconMimeType(initialFavicon);
     {!noindex && <link rel="canonical" href={canonicalUrl} />}
     {noindex && <meta name="robots" content="noindex, nofollow" />}
 
-    <!-- Google Fonts -->
+    <!-- Google Fonts (Non-blocking asynchronous load with zero render blocking) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      rel="stylesheet"
+      rel="preload"
+      as="style"
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap"
     />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap"
+      />
+    </noscript>
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
@@ -100,6 +113,7 @@ const initialFaviconType = getFaviconMimeType(initialFavicon);
       rel="apple-touch-icon"
       href={initialFavicon}
     />
+    <link rel="alternate icon" href="/favicon.ico" />
     <meta name="theme-color" content="#0b1f3a" />
 
     <!-- Zero-latency inline script: applies owner-uploaded original logo to browser tab immediately -->

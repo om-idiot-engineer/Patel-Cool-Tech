@@ -147,9 +147,15 @@ const settings = await getSiteSettings();
     if (!header || !container) return;
 
     let ticking = false;
+    let wasScrolled: boolean | null = null;
 
     function updateHeader() {
       const isScrolled = window.scrollY > 24;
+      if (isScrolled === wasScrolled) {
+        ticking = false;
+        return;
+      }
+      wasScrolled = isScrolled;
 
       if (isScrolled) {
         header?.classList.add('shadow-card-elevated', 'bg-white/95');

@@ -91,16 +91,8 @@ const row2Items = buildTrackItems(row2Source);
                 data-category={item.category}
                 data-serviceurl={item.service_url || '/services/'}
               >
-                <!-- Image or Video Poster -->
-                {isVideo ? (
-                  <video
-                    src={`${videoSrc}#t=0.001`}
-                    muted
-                    playsinline
-                    preload="metadata"
-                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none select-none"
-                  ></video>
-                ) : (
+                <!-- Image or Video Poster (Optimized with zero-latency image posters and preload="none") -->
+                {(item.thumbnail_url || !/\.(mp4|webm|mov)$/i.test(item.image_url)) ? (
                   <img
                     src={item.thumbnail_url || item.image_url}
                     alt={item.alt_text || item.title}
@@ -111,6 +103,14 @@ const row2Items = buildTrackItems(row2Source);
                     draggable="false"
                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none select-none"
                   />
+                ) : (
+                  <video
+                    src={videoSrc}
+                    muted
+                    playsinline
+                    preload="none"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none select-none"
+                  ></video>
                 )}
 
                 <!-- Dark Vignette Gradient Overlay -->
@@ -184,16 +184,8 @@ const row2Items = buildTrackItems(row2Source);
                 data-category={item.category}
                 data-serviceurl={item.service_url || '/services/'}
               >
-                <!-- Image or Video Poster -->
-                {isVideo ? (
-                  <video
-                    src={`${videoSrc}#t=0.001`}
-                    muted
-                    playsinline
-                    preload="metadata"
-                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none select-none"
-                  ></video>
-                ) : (
+                <!-- Image or Video Poster (Optimized with zero-latency image posters and preload="none") -->
+                {(item.thumbnail_url || !/\.(mp4|webm|mov)$/i.test(item.image_url)) ? (
                   <img
                     src={item.thumbnail_url || item.image_url}
                     alt={item.alt_text || item.title}
@@ -204,6 +196,14 @@ const row2Items = buildTrackItems(row2Source);
                     draggable="false"
                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none select-none"
                   />
+                ) : (
+                  <video
+                    src={videoSrc}
+                    muted
+                    playsinline
+                    preload="none"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none select-none"
+                  ></video>
                 )}
 
                 <!-- Dark Vignette Gradient Overlay -->
@@ -414,18 +414,9 @@ const row2Items = buildTrackItems(row2Source);
         data-category="${item.category}"
         data-serviceurl="${item.service_url || '/services/'}"
       >
-        ${isVideo ? `
-          <video
-            src="${videoSrc}#t=0.001"
-            muted
-            playsinline
-            preload="metadata"
-            draggable="false"
-            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none select-none"
-          ></video>
-        ` : `
+        ${(item.thumbnail_url || !/\.(mp4|webm|mov)$/i.test(item.image_url)) ? `
           <img
-            src="${mediaSrc}"
+            src="${item.thumbnail_url || item.image_url}"
             alt="${item.alt_text || item.title}"
             width="400"
             height="260"
@@ -434,6 +425,15 @@ const row2Items = buildTrackItems(row2Source);
             draggable="false"
             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none select-none"
           />
+        ` : `
+          <video
+            src="${videoSrc}"
+            muted
+            playsinline
+            preload="none"
+            draggable="false"
+            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none select-none"
+          ></video>
         `}
         <div class="absolute inset-0 bg-gradient-to-t from-brand-navy-dark/95 via-brand-navy-dark/40 to-transparent pointer-events-none"></div>
         <div class="absolute top-2.5 sm:top-3 left-2.5 sm:left-3 flex items-center gap-1.5 pointer-events-none">

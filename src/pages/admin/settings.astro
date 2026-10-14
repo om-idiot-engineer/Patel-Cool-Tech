@@ -541,7 +541,7 @@ const settings = await getSiteSettings();
   </form>
 
   <script>
-    import { supabase, isSupabaseConfigured } from '../../utils/supabase';
+    import { adminSupabase as supabase, isSupabaseConfigured } from '../../utils/supabase';
     import { broadcastSettingsUpdate } from '../../utils/liveSync';
 
     const form = document.getElementById('settings-form');

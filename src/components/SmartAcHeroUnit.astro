@@ -297,13 +297,12 @@ const {
       }
     }
 
-    // Idempotent event listeners
-    ledDisplay?.replaceWith(ledDisplay.cloneNode(true));
-    turboSwitchBtn?.replaceWith(turboSwitchBtn.cloneNode(true));
-    const freshLed = document.getElementById('ac-led-display');
-    const freshTurboBtn = document.getElementById('ac-turbo-switch-btn');
-    freshLed?.addEventListener('click', toggleMode);
-    freshTurboBtn?.addEventListener('click', toggleMode);
+    // Idempotent event listeners without DOM thrashing
+    if (showcase.dataset.initialized !== 'true') {
+      showcase.dataset.initialized = 'true';
+      ledDisplay?.addEventListener('click', toggleMode);
+      turboSwitchBtn?.addEventListener('click', toggleMode);
+    }
 
     // Sync logo from live sync if customized
     function syncDynamicBrandLogo(url?: string | null) {

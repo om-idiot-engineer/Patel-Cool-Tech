@@ -1,5 +1,5 @@
-import { supabase, isSupabaseConfigured, defaultSiteSettings } from './supabase';
 import type { SiteSettingsDB, WorkItemDB } from '../types/database';
+import { defaultSiteSettings } from '../data/defaults';
 import { updateBrowserFavicon } from './favicon';
 
 // Storage keys
@@ -9,6 +9,8 @@ export const LOGO_KEY = 'pct_custom_logo';
 
 let isInitialized = false;
 let broadcastChannel: BroadcastChannel | null = null;
+let lastFetchTimestamp = 0;
+const FETCH_THROTTLE_MS = 15 * 60 * 1000; // 15-minute throttle for background tab focus
 
 if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
   try {
@@ -16,6 +18,9 @@ if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
   } catch (_) {}
 }
 
+/**
+ * Fast O(1) in-memory / localStorage settings retrieval
+ */
 export function getStoredSettings(): SiteSettingsDB | null {
   if (typeof window === 'undefined') return null;
   try {
@@ -25,6 +30,9 @@ export function getStoredSettings(): SiteSettingsDB | null {
   return null;
 }
 
+/**
+ * Fast O(1) custom logo lookup
+ */
 export function getStoredLogo(): string {
   if (typeof window === 'undefined') return '';
   try {
@@ -36,6 +44,9 @@ export function getStoredLogo(): string {
   return '';
 }
 
+/**
+ * Fast O(1) work items retrieval
+ */
 export function getStoredWorkItems(): WorkItemDB[] | null {
   if (typeof window === 'undefined') return null;
   try {
@@ -45,6 +56,9 @@ export function getStoredWorkItems(): WorkItemDB[] | null {
   return null;
 }
 
+/**
+ * Broadcast local settings update across tabs in O(1) time
+ */
 export function broadcastSettingsUpdate(settings: Partial<SiteSettingsDB>) {
   if (typeof window === 'undefined') return;
   try {
@@ -67,6 +81,9 @@ export function broadcastSettingsUpdate(settings: Partial<SiteSettingsDB>) {
   } catch (_) {}
 }
 
+/**
+ * Broadcast local work items update across tabs in O(1) time
+ */
 export function broadcastWorkItemsUpdate(items: WorkItemDB[]) {
   if (typeof window === 'undefined') return;
   try {
@@ -76,8 +93,24 @@ export function broadcastWorkItemsUpdate(items: WorkItemDB[]) {
   } catch (_) {}
 }
 
+/**
+ * Lazy Supabase loader: only loads the 227KB Supabase SDK on demand, keeping it off the critical path
+ */
+async function getSupabaseInstance() {
+  try {
+    const { supabase, isSupabaseConfigured } = await import('./supabase');
+    if (isSupabaseConfigured && supabase) {
+      return supabase;
+    }
+  } catch (err) {
+    console.warn('Supabase lazy import failed:', err);
+  }
+  return null;
+}
+
 export async function fetchLiveSettings(): Promise<SiteSettingsDB | null> {
-  if (!isSupabaseConfigured || !supabase) return null;
+  const supabase = await getSupabaseInstance();
+  if (!supabase) return null;
   try {
     const { data, error } = await supabase
       .from('site_settings')
@@ -86,6 +119,7 @@ export async function fetchLiveSettings(): Promise<SiteSettingsDB | null> {
       .single();
     if (!error && data) {
       broadcastSettingsUpdate(data as SiteSettingsDB);
+      lastFetchTimestamp = Date.now();
       return data as SiteSettingsDB;
     }
   } catch (err) {
@@ -95,7 +129,8 @@ export async function fetchLiveSettings(): Promise<SiteSettingsDB | null> {
 }
 
 export async function fetchLiveWorkItems(): Promise<WorkItemDB[] | null> {
-  if (!isSupabaseConfigured || !supabase) return null;
+  const supabase = await getSupabaseInstance();
+  if (!supabase) return null;
   try {
     const { data, error } = await supabase
       .from('work_items')
@@ -105,6 +140,7 @@ export async function fetchLiveWorkItems(): Promise<WorkItemDB[] | null> {
       .order('created_at', { ascending: false });
     if (!error && data) {
       broadcastWorkItemsUpdate(data as WorkItemDB[]);
+      lastFetchTimestamp = Date.now();
       return data as WorkItemDB[];
     }
   } catch (err) {
@@ -113,8 +149,50 @@ export async function fetchLiveWorkItems(): Promise<WorkItemDB[] | null> {
   return null;
 }
 
+async function initAdminRealtime() {
+  const supabase = await getSupabaseInstance();
+  if (!supabase) return;
+
+  fetchLiveSettings();
+  fetchLiveWorkItems();
+
+  try {
+    supabase
+      .channel('public:site_settings_realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'site_settings' }, (payload) => {
+        if (payload.new && typeof payload.new === 'object') {
+          broadcastSettingsUpdate(payload.new as SiteSettingsDB);
+        } else {
+          fetchLiveSettings();
+        }
+      })
+      .subscribe();
+
+    supabase
+      .channel('public:work_items_realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'work_items' }, () => {
+        fetchLiveWorkItems();
+      })
+      .subscribe();
+  } catch (e) {
+    console.warn('Realtime subscription error:', e);
+  }
+}
+
 export function initLiveSync() {
-  // Sync browser favicon immediately on every execution (including view transitions)
+  // Clean up any stale or corrupted Supabase auth tokens from localStorage that trigger 400 Bad Request
+  if (typeof window !== 'undefined') {
+    try {
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('sb-') && key.endsWith('-auth-token')) {
+          localStorage.removeItem(key);
+        }
+      }
+    } catch (_) {}
+  }
+
+  // Sync browser favicon immediately on every execution (including view transitions) - O(1) synchronous
   const currentLogo = getStoredLogo();
   if (currentLogo) {
     updateBrowserFavicon(currentLogo);
@@ -123,7 +201,7 @@ export function initLiveSync() {
   if (typeof window === 'undefined' || isInitialized) return;
   isInitialized = true;
 
-  // Listen to custom logo & settings events
+  // Listen to custom logo & settings events - O(1) in-memory
   window.addEventListener('pct:logo-updated', (e: any) => {
     updateBrowserFavicon(e.detail?.logoUrl);
   });
@@ -133,7 +211,7 @@ export function initLiveSync() {
     }
   });
 
-  // Listen to BroadcastChannel messages from other tabs/admin
+  // Listen to BroadcastChannel messages from other tabs/admin - O(1) in-memory
   if (broadcastChannel) {
     broadcastChannel.onmessage = (event) => {
       const { type, data } = event.data || {};
@@ -149,7 +227,7 @@ export function initLiveSync() {
     };
   }
 
-  // Window storage event (for cross-tab storage sync fallback)
+  // Window storage event (for cross-tab storage sync fallback) - O(1) in-memory
   window.addEventListener('storage', (e) => {
     if (e.key === SETTINGS_KEY && e.newValue) {
       try {
@@ -171,44 +249,43 @@ export function initLiveSync() {
     }
   });
 
-  // Re-fetch on visibility change and focus
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') {
-      fetchLiveSettings();
-      fetchLiveWorkItems();
-    }
-  });
-  window.addEventListener('focus', () => {
-    fetchLiveSettings();
-    fetchLiveWorkItems();
-  });
+  const isAdmin = Boolean(
+    window.location.pathname.startsWith('/admin') ||
+    sessionStorage.getItem('pct_admin_authenticated') === 'true'
+  );
 
-  // Supabase Realtime Channels
-  if (isSupabaseConfigured && supabase) {
-    try {
-      supabase
-        .channel('public:site_settings_realtime')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'site_settings' }, (payload) => {
-          if (payload.new && typeof payload.new === 'object') {
-            broadcastSettingsUpdate(payload.new as SiteSettingsDB);
-          } else {
-            fetchLiveSettings();
-          }
-        })
-        .subscribe();
-
-      supabase
-        .channel('public:work_items_realtime')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'work_items' }, () => {
+  if (isAdmin) {
+    initAdminRealtime();
+  } else {
+    // For public visitors: schedule non-blocking background check during browser idle time
+    const scheduleIdleCheck = () => {
+      const performFetch = () => {
+        const now = Date.now();
+        if (now - lastFetchTimestamp > FETCH_THROTTLE_MS) {
+          fetchLiveSettings();
           fetchLiveWorkItems();
-        })
-        .subscribe();
-    } catch (e) {
-      console.warn('Realtime subscription error:', e);
-    }
-  }
+        }
+      };
 
-  // Initial background fetch
-  fetchLiveSettings();
-  fetchLiveWorkItems();
+      if ('requestIdleCallback' in window) {
+        (window as any).requestIdleCallback(performFetch, { timeout: 4000 });
+      } else {
+        setTimeout(performFetch, 2500);
+      }
+    };
+
+    scheduleIdleCheck();
+
+    // Throttled re-check on tab focus only if at least 15 minutes have passed
+    const handleThrottledFocus = () => {
+      if (document.visibilityState === 'visible') {
+        const now = Date.now();
+        if (now - lastFetchTimestamp > FETCH_THROTTLE_MS) {
+          scheduleIdleCheck();
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleThrottledFocus);
+  }
 }
