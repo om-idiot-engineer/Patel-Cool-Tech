@@ -3,6 +3,7 @@ import Container from './Container.astro';
 import SectionHeading from './SectionHeading.astro';
 import Button from './Button.astro';
 import { getPublishedWorkItems, defaultFallbackWork } from '../utils/supabase';
+import { getSafeThumbnailUrl, isVideoUrl } from '../utils/thumbnail';
 
 // Fetch work items from Supabase (or fallback)
 const workItems = await getPublishedWorkItems();
@@ -76,8 +77,9 @@ const row2Items = buildTrackItems(row2Source);
       <div id="preview-track-row1" class="marquee-track animate-marquee-left gap-3 sm:gap-4 lg:gap-5 flex items-center hover:[animation-play-state:paused] active:[animation-play-state:paused]">
         {
           row1Items.map((item) => {
-            const isVideo = item.media_type === 'video' || Boolean(item.video_url) || (Boolean(item.image_url) && /\.(mp4|webm|mov)$/i.test(item.image_url));
+            const isVideo = item.media_type === 'video' || Boolean(item.video_url) || isVideoUrl(item.image_url);
             const videoSrc = item.video_url || (isVideo ? item.image_url : '');
+            const thumbSrc = getSafeThumbnailUrl(item.thumbnail_url, item.image_url);
             const uniqueIdx = displayItems.findIndex((d) => d.id === item.id);
             return (
               <div
@@ -91,10 +93,10 @@ const row2Items = buildTrackItems(row2Source);
                 data-category={item.category}
                 data-serviceurl={item.service_url || '/services/'}
               >
-                <!-- Image or Video Poster (Optimized with zero-latency image posters and preload="none") -->
-                {(item.thumbnail_url || !/\.(mp4|webm|mov)$/i.test(item.image_url)) ? (
+                <!-- Thumbnail Image or Video First-Frame Poster -->
+                {thumbSrc ? (
                   <img
-                    src={item.thumbnail_url || item.image_url}
+                    src={thumbSrc}
                     alt={item.alt_text || item.title}
                     width="400"
                     height="260"
@@ -105,10 +107,10 @@ const row2Items = buildTrackItems(row2Source);
                   />
                 ) : (
                   <video
-                    src={videoSrc}
+                    src={`${videoSrc}#t=0.001`}
                     muted
                     playsinline
-                    preload="none"
+                    preload="metadata"
                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none select-none"
                   ></video>
                 )}
@@ -169,8 +171,9 @@ const row2Items = buildTrackItems(row2Source);
       <div id="preview-track-row2" class="marquee-track animate-marquee-right gap-3 sm:gap-4 lg:gap-5 flex items-center hover:[animation-play-state:paused] active:[animation-play-state:paused]">
         {
           row2Items.map((item) => {
-            const isVideo = item.media_type === 'video' || Boolean(item.video_url) || (Boolean(item.image_url) && /\.(mp4|webm|mov)$/i.test(item.image_url));
+            const isVideo = item.media_type === 'video' || Boolean(item.video_url) || isVideoUrl(item.image_url);
             const videoSrc = item.video_url || (isVideo ? item.image_url : '');
+            const thumbSrc = getSafeThumbnailUrl(item.thumbnail_url, item.image_url);
             const uniqueIdx = displayItems.findIndex((d) => d.id === item.id);
             return (
               <div
@@ -184,10 +187,10 @@ const row2Items = buildTrackItems(row2Source);
                 data-category={item.category}
                 data-serviceurl={item.service_url || '/services/'}
               >
-                <!-- Image or Video Poster (Optimized with zero-latency image posters and preload="none") -->
-                {(item.thumbnail_url || !/\.(mp4|webm|mov)$/i.test(item.image_url)) ? (
+                <!-- Thumbnail Image or Video First-Frame Poster -->
+                {thumbSrc ? (
                   <img
-                    src={item.thumbnail_url || item.image_url}
+                    src={thumbSrc}
                     alt={item.alt_text || item.title}
                     width="400"
                     height="260"
@@ -198,10 +201,10 @@ const row2Items = buildTrackItems(row2Source);
                   />
                 ) : (
                   <video
-                    src={videoSrc}
+                    src={`${videoSrc}#t=0.001`}
                     muted
                     playsinline
-                    preload="none"
+                    preload="metadata"
                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none select-none"
                   ></video>
                 )}
@@ -389,6 +392,7 @@ const row2Items = buildTrackItems(row2Source);
   import type { WorkItemDB } from '../types/database';
   import { getStoredWorkItems } from '../utils/liveSync';
   import { initInteractiveMarquee, type MarqueeController } from '../utils/marquee';
+  import { getSafeThumbnailUrl, isVideoUrl } from '../utils/thumbnail';
 
   let currentItemsData: WorkItemDB[] = [];
   let isLightboxOpen = false;
@@ -397,10 +401,10 @@ const row2Items = buildTrackItems(row2Source);
   let activeControllers: MarqueeController[] = [];
 
   function createCardHTML(item: WorkItemDB, liveItems: WorkItemDB[]) {
-    const isVideo = item.media_type === 'video' || Boolean(item.video_url) || (Boolean(item.image_url) && /\.(mp4|webm|mov)$/i.test(item.image_url));
+    const isVideo = item.media_type === 'video' || Boolean(item.video_url) || isVideoUrl(item.image_url);
     const videoSrc = item.video_url || (isVideo ? item.image_url : '');
     const uniqueIdx = liveItems.findIndex((d) => d.id === item.id);
-    const mediaSrc = item.thumbnail_url || item.image_url;
+    const thumbSrc = getSafeThumbnailUrl(item.thumbnail_url, item.image_url);
 
     return `
       <div
@@ -414,9 +418,9 @@ const row2Items = buildTrackItems(row2Source);
         data-category="${item.category}"
         data-serviceurl="${item.service_url || '/services/'}"
       >
-        ${(item.thumbnail_url || !/\.(mp4|webm|mov)$/i.test(item.image_url)) ? `
+        ${thumbSrc ? `
           <img
-            src="${item.thumbnail_url || item.image_url}"
+            src="${thumbSrc}"
             alt="${item.alt_text || item.title}"
             width="400"
             height="260"
@@ -427,10 +431,10 @@ const row2Items = buildTrackItems(row2Source);
           />
         ` : `
           <video
-            src="${videoSrc}"
+            src="${videoSrc}#t=0.001"
             muted
             playsinline
-            preload="none"
+            preload="metadata"
             draggable="false"
             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none select-none"
           ></video>

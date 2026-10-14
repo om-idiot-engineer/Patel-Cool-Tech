@@ -1,6 +1,7 @@
 ---
 import type { WorkItemDB } from '../types/database';
 import { defaultFallbackWork } from '../utils/supabase';
+import { getSafeThumbnailUrl, isVideoUrl } from '../utils/thumbnail';
 
 interface Props {
   items?: WorkItemDB[];
@@ -57,8 +58,9 @@ const gridColsClass = {
   <div class={`grid ${gridColsClass} gap-6 lg:gap-8 items-stretch gallery-grid`}>
     {
       items.map((item, index) => {
-        const isVideo = item.media_type === 'video' || Boolean(item.video_url) || (Boolean(item.image_url) && /\.(mp4|webm|mov)$/i.test(item.image_url));
+        const isVideo = item.media_type === 'video' || Boolean(item.video_url) || isVideoUrl(item.image_url);
         const videoSrc = item.video_url || (isVideo ? item.image_url : '');
+        const thumbSrc = getSafeThumbnailUrl(item.thumbnail_url, item.image_url);
         return (
           <article
             class="card-spotlight gallery-item flex flex-col bg-white rounded-2xl sm:rounded-3xl overflow-hidden border border-brand-border/90 hover:border-brand-ice/60 transition-all duration-300 hover:shadow-card-elevated card-hover-effect group cursor-pointer reveal-init relative active:scale-[0.99] sm:active:scale-100"
@@ -76,9 +78,9 @@ const gridColsClass = {
 
             <!-- Media Visual Container -->
             <div class="relative w-full aspect-[4/3] bg-brand-surface-alt overflow-hidden">
-              {(item.thumbnail_url || !/\.(mp4|webm|mov)$/i.test(item.image_url)) ? (
+              {thumbSrc ? (
                 <img
-                  src={item.thumbnail_url || item.image_url}
+                  src={thumbSrc}
                   alt={item.alt_text || item.title}
                   width="800"
                   height="600"
@@ -88,10 +90,10 @@ const gridColsClass = {
                 />
               ) : (
                 <video
-                  src={videoSrc}
+                  src={`${videoSrc}#t=0.001`}
                   muted
                   playsinline
-                  preload="none"
+                  preload="metadata"
                   class="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out pointer-events-none"
                 ></video>
               )}
@@ -259,11 +261,12 @@ const gridColsClass = {
 <script>
   import type { WorkItemDB } from '../types/database';
   import { getStoredWorkItems } from '../utils/liveSync';
+  import { getSafeThumbnailUrl, isVideoUrl } from '../utils/thumbnail';
 
   function createGalleryItemHTML(item: WorkItemDB, index: number) {
-    const isVideo = item.media_type === 'video' || Boolean(item.video_url) || (Boolean(item.image_url) && /\.(mp4|webm|mov)$/i.test(item.image_url));
+    const isVideo = item.media_type === 'video' || Boolean(item.video_url) || isVideoUrl(item.image_url);
     const videoSrc = item.video_url || (isVideo ? item.image_url : '');
-    const mediaSrc = item.thumbnail_url || item.image_url;
+    const thumbSrc = getSafeThumbnailUrl(item.thumbnail_url, item.image_url);
 
     return `
       <article
@@ -279,9 +282,9 @@ const gridColsClass = {
       >
         <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-ice via-sky-400 to-brand-blue opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
         <div class="relative w-full aspect-[4/3] bg-brand-surface-alt overflow-hidden">
-          ${(item.thumbnail_url || !/\.(mp4|webm|mov)$/i.test(item.image_url)) ? `
+          ${thumbSrc ? `
             <img
-              src="${item.thumbnail_url || item.image_url}"
+              src="${thumbSrc}"
               alt="${item.alt_text || item.title}"
               width="800"
               height="600"
@@ -291,10 +294,10 @@ const gridColsClass = {
             />
           ` : `
             <video
-              src="${videoSrc}"
+              src="${videoSrc}#t=0.001"
               muted
               playsinline
-              preload="none"
+              preload="metadata"
               class="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out pointer-events-none"
             ></video>
           `}

@@ -182,13 +182,14 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                 <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
                 </svg>
-                <span>Current Photo</span>
+                <span id="modal-preview-badge">Current Photo</span>
               </div>
             </div>
           </div>
 
           <!-- File Upload Trigger Box -->
           <input type="file" id="media-file-input" accept="image/*,video/mp4,video/webm" class="hidden" />
+          <input type="hidden" id="work-thumbnail-url" value="" />
           <div id="upload-idle-state" class="cursor-pointer border-2 border-dashed border-brand-ice/40 hover:border-brand-ice active:border-brand-ice bg-brand-navy/20 hover:bg-brand-navy/30 rounded-2xl p-4 sm:p-5 text-center transition-all">
             <div class="w-12 h-12 rounded-full bg-brand-ice/20 text-brand-ice mx-auto flex items-center justify-center mb-2">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -197,7 +198,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
               </svg>
             </div>
             <p id="upload-btn-text" class="text-sm font-bold text-white">Upload from Device or Camera</p>
-            <p class="text-[11px] text-slate-400 mt-1">Tap to capture from camera or choose an image / video file</p>
+            <p class="text-[11px] text-slate-400 mt-1">Tap to capture from camera or choose an image / video file (auto-creates video thumbnail)</p>
           </div>
 
           <!-- Upload In-Progress State -->
@@ -297,15 +298,27 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         </div>
 
         <div id="video-url-container" class="hidden">
-          <label for="work-video-url" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
-            Video Clip URL (MP4 / WebM)
-          </label>
+          <div class="flex items-center justify-between mb-1.5">
+            <label for="work-video-url" class="block text-xs font-bold uppercase tracking-wider text-slate-300">
+              Video Clip URL (MP4 / WebM)
+            </label>
+            <button
+              type="button"
+              id="extract-thumb-btn"
+              class="text-xs text-brand-ice hover:text-white flex items-center gap-1 font-bold cursor-pointer transition-colors"
+            >
+              <span>📸 Auto-Generate Thumbnail</span>
+            </button>
+          </div>
           <input
             type="text"
             id="work-video-url"
             placeholder="https://.../video.mp4"
             class="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-brand-ice text-base sm:text-sm min-h-[48px]"
           />
+          <p class="text-[11px] text-slate-400 mt-1">
+            Uploading a video automatically captures a frame and uploads it as the thumbnail.
+          </p>
         </div>
 
         <div>
@@ -391,6 +404,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     import { adminSupabase as supabase, isSupabaseConfigured, defaultFallbackWork } from '../../utils/supabase';
     import type { WorkItemDB } from '../../types/database';
     import { broadcastWorkItemsUpdate } from '../../utils/liveSync';
+    import { captureVideoThumbnail, getSafeThumbnailUrl, isVideoUrl } from '../../utils/thumbnail';
 
     let localWorkItems: WorkItemDB[] = [...defaultFallbackWork];
     let deleteTargetId: string | null = null;
@@ -448,14 +462,22 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
     function createCardHTML(item: WorkItemDB) {
       const isTop = item.row_position !== 'bottom';
-      const isVideo = item.media_type === 'video' || Boolean(item.video_url) || (Boolean(item.image_url) && /\.(mp4|webm|mov)$/i.test(item.image_url));
+      const isVideo = item.media_type === 'video' || Boolean(item.video_url) || isVideoUrl(item.image_url);
       const videoSrc = item.video_url || (isVideo ? item.image_url : '');
+      const thumbSrc = getSafeThumbnailUrl(item.thumbnail_url, item.image_url);
 
       return `
         <article class="bg-slate-900 border border-slate-800 hover:border-brand-ice/60 rounded-2xl overflow-hidden flex flex-col justify-between group shadow-md transition-all hover:shadow-xl hover:shadow-brand-ice/10">
           <!-- Clickable Image with direct Edit trigger -->
           <div class="relative w-full aspect-[4/3] bg-slate-950 overflow-hidden cursor-pointer edit-card-trigger" data-id="${item.id}" title="Click to edit this project">
-            ${isVideo ? `
+            ${thumbSrc ? `
+              <img
+                src="${thumbSrc}"
+                alt="${item.title}"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                loading="lazy"
+              />
+            ` : `
               <video
                 src="${videoSrc}#t=0.001"
                 muted
@@ -463,13 +485,6 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                 preload="metadata"
                 class="w-full h-full object-cover pointer-events-none"
               ></video>
-            ` : `
-              <img
-                src="${item.thumbnail_url || item.image_url}"
-                alt="${item.title}"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                loading="lazy"
-              />
             `}
             <!-- Top Badges -->
             <div class="absolute top-2.5 left-2.5 flex items-center gap-1.5">
@@ -696,7 +711,9 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
       const previewContainer = document.getElementById('modal-image-preview-container');
       const previewImg = document.getElementById('modal-image-preview') as HTMLImageElement | null;
+      const previewBadge = document.getElementById('modal-preview-badge');
       const uploadBtnText = document.getElementById('upload-btn-text');
+      const thumbnailUrlInput = document.getElementById('work-thumbnail-url') as HTMLInputElement | null;
 
       if (item) {
         if (modalTitle) modalTitle.textContent = 'Edit Project';
@@ -705,7 +722,9 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         if (titleInput) titleInput.value = item.title;
         if (catSelect) catSelect.value = item.category;
         if (mediaSelect) mediaSelect.value = item.media_type;
-        if (imageUrlInput) imageUrlInput.value = item.image_url;
+        const thumbSrc = getSafeThumbnailUrl(item.thumbnail_url, item.image_url);
+        if (imageUrlInput) imageUrlInput.value = thumbSrc || item.image_url;
+        if (thumbnailUrlInput) thumbnailUrlInput.value = item.thumbnail_url || (thumbSrc || '');
         if (videoInput) videoInput.value = item.video_url || '';
         if (descInput) descInput.value = item.description || '';
         if (sortInput) sortInput.value = String(item.sort_order || 1);
@@ -718,18 +737,22 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           if (radioTop) radioTop.checked = true;
         }
 
-        // Show existing image preview
-        if (previewContainer && previewImg && item.image_url) {
-          previewImg.src = item.image_url;
+        // Show existing thumbnail/image preview
+        if (previewContainer && previewImg && (thumbSrc || item.image_url)) {
+          previewImg.src = thumbSrc || item.image_url;
           previewContainer.classList.remove('hidden');
+          if (previewBadge) {
+            previewBadge.textContent = item.media_type === 'video' ? 'Video Thumbnail (Auto-extracted) 🎬' : 'Current Photo';
+          }
         }
-        if (uploadBtnText) uploadBtnText.textContent = 'Upload New Photo / Video';
+        if (uploadBtnText) uploadBtnText.textContent = item.media_type === 'video' ? 'Upload New Video / Photo' : 'Upload New Photo / Video';
       } else {
         if (modalTitle) modalTitle.textContent = defaultRow === 'top' ? 'Add Project to Top Line' : 'Add Project to Bottom Line';
         if (modalSubtitle) modalSubtitle.textContent = 'Upload photo or video from device or camera';
         form?.reset();
         if (formId) formId.value = '';
         if (imageUrlInput) imageUrlInput.value = '';
+        if (thumbnailUrlInput) thumbnailUrlInput.value = '';
         if (defaultRow === 'bottom') {
           if (radioBottom) radioBottom.checked = true;
         } else {
@@ -738,6 +761,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
         if (previewContainer) previewContainer.classList.add('hidden');
         if (previewImg) previewImg.src = '';
+        if (previewBadge) previewBadge.textContent = 'Current Photo';
         if (uploadBtnText) uploadBtnText.textContent = 'Upload from Device or Camera';
       }
 
@@ -793,7 +817,56 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       fileInput?.click();
     });
 
-    // Handle File Upload to Supabase Storage
+    // Quick Action: Auto-generate thumbnail from entered video URL
+    const extractThumbBtn = document.getElementById('extract-thumb-btn');
+    extractThumbBtn?.addEventListener('click', async () => {
+      const videoInput = document.getElementById('work-video-url') as HTMLInputElement | null;
+      const videoUrl = videoInput?.value?.trim();
+      if (!videoUrl) {
+        alert('Please enter or paste a video URL first.');
+        return;
+      }
+
+      const previewContainer = document.getElementById('modal-image-preview-container');
+      const previewImg = document.getElementById('modal-image-preview') as HTMLImageElement | null;
+      const previewBadge = document.getElementById('modal-preview-badge');
+      const thumbnailUrlInput = document.getElementById('work-thumbnail-url') as HTMLInputElement | null;
+
+      showToast('Extracting thumbnail frame from video...');
+      try {
+        const result = await captureVideoThumbnail(videoUrl);
+        if (previewContainer && previewImg) {
+          previewImg.src = result.dataUrl;
+          previewContainer.classList.remove('hidden');
+          if (previewBadge) previewBadge.textContent = 'Auto-Generated Video Thumbnail 🎬';
+        }
+
+        if (isSupabaseConfigured && supabase) {
+          const thumbPath = `work/thumb-${Date.now()}-${Math.random().toString(36).substring(7)}.jpg`;
+          const { error: thumbErr } = await supabase.storage
+            .from('work-media')
+            .upload(thumbPath, result.blob, { contentType: 'image/jpeg' });
+
+          if (!thumbErr) {
+            const { data: { publicUrl: thumbPublicUrl } } = supabase.storage
+              .from('work-media')
+              .getPublicUrl(thumbPath);
+
+            if (imageUrlInput) imageUrlInput.value = thumbPublicUrl;
+            if (thumbnailUrlInput) thumbnailUrlInput.value = thumbPublicUrl;
+            showToast('Thumbnail generated & uploaded to cloud storage!');
+          }
+        } else {
+          if (imageUrlInput) imageUrlInput.value = result.dataUrl;
+          if (thumbnailUrlInput) thumbnailUrlInput.value = result.dataUrl;
+          showToast('Thumbnail extracted successfully!');
+        }
+      } catch (err: any) {
+        alert('Could not extract thumbnail from video URL: ' + err.message);
+      }
+    });
+
+    // Handle File Upload to Supabase Storage with Automatic Video Thumbnail Generation
     fileInput?.addEventListener('change', async () => {
       const file = fileInput.files?.[0];
       if (!file) return;
@@ -803,12 +876,39 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
       const previewContainer = document.getElementById('modal-image-preview-container');
       const previewImg = document.getElementById('modal-image-preview') as HTMLImageElement | null;
+      const previewBadge = document.getElementById('modal-preview-badge');
       const uploadBtnText = document.getElementById('upload-btn-text');
+      const statusText = document.getElementById('upload-status-text');
+      const thumbnailUrlInput = document.getElementById('work-thumbnail-url') as HTMLInputElement | null;
 
-      if (isSupabaseConfigured && supabase) {
-        try {
-          const fileExt = file.name.split('.').pop();
-          const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const isVideo = file.type.startsWith('video') || isVideoUrl(file.name);
+
+      if (isVideo) {
+        if (statusText) statusText.textContent = 'Capturing automatic video thumbnail...';
+      } else {
+        if (statusText) statusText.textContent = 'Uploading photo to cloud storage...';
+      }
+
+      try {
+        let extractedThumbResult: { blob: Blob; dataUrl: string } | null = null;
+        if (isVideo) {
+          try {
+            extractedThumbResult = await captureVideoThumbnail(file);
+            if (previewContainer && previewImg) {
+              previewImg.src = extractedThumbResult.dataUrl;
+              previewContainer.classList.remove('hidden');
+              if (previewBadge) previewBadge.textContent = 'Auto-Generated Video Thumbnail 🎬';
+            }
+          } catch (thumbErr: any) {
+            console.warn('Could not extract video thumbnail client-side:', thumbErr);
+          }
+        }
+
+        if (isSupabaseConfigured && supabase) {
+          if (statusText) statusText.textContent = 'Uploading media to cloud storage...';
+          const fileExt = file.name.split('.').pop() || (isVideo ? 'mp4' : 'jpg');
+          const fileRand = Math.random().toString(36).substring(7);
+          const fileName = `${Date.now()}-${fileRand}.${fileExt}`;
           const filePath = `work/${fileName}`;
 
           const { error: uploadError } = await supabase.storage
@@ -817,39 +917,96 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
           if (uploadError) throw uploadError;
 
-          const { data: { publicUrl } } = supabase.storage
+          const { data: { publicUrl: filePublicUrl } } = supabase.storage
             .from('work-media')
             .getPublicUrl(filePath);
 
-          if (imageUrlInput) imageUrlInput.value = publicUrl;
-          if (previewContainer && previewImg) {
-            previewImg.src = publicUrl;
-            previewContainer.classList.remove('hidden');
-          }
-          if (uploadBtnText) uploadBtnText.textContent = 'Replace Photo / Video';
+          if (isVideo) {
+            let thumbPublicUrl = '';
+            if (extractedThumbResult) {
+              if (statusText) statusText.textContent = 'Saving generated video thumbnail...';
+              const thumbPath = `work/thumb-${Date.now()}-${fileRand}.jpg`;
+              const { error: thumbErr } = await supabase.storage
+                .from('work-media')
+                .upload(thumbPath, extractedThumbResult.blob, { contentType: 'image/jpeg' });
 
-          if (file.type.startsWith('video') || /\.(mp4|webm|mov)$/i.test(file.name)) {
+              if (!thumbErr) {
+                const { data: { publicUrl: tUrl } } = supabase.storage
+                  .from('work-media')
+                  .getPublicUrl(thumbPath);
+                thumbPublicUrl = tUrl;
+              }
+            }
+
+            const finalThumbUrl = thumbPublicUrl || filePublicUrl;
+            if (imageUrlInput) imageUrlInput.value = finalThumbUrl;
+            if (thumbnailUrlInput) thumbnailUrlInput.value = finalThumbUrl;
+
             const videoInput = document.getElementById('work-video-url') as HTMLInputElement | null;
-            if (videoInput) videoInput.value = publicUrl;
+            if (videoInput) videoInput.value = filePublicUrl;
             if (mediaTypeSelect) mediaTypeSelect.value = 'video';
             if (videoUrlContainer) videoUrlContainer.classList.remove('hidden');
-          }
-          showToast('Media uploaded to storage successfully.');
-        } catch (err: any) {
-          alert('Upload failed: ' + err.message);
-        }
-      } else {
-        const objectUrl = URL.createObjectURL(file);
-        if (imageUrlInput) imageUrlInput.value = objectUrl;
-        if (previewContainer && previewImg) {
-          previewImg.src = objectUrl;
-          previewContainer.classList.remove('hidden');
-        }
-        showToast('Photo selected.');
-      }
 
-      uploadIdleState?.classList.remove('hidden');
-      uploadProgressState?.classList.add('hidden');
+            if (previewContainer && previewImg && finalThumbUrl) {
+              previewImg.src = finalThumbUrl;
+              previewContainer.classList.remove('hidden');
+              if (previewBadge) previewBadge.textContent = 'Auto-Generated Video Thumbnail 🎬';
+            }
+            if (uploadBtnText) uploadBtnText.textContent = 'Replace Video / Photo';
+            showToast('Video & automatic thumbnail uploaded successfully!');
+          } else {
+            // Normal Image
+            if (imageUrlInput) imageUrlInput.value = filePublicUrl;
+            if (thumbnailUrlInput) thumbnailUrlInput.value = filePublicUrl;
+            if (mediaTypeSelect) mediaTypeSelect.value = 'image';
+            if (videoUrlContainer) videoUrlContainer.classList.add('hidden');
+            const videoInput = document.getElementById('work-video-url') as HTMLInputElement | null;
+            if (videoInput) videoInput.value = '';
+
+            if (previewContainer && previewImg) {
+              previewImg.src = filePublicUrl;
+              previewContainer.classList.remove('hidden');
+              if (previewBadge) previewBadge.textContent = 'Current Photo';
+            }
+            if (uploadBtnText) uploadBtnText.textContent = 'Replace Photo';
+            showToast('Photo uploaded successfully.');
+          }
+        } else {
+          // Local/demo mode
+          if (isVideo) {
+            const objectUrl = URL.createObjectURL(file);
+            const thumbUrl = extractedThumbResult ? extractedThumbResult.dataUrl : objectUrl;
+            if (imageUrlInput) imageUrlInput.value = thumbUrl;
+            if (thumbnailUrlInput) thumbnailUrlInput.value = thumbUrl;
+            const videoInput = document.getElementById('work-video-url') as HTMLInputElement | null;
+            if (videoInput) videoInput.value = objectUrl;
+            if (mediaTypeSelect) mediaTypeSelect.value = 'video';
+            if (videoUrlContainer) videoUrlContainer.classList.remove('hidden');
+            if (previewContainer && previewImg) {
+              previewImg.src = thumbUrl;
+              previewContainer.classList.remove('hidden');
+              if (previewBadge) previewBadge.textContent = 'Auto-Generated Video Thumbnail 🎬';
+            }
+            showToast('Video attached with automatic thumbnail.');
+          } else {
+            const objectUrl = URL.createObjectURL(file);
+            if (imageUrlInput) imageUrlInput.value = objectUrl;
+            if (thumbnailUrlInput) thumbnailUrlInput.value = objectUrl;
+            if (previewContainer && previewImg) {
+              previewImg.src = objectUrl;
+              previewContainer.classList.remove('hidden');
+              if (previewBadge) previewBadge.textContent = 'Current Photo';
+            }
+            showToast('Photo selected.');
+          }
+        }
+      } catch (err: any) {
+        console.error('Upload error:', err);
+        alert('Upload failed: ' + (err.message || err));
+      } finally {
+        uploadIdleState?.classList.remove('hidden');
+        uploadProgressState?.classList.add('hidden');
+      }
     });
 
     // Form submission
@@ -859,28 +1016,34 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       const title = (document.getElementById('work-title') as HTMLInputElement | null)?.value || '';
       const category = (document.getElementById('work-category') as HTMLSelectElement | null)?.value as any;
       const media_type = (document.getElementById('work-media-type') as HTMLSelectElement | null)?.value as any;
-      const image_url = (document.getElementById('work-image-url') as HTMLInputElement | null)?.value || '';
+      const rawImageUrl = (document.getElementById('work-image-url') as HTMLInputElement | null)?.value || '';
+      const rawThumbnailUrl = (document.getElementById('work-thumbnail-url') as HTMLInputElement | null)?.value || '';
       const video_url = (document.getElementById('work-video-url') as HTMLInputElement | null)?.value || null;
       const description = (document.getElementById('work-description') as HTMLTextAreaElement | null)?.value || '';
       const sort_order = Number((document.getElementById('work-sort') as HTMLInputElement | null)?.value || 1);
       const published = (document.getElementById('work-published') as HTMLInputElement | null)?.checked ?? true;
       const featured = (document.getElementById('work-featured') as HTMLInputElement | null)?.checked ?? true;
 
-      if (!image_url) {
-        alert('Please select a photo or enter a valid image URL.');
+      if (!rawImageUrl && !video_url) {
+        alert('Please select a photo/video or enter a valid URL.');
         return;
       }
 
       // Check selected row position
       const rowPosition = (document.querySelector('input[name="work-row-position"]:checked') as HTMLInputElement | null)?.value || 'top';
 
+      const safeThumb = getSafeThumbnailUrl(rawThumbnailUrl, rawImageUrl);
+      const finalThumb = safeThumb || rawThumbnailUrl || rawImageUrl;
+      // Guarantee image_url is a displayable image URL (not raw .mp4) if thumbnail exists
+      const finalImage = (!isVideoUrl(rawImageUrl) && rawImageUrl) ? rawImageUrl : (finalThumb || rawImageUrl);
+
       const itemPayload: Partial<WorkItemDB> = {
         title,
         category,
         media_type,
-        image_url,
+        image_url: finalImage,
         video_url,
-        thumbnail_url: image_url,
+        thumbnail_url: finalThumb,
         description,
         sort_order,
         published,

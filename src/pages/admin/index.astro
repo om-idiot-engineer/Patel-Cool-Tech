@@ -1,6 +1,7 @@
 ---
 import AdminLayout from '../../layouts/AdminLayout.astro';
 import { defaultFallbackWork, getPublishedWorkItems } from '../../utils/supabase';
+import { getSafeThumbnailUrl, isVideoUrl } from '../../utils/thumbnail';
 
 const workItems = await getPublishedWorkItems();
 const displayItems = workItems.length > 0 ? workItems : defaultFallbackWork;
@@ -164,11 +165,19 @@ const totalVideos = displayItems.filter(i => i.media_type === 'video').length;
     <div class="block sm:hidden divide-y divide-slate-800/80">
       {
         displayItems.map((item) => {
-          const isVideo = item.media_type === 'video' || Boolean(item.video_url) || (Boolean(item.image_url) && /\.(mp4|webm|mov)$/i.test(item.image_url));
+          const isVideo = item.media_type === 'video' || Boolean(item.video_url) || isVideoUrl(item.image_url);
           const videoSrc = item.video_url || (isVideo ? item.image_url : '');
+          const thumbSrc = getSafeThumbnailUrl(item.thumbnail_url, item.image_url);
           return (
             <div class="p-3.5 flex items-center gap-3">
-              {isVideo ? (
+              {thumbSrc ? (
+                <img
+                  src={thumbSrc}
+                  alt={item.title}
+                  class="w-16 h-16 object-cover rounded-xl border border-slate-700 bg-slate-950 flex-shrink-0"
+                  loading="lazy"
+                />
+              ) : (
                 <video
                   src={`${videoSrc}#t=0.001`}
                   muted
@@ -176,13 +185,6 @@ const totalVideos = displayItems.filter(i => i.media_type === 'video').length;
                   preload="metadata"
                   class="w-16 h-16 object-cover rounded-xl border border-slate-700 bg-slate-950 flex-shrink-0 pointer-events-none"
                 ></video>
-              ) : (
-                <img
-                  src={item.thumbnail_url || item.image_url}
-                  alt={item.title}
-                  class="w-16 h-16 object-cover rounded-xl border border-slate-700 bg-slate-950 flex-shrink-0"
-                  loading="lazy"
-                />
               )}
               <div class="flex-grow min-w-0">
                 <div class="font-bold text-sm text-white truncate">{item.title}</div>
@@ -223,12 +225,20 @@ const totalVideos = displayItems.filter(i => i.media_type === 'video').length;
         <tbody class="divide-y divide-slate-800/60" id="work-table-body">
           {
             displayItems.map((item) => {
-              const isVideo = item.media_type === 'video' || Boolean(item.video_url) || (Boolean(item.image_url) && /\.(mp4|webm|mov)$/i.test(item.image_url));
+              const isVideo = item.media_type === 'video' || Boolean(item.video_url) || isVideoUrl(item.image_url);
               const videoSrc = item.video_url || (isVideo ? item.image_url : '');
+              const thumbSrc = getSafeThumbnailUrl(item.thumbnail_url, item.image_url);
               return (
                 <tr class="hover:bg-slate-850/50 transition-colors">
                   <td class="py-3 px-4 sm:px-6">
-                    {isVideo ? (
+                    {thumbSrc ? (
+                      <img
+                        src={thumbSrc}
+                        alt={item.title}
+                        class="w-12 h-10 object-cover rounded-lg border border-slate-700 bg-slate-950"
+                        loading="lazy"
+                      />
+                    ) : (
                       <video
                         src={`${videoSrc}#t=0.001`}
                         muted
@@ -236,13 +246,6 @@ const totalVideos = displayItems.filter(i => i.media_type === 'video').length;
                         preload="metadata"
                         class="w-12 h-10 object-cover rounded-lg border border-slate-700 bg-slate-950 pointer-events-none"
                       ></video>
-                    ) : (
-                      <img
-                        src={item.thumbnail_url || item.image_url}
-                        alt={item.title}
-                        class="w-12 h-10 object-cover rounded-lg border border-slate-700 bg-slate-950"
-                        loading="lazy"
-                      />
                     )}
                   </td>
                 <td class="py-3 px-4">
